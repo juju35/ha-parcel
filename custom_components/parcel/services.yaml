@@ -35,6 +35,29 @@ add_delivery:
         config_entry:
           integration: parcel
 
+hide_delivery:
+  fields:
+    tracking_number:
+      required: true
+      example: "6A12345678901"
+      selector:
+        text:
+    carrier_code:
+      example: "colissimo"
+      selector:
+        text:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: parcel
+
+unhide_deliveries:
+  fields:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: parcel
+
 refresh:
   fields:
     config_entry_id:

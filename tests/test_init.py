@@ -198,3 +198,46 @@ async def test_carriers_as_objects(hass, aioclient_mock, entry):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.runtime_data.carriers == {"amzfr": "Amazon France", "colissimo": "Colissimo"}
+
+
+async def test_hide_and_unhide_delivery(hass, aioclient_mock, entry, hass_storage):
+    await _setup(hass, aioclient_mock, entry)
+    calls_before = aioclient_mock.call_count
+    await hass.services.async_call(
+        DOMAIN, "hide_delivery", {"tracking_number": "6A123"}, blocking=True
+    )
+    state = hass.states.get("sensor.parcel_deliveries")
+    assert state.state == "0"
+    assert [d["tracking_number"] for d in state.attributes["deliveries"]] == ["1Z999"]
+    assert state.attributes["hidden_count"] == 1
+    # Hiding is local: no call to Parcel.
+    assert aioclient_mock.call_count == calls_before
+    assert hass_storage[f"{DOMAIN}.{entry.entry_id}.hidden"]["data"] == ["colissimo:6A123"]
+
+    await hass.services.async_call(DOMAIN, "unhide_deliveries", {}, blocking=True)
+    state = hass.states.get("sensor.parcel_deliveries")
+    assert state.state == "1"
+    assert state.attributes["hidden_count"] == 0
+
+
+async def test_hidden_deliveries_survive_restart(hass, aioclient_mock, entry, hass_storage):
+    hass_storage[f"{DOMAIN}.{entry.entry_id}.hidden"] = {
+        "version": 1,
+        "key": f"{DOMAIN}.{entry.entry_id}.hidden",
+        "data": ["colissimo:6A123", "dhl:gone"],
+    }
+    await _setup(hass, aioclient_mock, entry)
+    state = hass.states.get("sensor.parcel_deliveries")
+    assert state.state == "0"
+    # Deliveries Parcel no longer returns are forgotten.
+    assert entry.runtime_data.hidden == {"colissimo:6A123"}
+
+
+async def test_hide_unknown_delivery(hass, aioclient_mock, entry):
+    from homeassistant.exceptions import ServiceValidationError
+
+    await _setup(hass, aioclient_mock, entry)
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(
+            DOMAIN, "hide_delivery", {"tracking_number": "nope"}, blocking=True
+        )

@@ -6,7 +6,7 @@ from datetime import timedelta
 from typing import Final
 
 DOMAIN: Final = "parcel"
-VERSION: Final = "0.1.3"
+VERSION: Final = "0.1.4"
 
 API_BASE: Final = "https://api.parcel.app/external"
 API_DELIVERIES: Final = f"{API_BASE}/deliveries/"
@@ -26,6 +26,8 @@ CARRIERS_REFRESH: Final = timedelta(hours=24)
 
 SERVICE_ADD_DELIVERY: Final = "add_delivery"
 SERVICE_REFRESH: Final = "refresh"
+SERVICE_HIDE_DELIVERY: Final = "hide_delivery"
+SERVICE_UNHIDE_DELIVERIES: Final = "unhide_deliveries"
 
 ATTR_CONFIG_ENTRY_ID: Final = "config_entry_id"
 ATTR_TRACKING_NUMBER: Final = "tracking_number"
