@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.1.6';
+var PARCEL_CARD_VERSION = '0.1.7';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -28,6 +28,15 @@ var ParcelI18n = {
     limit: 'Parcel limite les ajouts à 20 par jour.',
     no_events: 'Aucun événement pour l\'instant',
     copy: 'Copier le numéro',
+    editor: {
+      entity: 'Capteur Parcel',
+      title: 'Titre',
+      show_icon: 'Afficher l\'icône',
+      show_delivered: 'Afficher les colis livrés',
+      show_add: 'Afficher le bouton d\'ajout',
+      show_refresh: 'Afficher le bouton Actualiser',
+      max_events: 'Événements affichés quand un colis est déplié',
+    },
     status: {
       delivered: 'Livré',
       frozen: 'Sans mise à jour',
@@ -64,6 +73,15 @@ var ParcelI18n = {
     limit: 'Parcel allows 20 additions per day.',
     no_events: 'No events yet',
     copy: 'Copy tracking number',
+    editor: {
+      entity: 'Parcel sensor',
+      title: 'Title',
+      show_icon: 'Show icon',
+      show_delivered: 'Show delivered parcels',
+      show_add: 'Show add button',
+      show_refresh: 'Show refresh button',
+      max_events: 'Events shown when a parcel is expanded',
+    },
     status: {
       delivered: 'Delivered',
       frozen: 'No updates',
@@ -110,6 +128,10 @@ function parcelLang(hass) {
 
 // ── parcel-card ───────────────────────────────────────────────────────────────
 class ParcelCard extends HTMLElement {
+  static getConfigElement() {
+    return document.createElement('parcel-card-editor');
+  }
+
   static getStubConfig(hass) {
     var entity = ParcelCard._findEntity(hass);
     return entity ? { entity: entity } : {};
@@ -481,6 +503,69 @@ class ParcelCard extends HTMLElement {
       '.actions button:disabled { opacity: 0.6; cursor: default; }',
     ].join('\n');
   }
+}
+
+// ── parcel-card-editor ────────────────────────────────────────────────────────
+var PARCEL_EDITOR_SCHEMA = [
+  { name: 'entity', selector: { entity: { domain: 'sensor', integration: 'parcel' } } },
+  { name: 'title', selector: { text: {} } },
+  {
+    type: 'grid',
+    name: '',
+    schema: [
+      { name: 'show_icon', selector: { boolean: {} } },
+      { name: 'show_delivered', selector: { boolean: {} } },
+      { name: 'show_refresh', selector: { boolean: {} } },
+      { name: 'show_add', selector: { boolean: {} } },
+    ],
+  },
+  { name: 'max_events', selector: { number: { min: 1, max: 20, mode: 'box' } } },
+];
+
+var PARCEL_EDITOR_DEFAULTS = { show_icon: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
+
+class ParcelCardEditor extends HTMLElement {
+  setConfig(config) {
+    this._config = Object.assign({}, config);
+    this._render();
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+    if (this._form) this._form.hass = hass;
+    else this._render();
+  }
+
+  _render() {
+    if (!this._hass || !this._config) return;
+    if (!this._form) {
+      var t = ParcelI18n[parcelLang(this._hass)].editor;
+      this._form = document.createElement('ha-form');
+      this._form.schema = PARCEL_EDITOR_SCHEMA;
+      this._form.computeLabel = function (field) { return t[field.name] || field.name; };
+      this._form.addEventListener('value-changed', this._valueChanged.bind(this));
+      this.appendChild(this._form);
+    }
+    this._form.hass = this._hass;
+    // Show the defaults as set, so the toggles match what the card does.
+    this._form.data = Object.assign({}, PARCEL_EDITOR_DEFAULTS, this._config);
+  }
+
+  _valueChanged(ev) {
+    var value = Object.assign({}, ev.detail.value);
+    // Keep the YAML short: drop options left at their default.
+    Object.keys(PARCEL_EDITOR_DEFAULTS).forEach(function (key) {
+      if (value[key] === PARCEL_EDITOR_DEFAULTS[key]) delete value[key];
+    });
+    if (!value.title) delete value.title;
+    if (!value.entity) delete value.entity;
+    this._config = value;
+    this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: value }, bubbles: true, composed: true }));
+  }
+}
+
+if (!customElements.get('parcel-card-editor')) {
+  customElements.define('parcel-card-editor', ParcelCardEditor);
 }
 
 if (!customElements.get('parcel-card')) {

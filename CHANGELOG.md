@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7
+
+### Nouveautés
+- Éditeur visuel de la carte : capteur, titre, icône, colis livrés, boutons Actualiser et Ajouter, nombre d'événements, sans passer par le YAML.
+
 ## 0.1.6
 
 ### Nouveautés

@@ -56,6 +56,8 @@ Options (bouton **Configurer**) :
 
 ## Carte
 
+Ajoutez la carte **Parcel** depuis le sélecteur de cartes : toutes les options se règlent dans l'éditeur visuel. En YAML :
+
 ```yaml
 type: custom:parcel-card
 ```
