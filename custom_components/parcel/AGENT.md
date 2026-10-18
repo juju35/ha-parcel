@@ -30,7 +30,7 @@ custom_components/parcel/
 - Reads `sensor.*` with `deliveries` and `config_entry_id` attributes; adds via `parcel.add_delivery`, carriers via websocket `parcel/carriers`.
 
 ## Release
-HACS downloads the repository itself (no `zip_release`). Before tagging `vX.Y.Z`, bump the version in manifest.json, const.py (`VERSION`, used as the card cache-buster) and `PARCEL_CARD_VERSION` in the card. Pushing the tag publishes the GitHub release (generated notes, `parcel.zip` attached); the workflow fails if the tag and the three versions differ.
+HACS downloads the repository itself (no `zip_release`). Before tagging `vX.Y.Z`, bump the version in manifest.json, const.py (`VERSION`, used as the card cache-buster) and `PARCEL_CARD_VERSION` in the card. Pushing to main publishes release `vX.Y.Z` (tag, generated notes, `parcel.zip`) when that tag doesn't exist yet; the workflow fails if the three versions differ. Tags can't be pushed from Claude sessions, hence this flow.
 
 ## Tests
 `pip install -r requirements_test.txt && pytest`
