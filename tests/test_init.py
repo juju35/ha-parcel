@@ -164,3 +164,28 @@ async def test_options_flow(hass, aioclient_mock, entry):
     await hass.async_block_till_done()
     assert entry.runtime_data.filter_mode == "active"
     assert entry.runtime_data.update_interval.total_seconds() == 900
+
+
+async def test_card_added_to_resources(hass, aioclient_mock, entry, stub_frontend):
+    assert await async_setup_component(hass, "lovelace", {})
+    await _setup(hass, aioclient_mock, entry)
+    await hass.async_block_till_done()
+    resources = hass.data["lovelace"].resources
+    urls = [item["url"] for item in resources.async_items()]
+    assert len(urls) == 1
+    assert urls[0].startswith("/parcel_static/parcel-card.js?v=")
+    assert resources.async_items()[0]["type"] == "module"
+    stub_frontend.assert_not_called()
+
+
+async def test_card_resource_updated_not_duplicated(hass, aioclient_mock, entry):
+    assert await async_setup_component(hass, "lovelace", {})
+    resources = hass.data["lovelace"].resources
+    await resources.async_load()
+    resources.loaded = True
+    await resources.async_create_item({"res_type": "module", "url": "/parcel_static/parcel-card.js?v=old"})
+    await _setup(hass, aioclient_mock, entry)
+    await hass.async_block_till_done()
+    urls = [item["url"] for item in resources.async_items()]
+    assert len(urls) == 1
+    assert not urls[0].endswith("v=old")

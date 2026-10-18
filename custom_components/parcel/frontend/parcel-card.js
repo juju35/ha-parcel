@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.1.0';
+var PARCEL_CARD_VERSION = '0.1.1';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var ParcelI18n = {

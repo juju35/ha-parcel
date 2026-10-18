@@ -33,7 +33,9 @@ Ou manuellement :
 3. Rechercher **Parcel** et l'installer
 4. Redémarrer Home Assistant
 
-La carte est servie par l'intégration elle-même : rien à copier dans `/config/www/` et aucune ressource Lovelace à ajouter. Après une mise à jour, rafraîchissez simplement le navigateur.
+La carte est **incluse dans l'intégration** : au démarrage, elle est ajoutée automatiquement aux ressources du tableau de bord (`/parcel_static/parcel-card.js`, type module). Après une installation ou une mise à jour, redémarrez Home Assistant puis rafraîchissez le navigateur (vider le cache de l'application mobile si besoin).
+
+Si vos tableaux de bord sont en mode YAML, la carte est chargée sur toutes les pages sans passer par les ressources.
 
 ## Installation manuelle
 

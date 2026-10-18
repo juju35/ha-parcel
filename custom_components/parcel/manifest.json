@@ -1,6 +1,7 @@
 {
   "domain": "parcel",
   "name": "Parcel",
+  "after_dependencies": ["lovelace"],
   "codeowners": ["@juju35"],
   "config_flow": true,
   "dependencies": ["frontend", "http", "websocket_api"],
@@ -9,5 +10,5 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/juju35/ha-parcel/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.1.1"
 }

@@ -26,7 +26,7 @@ custom_components/parcel/
 - Status codes: 0 delivered, 1 frozen, 2 in transit, 3 awaiting pickup, 4 out for delivery, 5 not found, 6 failed attempt, 7 exception, 8 info received.
 
 ## Card
-- Registered with `add_extra_js_url` from the `/parcel_static` static path: no file copied into `/config/www`, no Lovelace resource to add.
+- Served from the `/parcel_static` static path and added to the Lovelace resources collection at startup (like ha-zoraxy), URL versioned with the file's md5. Falls back to `add_extra_js_url` when resources are in YAML mode.
 - Reads `sensor.*` with `deliveries` and `config_entry_id` attributes; adds via `parcel.add_delivery`, carriers via websocket `parcel/carriers`.
 
 ## Release
