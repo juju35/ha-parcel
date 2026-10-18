@@ -1,0 +1,43 @@
+add_delivery:
+  fields:
+    tracking_number:
+      required: true
+      example: "1Z999AA10123456784"
+      selector:
+        text:
+    carrier_code:
+      required: true
+      example: "ups"
+      selector:
+        text:
+    description:
+      required: true
+      example: "Nouveau casque"
+      selector:
+        text:
+    language:
+      example: "fr"
+      selector:
+        text:
+    send_push_confirmation:
+      default: false
+      selector:
+        boolean:
+    postcode:
+      selector:
+        text:
+    email:
+      selector:
+        text:
+          type: email
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: parcel
+
+refresh:
+  fields:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: parcel

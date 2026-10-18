@@ -1,0 +1,13 @@
+{
+  "domain": "parcel",
+  "name": "Parcel",
+  "codeowners": ["@juju35"],
+  "config_flow": true,
+  "dependencies": ["frontend", "http", "websocket_api"],
+  "documentation": "https://github.com/juju35/ha-parcel",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/juju35/ha-parcel/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

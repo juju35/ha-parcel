@@ -1,0 +1,11 @@
+{
+  "entity": {
+    "sensor": {
+      "deliveries": { "default": "mdi:package-variant-closed" }
+    }
+  },
+  "services": {
+    "add_delivery": { "service": "mdi:package-variant-plus" },
+    "refresh": { "service": "mdi:refresh" }
+  }
+}

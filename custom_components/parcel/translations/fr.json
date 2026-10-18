@@ -1,0 +1,74 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Générez une clé d'API sur web.parcelapp.net (abonnement Parcel Premium requis).",
+        "data": { "api_key": "Clé d'API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "La clé d'API Parcel a été refusée. Saisissez-en une nouvelle.",
+        "data": { "api_key": "Clé d'API" }
+      }
+    },
+    "error": {
+      "invalid_auth": "Clé d'API invalide.",
+      "cannot_connect": "Impossible de joindre Parcel, ou la limite de requêtes par heure est atteinte. Réessayez plus tard."
+    },
+    "abort": {
+      "already_configured": "Cette clé d'API est déjà configurée.",
+      "reauth_successful": "Clé d'API mise à jour."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options Parcel",
+        "data": {
+          "filter_mode": "Colis à afficher",
+          "scan_interval": "Intervalle de mise à jour"
+        },
+        "data_description": {
+          "scan_interval": "Parcel autorise 20 requêtes par heure, donc 5 minutes au minimum."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Récents (en cours et livrés récemment)",
+        "active": "En cours uniquement"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Colis" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Ajouter un colis",
+      "description": "Ajoute un colis dans Parcel. Parcel autorise 20 ajouts par jour.",
+      "fields": {
+        "tracking_number": { "name": "Numéro de suivi", "description": "Le numéro de suivi du transporteur." },
+        "carrier_code": { "name": "Code transporteur", "description": "Code transporteur Parcel, par exemple colissimo, chronopost ou pholder pour un colis sans suivi." },
+        "description": { "name": "Description", "description": "Nom affiché dans Parcel." },
+        "language": { "name": "Langue", "description": "Code de langue à deux lettres pour les événements de suivi. Par défaut, la langue de Home Assistant." },
+        "send_push_confirmation": { "name": "Notification de confirmation", "description": "Parcel envoie une notification une fois le colis ajouté." },
+        "postcode": { "name": "Code postal", "description": "Seulement pour les transporteurs qui l'exigent." },
+        "email": { "name": "E-mail", "description": "Seulement pour les services qui l'exigent, comme l'Apple Store." },
+        "config_entry_id": { "name": "Compte Parcel", "description": "Utile seulement si plusieurs comptes Parcel sont configurés." }
+      }
+    },
+    "refresh": {
+      "name": "Actualiser",
+      "description": "Récupère les colis maintenant. Compte dans la limite de 20 requêtes par heure.",
+      "fields": {
+        "config_entry_id": { "name": "Compte Parcel", "description": "Utile seulement si plusieurs comptes Parcel sont configurés." }
+      }
+    }
+  }
+}
