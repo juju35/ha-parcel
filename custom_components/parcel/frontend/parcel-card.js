@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.1.1';
+var PARCEL_CARD_VERSION = '0.1.2';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var ParcelI18n = {
@@ -89,6 +89,11 @@ function parcelEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
   });
+}
+
+// Parcel sends placeholders such as "--//--" when the carrier gave no date.
+function parcelDate(s) {
+  return /\d/.test(String(s || '')) ? String(s) : '';
 }
 
 function parcelLang(hass) {
@@ -229,7 +234,7 @@ class ParcelCard extends HTMLElement {
       '<span class="tracking" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
       (last
         ? '<div class="line3">' + parcelEsc(last.event) + (last.location ? ' · ' + parcelEsc(last.location) : '') +
-          ' <span class="date">' + parcelEsc(last.date) + '</span></div>'
+          (parcelDate(last.date) ? ' <span class="date">' + parcelEsc(parcelDate(last.date)) + '</span>' : '') + '</div>'
         : '') +
       (expected && d.status_code !== 0 ? '<div class="expected">' + parcelEsc(t.expected) + ' : ' + parcelEsc(expected) + '</div>' : '') +
       '</div>' +
@@ -241,7 +246,7 @@ class ParcelCard extends HTMLElement {
       html += '<ul class="events">' +
         (shown.length
           ? shown.map(function (e) {
-              return '<li><span class="date">' + parcelEsc(e.date) + '</span> ' + parcelEsc(e.event) +
+              return '<li>' + (parcelDate(e.date) ? '<span class="date">' + parcelEsc(parcelDate(e.date)) + '</span> ' : '') + parcelEsc(e.event) +
                 (e.location ? ' · ' + parcelEsc(e.location) : '') +
                 (e.additional ? '<div class="additional">' + parcelEsc(e.additional) + '</div>' : '') + '</li>';
             }).join('')

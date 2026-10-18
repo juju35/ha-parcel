@@ -189,3 +189,12 @@ async def test_card_resource_updated_not_duplicated(hass, aioclient_mock, entry)
     urls = [item["url"] for item in resources.async_items()]
     assert len(urls) == 1
     assert not urls[0].endswith("v=old")
+
+
+async def test_carriers_as_objects(hass, aioclient_mock, entry):
+    aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
+    aioclient_mock.get(API_CARRIERS, json={"amzfr": {"name": "Amazon France"}, "colissimo": {"name": "Colissimo"}})
+    assert await async_setup_component(hass, "http", {})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.runtime_data.carriers == {"amzfr": "Amazon France", "colissimo": "Colissimo"}

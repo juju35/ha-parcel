@@ -78,12 +78,13 @@ class ParcelApi:
         except (aiohttp.ClientError, ValueError) as err:
             raise ParcelError(f"Cannot load Parcel carriers: {err}") from err
 
-        if isinstance(data, dict):
-            return {str(code): str(name) for code, name in data.items()}
+        # Seen as {code: name} and {code: {"name": ...}}; a list of {code, name} is accepted too.
         if isinstance(data, list):
-            carriers: dict[str, str] = {}
-            for item in data:
-                if isinstance(item, dict) and "code" in item:
-                    carriers[str(item["code"])] = str(item.get("name") or item["code"])
-            return carriers
-        raise ParcelError("Unexpected carriers list format")
+            data = {item["code"]: item for item in data if isinstance(item, dict) and "code" in item}
+        if not isinstance(data, dict):
+            raise ParcelError("Unexpected carriers list format")
+        carriers: dict[str, str] = {}
+        for code, value in data.items():
+            name = value.get("name") if isinstance(value, dict) else value
+            carriers[str(code)] = str(name or code)
+        return carriers
