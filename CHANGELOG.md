@@ -1,0 +1,29 @@
+# Changelog
+
+## 0.1.6
+
+### Nouveautés
+- L'icône Parcel s'affiche à gauche du titre de la carte (option `show_icon`, activée par défaut).
+
+## 0.1.5
+
+Première version publique de l'intégration Parcel pour Home Assistant, avec sa carte Lovelace.
+
+### Intégration
+- Configuration depuis l'interface avec la clé d'API Parcel (Parcel Premium requis), et ré-authentification si la clé est refusée.
+- Capteur **Colis** : nombre de colis en cours, avec tous les colis en attributs (statut, transporteur, événements, date de livraison prévue).
+- Options : colis à afficher (récents ou en cours uniquement) et intervalle de mise à jour, 10 minutes par défaut et 5 minutes minimum pour respecter la limite de 20 requêtes par heure.
+- Action `parcel.add_delivery` pour ajouter un colis (limite Parcel : 20 ajouts par jour).
+- Action `parcel.refresh` pour forcer une mise à jour.
+- Liste des transporteurs supportés chargée une fois par jour.
+- Interface en français et en anglais.
+
+### Carte `custom:parcel-card`
+- Incluse dans l'intégration et ajoutée automatiquement aux ressources du tableau de bord : rien à installer à part.
+- Liste des colis avec icône et pastille de statut, transporteur, numéro de suivi (copié au clic), dernier événement et date prévue.
+- Clic sur un colis pour afficher l'historique de ses événements.
+- Bouton **Actualiser** et formulaire d'ajout avec recherche du transporteur.
+- Compatible thème clair et sombre.
+
+### Installation
+- Via HACS (dépôt personnalisé, catégorie Intégration) ou en copiant `custom_components/parcel/`. L'archive `parcel.zip` est jointe à la release.
