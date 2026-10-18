@@ -1,7 +1,6 @@
 {
   "name": "Parcel",
+  "content_in_root": false,
   "render_readme": true,
-  "homeassistant": "2024.11.0",
-  "zip_release": true,
-  "filename": "parcel.zip"
+  "homeassistant": "2024.11.0"
 }

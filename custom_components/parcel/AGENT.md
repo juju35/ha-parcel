@@ -30,7 +30,7 @@ custom_components/parcel/
 - Reads `sensor.*` with `deliveries` and `config_entry_id` attributes; adds via `parcel.add_delivery`, carriers via websocket `parcel/carriers`.
 
 ## Release
-Publishing a GitHub release `vX.Y.Z` stamps the version in manifest.json, const.py and the card, then attaches `parcel.zip` (HACS `zip_release`).
+HACS downloads the repository itself (no `zip_release`). Before tagging `vX.Y.Z`, bump the version in manifest.json, const.py (`VERSION`, used as the card cache-buster) and `PARCEL_CARD_VERSION` in the card. The release workflow attaches `parcel.zip` for manual installs.
 
 ## Tests
 `pip install -r requirements_test.txt && pytest`
