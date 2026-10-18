@@ -1,4 +1,7 @@
-var PARCEL_CARD_VERSION = '0.1.5';
+var PARCEL_CARD_VERSION = '0.1.6';
+
+// ── Integration icon (same drawing as brand/icon.png) ────────────────────────
+var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var ParcelI18n = {
@@ -126,7 +129,7 @@ class ParcelCard extends HTMLElement {
 
   setConfig(config) {
     this._config = Object.assign(
-      { show_delivered: true, show_add: true, show_refresh: true, max_events: 5 },
+      { show_icon: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 },
       config || {}
     );
     this._expanded = this._expanded || {};
@@ -183,7 +186,7 @@ class ParcelCard extends HTMLElement {
     var title = this._config.title || t.default_title;
 
     if (!st) {
-      header.innerHTML = '<div class="title">' + parcelEsc(title) + '</div>';
+      header.innerHTML = '<div class="title">' + this._iconHtml() + parcelEsc(title) + '</div>';
       list.innerHTML = '<div class="empty">' + parcelEsc(t.no_entity) + '</div>';
       return;
     }
@@ -202,7 +205,7 @@ class ParcelCard extends HTMLElement {
     });
 
     header.innerHTML =
-      '<div class="title">' + parcelEsc(title) +
+      '<div class="title">' + this._iconHtml() + parcelEsc(title) +
       ' <span class="count">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</span></div>' +
       '<div class="buttons">' +
       (this._config.show_refresh
@@ -223,6 +226,10 @@ class ParcelCard extends HTMLElement {
     }
     var self = this;
     list.innerHTML = deliveries.map(function (d) { return self._renderDelivery(d, t); }).join('');
+  }
+
+  _iconHtml() {
+    return this._config.show_icon ? '<img class="logo" src="' + PARCEL_ICON + '" alt="">' : '';
   }
 
   _renderDelivery(d, t) {
@@ -434,7 +441,8 @@ class ParcelCard extends HTMLElement {
       ':host { display: block; }',
       'ha-card { padding: 12px 0 8px; overflow: hidden; }',
       '.header { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 4px 16px; min-height: 40px; }',
-      '.title { font-size: 1.15em; font-weight: 500; color: var(--primary-text-color); }',
+      '.title { display: flex; align-items: center; font-size: 1.15em; font-weight: 500; color: var(--primary-text-color); }',
+      '.logo { width: 28px; height: 28px; margin-right: 10px; flex: none; }',
       '.buttons { display: flex; align-items: center; }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
