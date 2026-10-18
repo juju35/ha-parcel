@@ -4,16 +4,12 @@
       "user": {
         "title": "Parcel",
         "description": "Generate an API key at web.parcelapp.net (Parcel Premium is required).",
-        "data": {
-          "api_key": "API key"
-        }
+        "data": { "api_key": "API key" }
       },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "The Parcel API key was rejected. Enter a new one.",
-        "data": {
-          "api_key": "API key"
-        }
+        "data": { "api_key": "API key" }
       }
     },
     "error": {
@@ -49,9 +45,7 @@
   },
   "entity": {
     "sensor": {
-      "deliveries": {
-        "name": "Deliveries"
-      }
+      "deliveries": { "name": "Deliveries" }
     }
   },
   "services": {
@@ -59,76 +53,21 @@
       "name": "Add delivery",
       "description": "Adds a delivery to Parcel. Parcel allows 20 additions per day.",
       "fields": {
-        "tracking_number": {
-          "name": "Tracking number",
-          "description": "The carrier's tracking number."
-        },
-        "carrier_code": {
-          "name": "Carrier code",
-          "description": "Parcel carrier code, for example ups, dhl or pholder for a placeholder."
-        },
-        "description": {
-          "name": "Description",
-          "description": "Name shown in Parcel."
-        },
-        "language": {
-          "name": "Language",
-          "description": "Two-letter language code for tracking events. Defaults to the Home Assistant language."
-        },
-        "send_push_confirmation": {
-          "name": "Push confirmation",
-          "description": "Send a push notification from Parcel once the delivery is added."
-        },
-        "postcode": {
-          "name": "Postcode",
-          "description": "Only for carriers that require it."
-        },
-        "email": {
-          "name": "Email",
-          "description": "Only for services that require it, such as Apple Store."
-        },
-        "config_entry_id": {
-          "name": "Parcel account",
-          "description": "Only needed when several Parcel accounts are configured."
-        }
+        "tracking_number": { "name": "Tracking number", "description": "The carrier's tracking number." },
+        "carrier_code": { "name": "Carrier code", "description": "Parcel carrier code, for example ups, dhl or pholder for a placeholder." },
+        "description": { "name": "Description", "description": "Name shown in Parcel." },
+        "language": { "name": "Language", "description": "Two-letter language code for tracking events. Defaults to the Home Assistant language." },
+        "send_push_confirmation": { "name": "Push confirmation", "description": "Send a push notification from Parcel once the delivery is added." },
+        "postcode": { "name": "Postcode", "description": "Only for carriers that require it." },
+        "email": { "name": "Email", "description": "Only for services that require it, such as Apple Store." },
+        "config_entry_id": { "name": "Parcel account", "description": "Only needed when several Parcel accounts are configured." }
       }
     },
     "refresh": {
       "name": "Refresh",
       "description": "Fetches the deliveries now. Counts toward the limit of 20 requests per hour.",
       "fields": {
-        "config_entry_id": {
-          "name": "Parcel account",
-          "description": "Only needed when several Parcel accounts are configured."
-        }
-      }
-    },
-    "hide_delivery": {
-      "name": "Hide delivery",
-      "description": "Hides a delivery in Home Assistant. The Parcel API cannot delete deliveries, so it stays in the Parcel app.",
-      "fields": {
-        "tracking_number": {
-          "name": "Tracking number",
-          "description": "Tracking number of the delivery to hide."
-        },
-        "carrier_code": {
-          "name": "Carrier code",
-          "description": "Only needed if two carriers use the same tracking number."
-        },
-        "config_entry_id": {
-          "name": "Parcel account",
-          "description": "Only needed when several Parcel accounts are configured."
-        }
-      }
-    },
-    "unhide_deliveries": {
-      "name": "Show hidden deliveries",
-      "description": "Shows every delivery hidden in Home Assistant again.",
-      "fields": {
-        "config_entry_id": {
-          "name": "Parcel account",
-          "description": "Only needed when several Parcel accounts are configured."
-        }
+        "config_entry_id": { "name": "Parcel account", "description": "Only needed when several Parcel accounts are configured." }
       }
     }
   }

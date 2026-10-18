@@ -4,16 +4,12 @@
       "user": {
         "title": "Parcel",
         "description": "Générez une clé d'API sur web.parcelapp.net (abonnement Parcel Premium requis).",
-        "data": {
-          "api_key": "Clé d'API"
-        }
+        "data": { "api_key": "Clé d'API" }
       },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "La clé d'API Parcel a été refusée. Saisissez-en une nouvelle.",
-        "data": {
-          "api_key": "Clé d'API"
-        }
+        "data": { "api_key": "Clé d'API" }
       }
     },
     "error": {
@@ -49,9 +45,7 @@
   },
   "entity": {
     "sensor": {
-      "deliveries": {
-        "name": "Colis"
-      }
+      "deliveries": { "name": "Colis" }
     }
   },
   "services": {
@@ -59,76 +53,21 @@
       "name": "Ajouter un colis",
       "description": "Ajoute un colis dans Parcel. Parcel autorise 20 ajouts par jour.",
       "fields": {
-        "tracking_number": {
-          "name": "Numéro de suivi",
-          "description": "Le numéro de suivi du transporteur."
-        },
-        "carrier_code": {
-          "name": "Code transporteur",
-          "description": "Code transporteur Parcel, par exemple colissimo, chronopost ou pholder pour un colis sans suivi."
-        },
-        "description": {
-          "name": "Description",
-          "description": "Nom affiché dans Parcel."
-        },
-        "language": {
-          "name": "Langue",
-          "description": "Code de langue à deux lettres pour les événements de suivi. Par défaut, la langue de Home Assistant."
-        },
-        "send_push_confirmation": {
-          "name": "Notification de confirmation",
-          "description": "Parcel envoie une notification une fois le colis ajouté."
-        },
-        "postcode": {
-          "name": "Code postal",
-          "description": "Seulement pour les transporteurs qui l'exigent."
-        },
-        "email": {
-          "name": "E-mail",
-          "description": "Seulement pour les services qui l'exigent, comme l'Apple Store."
-        },
-        "config_entry_id": {
-          "name": "Compte Parcel",
-          "description": "Utile seulement si plusieurs comptes Parcel sont configurés."
-        }
+        "tracking_number": { "name": "Numéro de suivi", "description": "Le numéro de suivi du transporteur." },
+        "carrier_code": { "name": "Code transporteur", "description": "Code transporteur Parcel, par exemple colissimo, chronopost ou pholder pour un colis sans suivi." },
+        "description": { "name": "Description", "description": "Nom affiché dans Parcel." },
+        "language": { "name": "Langue", "description": "Code de langue à deux lettres pour les événements de suivi. Par défaut, la langue de Home Assistant." },
+        "send_push_confirmation": { "name": "Notification de confirmation", "description": "Parcel envoie une notification une fois le colis ajouté." },
+        "postcode": { "name": "Code postal", "description": "Seulement pour les transporteurs qui l'exigent." },
+        "email": { "name": "E-mail", "description": "Seulement pour les services qui l'exigent, comme l'Apple Store." },
+        "config_entry_id": { "name": "Compte Parcel", "description": "Utile seulement si plusieurs comptes Parcel sont configurés." }
       }
     },
     "refresh": {
       "name": "Actualiser",
       "description": "Récupère les colis maintenant. Compte dans la limite de 20 requêtes par heure.",
       "fields": {
-        "config_entry_id": {
-          "name": "Compte Parcel",
-          "description": "Utile seulement si plusieurs comptes Parcel sont configurés."
-        }
-      }
-    },
-    "hide_delivery": {
-      "name": "Masquer un colis",
-      "description": "Masque un colis dans Home Assistant. L'API Parcel ne permet pas de supprimer un colis : il reste dans l'app Parcel.",
-      "fields": {
-        "tracking_number": {
-          "name": "Numéro de suivi",
-          "description": "Numéro de suivi du colis à masquer."
-        },
-        "carrier_code": {
-          "name": "Code transporteur",
-          "description": "Utile seulement si deux transporteurs ont le même numéro de suivi."
-        },
-        "config_entry_id": {
-          "name": "Compte Parcel",
-          "description": "Utile seulement si plusieurs comptes Parcel sont configurés."
-        }
-      }
-    },
-    "unhide_deliveries": {
-      "name": "Réafficher les colis masqués",
-      "description": "Réaffiche tous les colis masqués dans Home Assistant.",
-      "fields": {
-        "config_entry_id": {
-          "name": "Compte Parcel",
-          "description": "Utile seulement si plusieurs comptes Parcel sont configurés."
-        }
+        "config_entry_id": { "name": "Compte Parcel", "description": "Utile seulement si plusieurs comptes Parcel sont configurés." }
       }
     }
   }

@@ -6,8 +6,6 @@
   },
   "services": {
     "add_delivery": { "service": "mdi:package-variant-plus" },
-    "refresh": { "service": "mdi:refresh" },
-    "hide_delivery": { "service": "mdi:eye-off" },
-    "unhide_deliveries": { "service": "mdi:eye" }
+    "refresh": { "service": "mdi:refresh" }
   }
 }

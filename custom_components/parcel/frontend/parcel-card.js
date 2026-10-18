@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.1.4';
+var PARCEL_CARD_VERSION = '0.1.5';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var ParcelI18n = {
@@ -10,10 +10,6 @@ var ParcelI18n = {
     expected: 'Prévu',
     add: 'Ajouter un colis',
     refresh: 'Actualiser',
-    hide: 'Masquer',
-    hide_confirm: 'Masquer « {name} » dans Home Assistant ? L\'API Parcel ne permet pas de le supprimer : il restera dans l\'app Parcel.',
-    hidden: '{n} masqué(s)',
-    unhide: 'Tout réafficher',
     refresh_failed: 'Actualisation impossible',
     tracking_number: 'Numéro de suivi',
     carrier: 'Transporteur',
@@ -50,10 +46,6 @@ var ParcelI18n = {
     expected: 'Expected',
     add: 'Add a delivery',
     refresh: 'Refresh',
-    hide: 'Hide',
-    hide_confirm: 'Hide "{name}" in Home Assistant? The Parcel API cannot delete it, so it stays in the Parcel app.',
-    hidden: '{n} hidden',
-    unhide: 'Show all',
     refresh_failed: 'Refresh failed',
     tracking_number: 'Tracking number',
     carrier: 'Carrier',
@@ -177,9 +169,8 @@ class ParcelCard extends HTMLElement {
     this._root = this.attachShadow({ mode: 'open' });
     this._root.innerHTML =
       '<style>' + ParcelCard._styles() + '</style>' +
-      '<ha-card><div class="header"></div><div class="list"></div><div class="footer"></div><div class="form" hidden></div></ha-card>';
+      '<ha-card><div class="header"></div><div class="list"></div><div class="form" hidden></div></ha-card>';
     this._root.querySelector('.list').addEventListener('click', this._onListClick.bind(this));
-    this._root.querySelector('.footer').addEventListener('click', this._onFooterClick.bind(this));
   }
 
   _render() {
@@ -226,12 +217,6 @@ class ParcelCard extends HTMLElement {
     var refreshBtn = header.querySelector('.refresh-btn');
     if (refreshBtn) refreshBtn.addEventListener('click', this._refresh.bind(this));
 
-    var footer = this._root.querySelector('.footer');
-    var hiddenCount = st.attributes.hidden_count || 0;
-    footer.innerHTML = hiddenCount
-      ? parcelEsc(t.hidden.replace('{n}', hiddenCount)) + ' · <a href="#" class="unhide">' + parcelEsc(t.unhide) + '</a>'
-      : '';
-
     if (!deliveries.length) {
       list.innerHTML = '<div class="empty">' + parcelEsc(t.empty) + '</div>';
       return;
@@ -277,10 +262,7 @@ class ParcelCard extends HTMLElement {
                 (e.additional ? '<div class="additional">' + parcelEsc(e.additional) + '</div>' : '') + '</li>';
             }).join('')
           : '<li>' + parcelEsc(t.no_events) + '</li>') +
-        '</ul>' +
-        '<div class="item-actions"><button type="button" class="hide-btn" data-hide="' + parcelEsc(d.tracking_number) +
-        '" data-carrier="' + parcelEsc(d.carrier_code) + '" data-name="' + parcelEsc(d.description || d.tracking_number) + '">' +
-        '<ha-icon icon="mdi:eye-off-outline"></ha-icon> ' + parcelEsc(t.hide) + '</button></div>';
+        '</ul>';
     }
     return html + '</div>';
   }
@@ -302,12 +284,6 @@ class ParcelCard extends HTMLElement {
   }
 
   _onListClick(ev) {
-    var hide = ev.target.closest('[data-hide]');
-    if (hide) {
-      ev.stopPropagation();
-      this._hide(hide.getAttribute('data-hide'), hide.getAttribute('data-carrier'), hide.getAttribute('data-name'));
-      return;
-    }
     var copy = ev.target.closest('[data-copy]');
     if (copy) {
       ev.stopPropagation();
@@ -319,27 +295,6 @@ class ParcelCard extends HTMLElement {
     var id = item.getAttribute('data-id');
     this._expanded[id] = !this._expanded[id];
     this._render();
-  }
-
-  _serviceData(extra) {
-    var data = Object.assign({}, extra);
-    var st = this._lastState;
-    if (st && st.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
-    return data;
-  }
-
-  _hide(tracking, carrier, name) {
-    var t = this._t();
-    if (!window.confirm(t.hide_confirm.replace('{name}', name))) return;
-    this._hass.callService('parcel', 'hide_delivery', this._serviceData({ tracking_number: tracking, carrier_code: carrier }))
-      .catch(function (err) { window.alert((err && err.message) || String(err)); });
-  }
-
-  _onFooterClick(ev) {
-    if (!ev.target.closest('.unhide')) return;
-    ev.preventDefault();
-    this._hass.callService('parcel', 'unhide_deliveries', this._serviceData({}))
-      .catch(function (err) { window.alert((err && err.message) || String(err)); });
   }
 
   _refresh() {
@@ -480,12 +435,6 @@ class ParcelCard extends HTMLElement {
       'ha-card { padding: 12px 0 8px; overflow: hidden; }',
       '.header { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 4px 16px; min-height: 40px; }',
       '.title { font-size: 1.15em; font-weight: 500; color: var(--primary-text-color); }',
-      '.item-actions { display: flex; justify-content: flex-end; margin-top: 4px; }',
-      '.hide-btn { display: inline-flex; align-items: center; gap: 4px; font: inherit; font-size: 0.8em; padding: 2px 10px; border-radius: 14px; border: 1px solid var(--divider-color, #ccc); background: none; color: var(--secondary-text-color); cursor: pointer; }',
-      '.hide-btn ha-icon { --mdc-icon-size: 16px; width: 16px; height: 16px; }',
-      '.footer { padding: 4px 16px 0; font-size: 0.8em; color: var(--secondary-text-color); }',
-      '.footer:empty { display: none; }',
-      '.footer a { color: var(--primary-color); text-decoration: none; }',
       '.buttons { display: flex; align-items: center; }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',

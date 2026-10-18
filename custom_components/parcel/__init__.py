@@ -34,11 +34,9 @@ from .const import (
     DOMAIN,
     FRONTEND_URL,
     SERVICE_ADD_DELIVERY,
-    SERVICE_HIDE_DELIVERY,
     SERVICE_REFRESH,
-    SERVICE_UNHIDE_DELIVERIES,
 )
-from .coordinator import ParcelConfigEntry, ParcelCoordinator, delivery_key
+from .coordinator import ParcelConfigEntry, ParcelCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,13 +57,6 @@ ADD_DELIVERY_SCHEMA = vol.Schema(
     }
 )
 REFRESH_SCHEMA = vol.Schema({vol.Optional(ATTR_CONFIG_ENTRY_ID): cv.string})
-HIDE_DELIVERY_SCHEMA = vol.Schema(
-    {
-        vol.Optional(ATTR_CONFIG_ENTRY_ID): cv.string,
-        vol.Required(ATTR_TRACKING_NUMBER): vol.All(cv.string, vol.Strip, vol.Length(min=1)),
-        vol.Optional(ATTR_CARRIER_CODE): cv.string,
-    }
-)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -98,27 +89,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     async def refresh(call: ServiceCall) -> None:
         await _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID)).async_request_refresh()
 
-    async def hide_delivery(call: ServiceCall) -> None:
-        coordinator = _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID))
-        tracking = call.data[ATTR_TRACKING_NUMBER]
-        carrier = call.data.get(ATTR_CARRIER_CODE)
-        keys = {
-            delivery_key(d)
-            for d in coordinator.data or []
-            if d.get("tracking_number") == tracking and carrier in (None, d.get("carrier_code"))
-        }
-        if not keys:
-            raise ServiceValidationError(f"No Parcel delivery with tracking number {tracking}")
-        await coordinator.async_hide(keys)
-
-    async def unhide_deliveries(call: ServiceCall) -> None:
-        await _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID)).async_unhide_all()
-
     hass.services.async_register(DOMAIN, SERVICE_ADD_DELIVERY, add_delivery, ADD_DELIVERY_SCHEMA)
-    hass.services.async_register(DOMAIN, SERVICE_HIDE_DELIVERY, hide_delivery, HIDE_DELIVERY_SCHEMA)
-    hass.services.async_register(
-        DOMAIN, SERVICE_UNHIDE_DELIVERIES, unhide_deliveries, REFRESH_SCHEMA
-    )
     hass.services.async_register(DOMAIN, SERVICE_REFRESH, refresh, REFRESH_SCHEMA)
     return True
 
@@ -174,7 +145,6 @@ async def _async_register_card(hass: HomeAssistant) -> None:
 async def async_setup_entry(hass: HomeAssistant, entry: ParcelConfigEntry) -> bool:
     api = ParcelApi(async_get_clientsession(hass), entry.data[CONF_API_KEY])
     coordinator = ParcelCoordinator(hass, entry, api)
-    await coordinator.async_load_hidden()
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

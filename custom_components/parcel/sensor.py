@@ -63,7 +63,7 @@ class ParcelDeliveriesSensor(CoordinatorEntity[ParcelCoordinator], SensorEntity)
 
     @property
     def native_value(self) -> int:
-        return sum(1 for d in self.coordinator.visible() if d.get("status_code") != STATUS_COMPLETED)
+        return sum(1 for d in self.coordinator.data or [] if d.get("status_code") != STATUS_COMPLETED)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -71,6 +71,5 @@ class ParcelDeliveriesSensor(CoordinatorEntity[ParcelCoordinator], SensorEntity)
         return {
             "config_entry_id": self.coordinator.config_entry.entry_id,
             "filter_mode": self.coordinator.filter_mode,
-            "hidden_count": len(self.coordinator.hidden),
-            "deliveries": [_format_delivery(d, carriers) for d in self.coordinator.visible()],
+            "deliveries": [_format_delivery(d, carriers) for d in self.coordinator.data or []],
         }

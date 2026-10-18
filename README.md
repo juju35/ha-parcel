@@ -13,7 +13,6 @@ Intégration Home Assistant pour [Parcel](https://parcelapp.net) : consultez vos
 - Capteur **Colis** : nombre de colis en cours, avec tous les colis (statut, transporteur, événements, date prévue) en attributs
 - Action `parcel.add_delivery` pour ajouter un colis depuis une automatisation, un script ou la carte
 - Action `parcel.refresh` pour forcer une mise à jour
-- Bouton **Masquer** sur chaque colis (et actions `parcel.hide_delivery` / `parcel.unhide_deliveries`). L'API Parcel ne permet pas de supprimer un colis : il est masqué dans Home Assistant mais reste dans l'app Parcel
 - Carte `custom:parcel-card` **incluse dans l'intégration** et chargée automatiquement : liste des colis, détail des événements au clic, formulaire d'ajout avec recherche du transporteur
 - Clé d'API saisie dans l'interface, jamais dans le YAML
 - Français / anglais
@@ -70,7 +69,7 @@ type: custom:parcel-card
 | `show_refresh` | `true` | Afficher le bouton d'actualisation (compte dans la limite de 20 requêtes par heure) |
 | `max_events` | `5` | Nombre d'événements affichés quand un colis est déplié |
 
-Cliquez sur un colis pour voir ses événements et le bouton **Masquer**, sur le numéro de suivi pour le copier. Le lien **Tout réafficher**, en bas de la carte, fait revenir les colis masqués.
+Cliquez sur un colis pour voir ses événements, sur le numéro de suivi pour le copier.
 
 ## Ajouter un colis depuis une automatisation
 
