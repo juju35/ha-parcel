@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.1.2';
+var PARCEL_CARD_VERSION = '0.1.3';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var ParcelI18n = {
@@ -9,6 +9,8 @@ var ParcelI18n = {
     in_progress: 'en cours',
     expected: 'Prévu',
     add: 'Ajouter un colis',
+    refresh: 'Actualiser',
+    refresh_failed: 'Actualisation impossible',
     tracking_number: 'Numéro de suivi',
     carrier: 'Transporteur',
     carrier_search: 'Rechercher un transporteur',
@@ -43,6 +45,8 @@ var ParcelI18n = {
     in_progress: 'active',
     expected: 'Expected',
     add: 'Add a delivery',
+    refresh: 'Refresh',
+    refresh_failed: 'Refresh failed',
     tracking_number: 'Tracking number',
     carrier: 'Carrier',
     carrier_search: 'Search a carrier',
@@ -122,7 +126,7 @@ class ParcelCard extends HTMLElement {
 
   setConfig(config) {
     this._config = Object.assign(
-      { show_delivered: true, show_add: true, max_events: 5 },
+      { show_delivered: true, show_add: true, show_refresh: true, max_events: 5 },
       config || {}
     );
     this._expanded = this._expanded || {};
@@ -200,11 +204,18 @@ class ParcelCard extends HTMLElement {
     header.innerHTML =
       '<div class="title">' + parcelEsc(title) +
       ' <span class="count">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</span></div>' +
+      '<div class="buttons">' +
+      (this._config.show_refresh
+        ? '<ha-icon-button class="refresh-btn' + (this._refreshing ? ' spinning' : '') + '" label="' + parcelEsc(t.refresh) + '" title="' + parcelEsc(t.refresh) + '"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>'
+        : '') +
       (this._config.show_add
-        ? '<ha-icon-button class="add-btn" label="' + parcelEsc(t.add) + '"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>'
-        : '');
+        ? '<ha-icon-button class="add-btn" label="' + parcelEsc(t.add) + '" title="' + parcelEsc(t.add) + '"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>'
+        : '') +
+      '</div>';
     var addBtn = header.querySelector('.add-btn');
     if (addBtn) addBtn.addEventListener('click', this._toggleForm.bind(this));
+    var refreshBtn = header.querySelector('.refresh-btn');
+    if (refreshBtn) refreshBtn.addEventListener('click', this._refresh.bind(this));
 
     if (!deliveries.length) {
       list.innerHTML = '<div class="empty">' + parcelEsc(t.empty) + '</div>';
@@ -284,6 +295,25 @@ class ParcelCard extends HTMLElement {
     var id = item.getAttribute('data-id');
     this._expanded[id] = !this._expanded[id];
     this._render();
+  }
+
+  _refresh() {
+    if (this._refreshing) return;
+    var data = {};
+    var st = this._lastState;
+    if (st && st.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
+    this._refreshing = true;
+    this._render();
+    var self = this;
+    var t = this._t();
+    this._hass.callService('parcel', 'refresh', data).catch(function (err) {
+      var btn = self._root.querySelector('.refresh-btn');
+      if (btn) btn.title = t.refresh_failed + ' : ' + ((err && err.message) || err);
+    }).finally(function () {
+      self._refreshing = false;
+      var btn = self._root.querySelector('.refresh-btn');
+      if (btn) btn.classList.remove('spinning');
+    });
   }
 
   // ── add form ────────────────────────────────────────────────────────────────
@@ -405,6 +435,9 @@ class ParcelCard extends HTMLElement {
       'ha-card { padding: 12px 0 8px; overflow: hidden; }',
       '.header { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 4px 16px; min-height: 40px; }',
       '.title { font-size: 1.15em; font-weight: 500; color: var(--primary-text-color); }',
+      '.buttons { display: flex; align-items: center; }',
+      '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
+      '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       '.count { font-size: 0.8em; font-weight: 400; color: var(--secondary-text-color); margin-left: 6px; }',
       '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
       '.delivery { padding: 8px 16px; cursor: pointer; border-top: 1px solid var(--divider-color, rgba(0,0,0,.12)); }',

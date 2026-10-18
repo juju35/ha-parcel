@@ -66,6 +66,7 @@ type: custom:parcel-card
 | `title` | « Colis » | Titre de la carte |
 | `show_delivered` | `true` | Afficher les colis livrés |
 | `show_add` | `true` | Afficher le bouton d'ajout |
+| `show_refresh` | `true` | Afficher le bouton d'actualisation (compte dans la limite de 20 requêtes par heure) |
 | `max_events` | `5` | Nombre d'événements affichés quand un colis est déplié |
 
 Cliquez sur un colis pour voir ses événements, sur le numéro de suivi pour le copier.
