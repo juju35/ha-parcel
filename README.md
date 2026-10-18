@@ -6,7 +6,7 @@
 
 Intégration Home Assistant pour [Parcel](https://parcelapp.net) : consultez vos colis suivis dans Parcel et ajoutez-en de nouveaux, avec une carte Lovelace incluse.
 
-<img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="parcel-card" width="380">
+<img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/parcel-card.png" alt="parcel-card" width="380">
 
 ## Fonctionnalités
 
