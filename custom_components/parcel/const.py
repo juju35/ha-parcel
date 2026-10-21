@@ -6,7 +6,7 @@ from datetime import timedelta
 from typing import Final
 
 DOMAIN: Final = "parcel"
-VERSION: Final = "0.2.2"
+VERSION: Final = "0.2.3"
 
 API_BASE: Final = "https://api.parcel.app/external"
 API_DELIVERIES: Final = f"{API_BASE}/deliveries/"
