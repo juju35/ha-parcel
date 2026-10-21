@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2
+
+### Changes
+- README screenshots show the new chevron. Nothing changes for users.
+
 ## 0.2.1
 
 ### Changes
