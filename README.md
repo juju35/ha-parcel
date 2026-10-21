@@ -6,105 +6,148 @@
 [![Release](https://img.shields.io/github/v/release/juju35/ha-parcel)](https://github.com/juju35/ha-parcel/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Intégration Home Assistant pour [Parcel](https://parcelapp.net) : consultez vos colis suivis dans Parcel et ajoutez-en de nouveaux, avec une carte Lovelace incluse.
+Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveries tracked in Parcel and add new ones, with a Lovelace card included.
 
-<img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/parcel-card-0.1.6.png" alt="parcel-card" width="380">
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=juju35&repository=ha-parcel&category=integration)
 
-## Fonctionnalités
+<img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="parcel-card" width="380">
 
-- Capteur **Colis** : nombre de colis en cours, avec tous les colis (statut, transporteur, événements, date prévue) en attributs
-- Action `parcel.add_delivery` pour ajouter un colis depuis une automatisation, un script ou la carte
-- Action `parcel.refresh` pour forcer une mise à jour
-- Carte `custom:parcel-card` **incluse dans l'intégration** et chargée automatiquement : liste des colis, détail des événements au clic, formulaire d'ajout avec recherche du transporteur
-- Clé d'API saisie dans l'interface, jamais dans le YAML
-- Français / anglais
+## Features
 
-## Prérequis
+- **Deliveries** sensor: number of active deliveries, with every delivery (status, carrier, events, expected date) as attributes
+- `parcel.add_delivery` action to add a delivery from an automation, a script or the card
+- `parcel.refresh` action to force an update
+- `custom:parcel-card` card, **shipped with the integration** and loaded automatically: list of deliveries, events on click, add form with carrier search
+- API key entered in the UI, never in YAML
+- English and French
 
-- Un abonnement **Parcel Premium** (l'API y est réservée)
-- Une clé d'API, à générer sur [web.parcelapp.net](https://web.parcelapp.net)
+## Prerequisites
 
-## Installation via HACS (recommandé)
+- A **Parcel Premium** subscription (the API is reserved to it)
+- An API key, generated on [web.parcelapp.net](https://web.parcelapp.net)
 
-[![Ajouter à HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=juju35&repository=ha-parcel&category=integration)
+## Installation
 
-Ou manuellement :
+### Via HACS (recommended)
 
-1. Ouvrir HACS → ⋮ → **Dépôts personnalisés**
-2. Ajouter `https://github.com/juju35/ha-parcel` — Catégorie : **Intégration**
-3. Rechercher **Parcel** et l'installer
-4. Redémarrer Home Assistant
+Click the button below to add the repository directly:
 
-La carte est **incluse dans l'intégration** : au démarrage, elle est ajoutée automatiquement aux ressources du tableau de bord (`/parcel_static/parcel-card.js`, type module). Après une installation ou une mise à jour, redémarrez Home Assistant puis rafraîchissez le navigateur (vider le cache de l'application mobile si besoin).
+[![Add to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=juju35&repository=ha-parcel&category=integration)
 
-Si vos tableaux de bord sont en mode YAML, la carte est chargée sur toutes les pages sans passer par les ressources.
+Then click **Download** and restart Home Assistant.
 
-## Installation manuelle
+Or manually:
 
-Copiez le dossier `custom_components/parcel/` dans `/config/custom_components/parcel/`, puis redémarrez Home Assistant.
+1. Open HACS → **⋮** (top right) → **Custom repositories**
+2. Add `https://github.com/juju35/ha-parcel` — Type: **Integration**
+3. Search for **Parcel** and click **Download**
+4. Restart Home Assistant
+
+The card is **part of the integration**: at startup it is added to the dashboard resources (`/parcel_static/parcel-card.js`, module). After an install or an update, restart Home Assistant and refresh the browser (clear the companion app cache if needed).
+
+If your dashboards are in YAML mode, the card is loaded on every page without going through the resources.
+
+### Manual
+
+Copy `custom_components/parcel/` to `/config/custom_components/parcel/`, then restart Home Assistant.
 
 ## Configuration
 
-[![Ajouter l'intégration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=parcel)
+### Integration
 
-**Paramètres → Appareils et services → Ajouter une intégration → Parcel**, puis collez votre clé d'API.
+[![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=parcel)
 
-Options (bouton **Configurer**) :
+**Settings → Devices & services → Add integration → Parcel**, then paste your API key.
 
-| Option | Défaut | Description |
+Options (**Configure** button):
+
+| Option | Default | Description |
 |---|---|---|
-| Colis à afficher | Récents | `recent` : en cours et livrés récemment. `active` : en cours uniquement |
-| Intervalle de mise à jour | 10 min | Minimum 5 min : Parcel limite l'API à 20 requêtes par heure |
+| Deliveries to show | Recent | `recent`: active and recently delivered. `active`: active only |
+| Update interval | 10 min | Minimum 5 min: Parcel limits the API to 20 requests per hour |
 
-## Carte
+### Card
 
-Ajoutez la carte **Parcel** depuis le sélecteur de cartes : toutes les options se règlent dans l'éditeur visuel. En YAML :
+Add the **Parcel** card from the card picker: every option is set in the visual editor. In YAML:
 
 ```yaml
 type: custom:parcel-card
 ```
 
-| Option | Défaut | Description |
+| Option | Default | Description |
 |---|---|---|
-| `entity` | détectée | Capteur Parcel à afficher (utile avec plusieurs comptes) |
-| `title` | « Colis » | Titre de la carte |
-| `show_icon` | `true` | Afficher l'icône Parcel à côté du titre |
-| `show_delivered` | `true` | Afficher les colis livrés |
-| `show_add` | `true` | Afficher le bouton d'ajout |
-| `show_refresh` | `true` | Afficher le bouton d'actualisation (compte dans la limite de 20 requêtes par heure) |
-| `max_events` | `5` | Nombre d'événements affichés quand un colis est déplié |
+| `entity` | detected | Parcel sensor to show (useful with several accounts) |
+| `title` | `Deliveries` | Card title |
+| `show_icon` | `true` | Show the Parcel icon next to the title |
+| `show_delivered` | `true` | Show delivered parcels |
+| `show_add` | `true` | Show the add button |
+| `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |
+| `max_events` | `5` | Number of events shown when a delivery is expanded |
 
-Cliquez sur un colis pour voir ses événements, sur le numéro de suivi pour le copier.
+Click a delivery to see its events, and the tracking number to copy it.
 
-## Ajouter un colis depuis une automatisation
+### Adding a delivery from an automation
 
 ```yaml
 action: parcel.add_delivery
 data:
   tracking_number: "6A12345678901"
   carrier_code: colissimo
-  description: Casque audio
+  description: Headphones
   send_push_confirmation: true
 ```
 
-Les codes transporteurs sont listés dans [supported_carriers.json](https://api.parcel.app/external/supported_carriers.json). Utilisez `pholder` pour un colis sans suivi.
+Carrier codes are listed in [supported_carriers.json](https://api.parcel.app/external/supported_carriers.json). Use `pholder` for a delivery without tracking.
 
-> Parcel limite les ajouts à **20 par jour**, échecs compris. Un colis ajouté apparaît après la prochaine mise à jour côté Parcel.
+> Parcel limits additions to **20 per day**, failures included. A new delivery shows up after Parcel's next update.
 
-## Statuts
+## Screenshots
 
-| Code | Statut |
+| Light (a delivery expanded) | Dark (French) |
 |---|---|
-| 0 | Livré |
-| 1 | Sans mise à jour |
-| 2 | En transit |
-| 3 | À retirer |
-| 4 | En cours de livraison |
-| 5 | Introuvable |
-| 6 | Échec de livraison |
-| 7 | Problème |
-| 8 | Annoncé |
+| ![card](screenshots/card.png) | ![card dark](screenshots/card-dark.png) |
 
-## Licence
+## How it works
 
-MIT
+The integration polls the Parcel API at the update interval and exposes the deliveries on one sensor per account. The card reads that sensor, sorts active deliveries first by expected date, and colors each status from the Home Assistant theme:
+
+| Code | Status | Color |
+|---|---|---|
+| 0 | Delivered | `--success-color` |
+| 1 | No updates | disabled |
+| 2 | In transit | `--info-color` |
+| 3 | Awaiting pickup | `--warning-color` |
+| 4 | Out for delivery | `--primary-color` |
+| 5 | Not found | disabled |
+| 6 | Failed attempt | `--error-color` |
+| 7 | Exception | `--error-color` |
+| 8 | Info received | secondary text |
+
+## Development
+
+```bash
+pip install -r requirements_test.txt && pytest
+pip install playwright && playwright install chromium
+python scripts/screenshots.py   # renders the card with mock deliveries into screenshots/
+```
+
+### Releasing
+
+1. Bump the version in `custom_components/parcel/manifest.json`, `const.py` and `PARCEL_CARD_VERSION` in the card
+2. Add a `## <version>` section at the top of [CHANGELOG.md](CHANGELOG.md)
+3. Push to `main`: the **Release** workflow creates the tag and the GitHub release with the changelog section as notes
+
+## Translations
+
+The integration and the card follow the language of Home Assistant. Currently supported:
+
+| Language | Code |
+|---|---|
+| English | `en` |
+| Français | `fr` |
+
+Contributions for additional languages are welcome!
+
+## License
+
+[MIT](LICENSE)
