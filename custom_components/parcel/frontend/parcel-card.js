@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.2.2';
+var PARCEL_CARD_VERSION = '0.2.3';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -10,10 +10,10 @@ var ParcelI18n = {
     empty: 'Aucun colis à afficher',
     no_entity: 'Capteur Parcel introuvable. Ajoutez l\'intégration Parcel ou renseignez « entity ».',
     in_progress: 'en cours',
-    expected: 'Prévu',
+    expected: 'Prévu :',
     add: 'Ajouter un colis',
     refresh: 'Actualiser',
-    refresh_failed: 'Actualisation impossible',
+    refresh_failed: 'Actualisation impossible :',
     tracking_number: 'Numéro de suivi',
     carrier: 'Transporteur',
     carrier_search: 'Rechercher un transporteur',
@@ -55,10 +55,10 @@ var ParcelI18n = {
     empty: 'No deliveries to show',
     no_entity: 'Parcel sensor not found. Add the Parcel integration or set "entity".',
     in_progress: 'active',
-    expected: 'Expected',
+    expected: 'Expected:',
     add: 'Add a delivery',
     refresh: 'Refresh',
-    refresh_failed: 'Refresh failed',
+    refresh_failed: 'Refresh failed:',
     tracking_number: 'Tracking number',
     carrier: 'Carrier',
     carrier_search: 'Search a carrier',
@@ -294,7 +294,7 @@ class ParcelCard extends HTMLElement {
         ? '<div class="line3">' + parcelEsc(last.event) + (last.location ? ' · ' + parcelEsc(last.location) : '') +
           (parcelDate(last.date) ? ' <span class="date">' + parcelEsc(parcelDate(last.date)) + '</span>' : '') + '</div>'
         : '') +
-      (expected && d.status_code !== 0 ? '<div class="expected">' + parcelEsc(t.expected) + ' : ' + parcelEsc(expected) + '</div>' : '') +
+      (expected && d.status_code !== 0 ? '<div class="expected">' + parcelEsc(t.expected) + ' ' + parcelEsc(expected) + '</div>' : '') +
       '</div>' +
       '<ha-icon class="chevron' + (expanded ? '' : ' closed') + '" icon="mdi:chevron-down"></ha-icon>' +
       '</div>';
@@ -355,7 +355,7 @@ class ParcelCard extends HTMLElement {
     var t = this._t();
     this._hass.callService('parcel', 'refresh', data).catch(function (err) {
       var btn = self._root.querySelector('.refresh-btn');
-      if (btn) btn.title = t.refresh_failed + ' : ' + ((err && err.message) || err);
+      if (btn) btn.title = t.refresh_failed + ' ' + ((err && err.message) || err);
     }).finally(function () {
       self._refreshing = false;
       var btn = self._root.querySelector('.refresh-btn');
@@ -499,22 +499,22 @@ class ParcelCard extends HTMLElement {
       '.line1 { display: flex; align-items: center; gap: 8px; justify-content: space-between; }',
       '.desc { font-weight: 500; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
       '.chip { flex: none; font-size: 12px; font-weight: 500; border-radius: 12px; padding: 2px 10px; white-space: nowrap; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }',
-      '.line2, .line3, .expected { font-size: 0.875em; color: var(--secondary-text-color); margin-top: 2px; overflow-wrap: anywhere; }',
+      '.line2, .line3, .expected { font-size: 13px; color: var(--secondary-text-color); margin-top: 2px; overflow-wrap: anywhere; }',
       '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; }',
       '.expected { color: var(--primary-text-color); }',
-      '.date { color: var(--secondary-text-color); font-size: 0.9em; }',
+      '.date { color: var(--secondary-text-color); font-size: 13px; }',
       '.chevron { flex: none; color: var(--secondary-text-color); transition: transform .2s ease; }',
       '.chevron.closed { transform: rotate(-90deg); }',
-      '.events { list-style: none; margin: 6px 0 0 36px; padding: 0 0 0 12px; border-left: 2px solid var(--divider-color, rgba(0,0,0,.12)); font-size: 0.875em; color: var(--primary-text-color); }',
+      '.events { list-style: none; margin: 6px 0 0 36px; padding: 0 0 0 12px; border-left: 2px solid var(--divider-color, rgba(0,0,0,.12)); font-size: 13px; color: var(--primary-text-color); }',
       '.events li { margin: 4px 0; }',
       '.additional { color: var(--secondary-text-color); }',
       '.form { padding: 8px 16px 4px; border-top: 1px solid var(--divider-color, rgba(0,0,0,.12)); display: flex; flex-direction: column; gap: 8px; }',
       '.form[hidden] { display: none; }',
-      '.form label { display: flex; flex-direction: column; gap: 4px; font-size: 0.875em; color: var(--secondary-text-color); }',
+      '.form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--secondary-text-color); }',
       '.form label.check { flex-direction: row; align-items: center; gap: 8px; }',
-      '.form input:not([type=checkbox]) { font: inherit; font-size: 1rem; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--divider-color, #ccc); background: var(--card-background-color, #fff); color: var(--primary-text-color); }',
-      '.hint { font-size: 0.75em; color: var(--secondary-text-color); }',
-      '.msg { font-size: 0.875em; }',
+      '.form input:not([type=checkbox]) { font: inherit; font-size: 16px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--divider-color, #ccc); background: var(--card-background-color, #fff); color: var(--primary-text-color); }',
+      '.hint { font-size: 12px; color: var(--secondary-text-color); }',
+      '.msg { font-size: 13px; }',
       '.msg:empty { display: none; }',
       '.msg.error { color: var(--error-color, #db4437); }',
       '.msg.ok { color: var(--success-color, #43a047); }',

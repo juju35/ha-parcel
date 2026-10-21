@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.3
+
+### Changes
+- Card text sizes in px, like the other ha-* cards, instead of em and rem sizes.
+
+### Fixes
+- "Expected: Sun, Oct 18" and "Refresh failed: …" in English, without the French space before the colon.
+
+### Maintenance
+- The older CHANGELOG entries are in English, with the same headings as the other ha-* repositories.
+
 ## 0.2.2
 
 ### Changes
@@ -19,33 +30,25 @@
 
 ## 0.1.7
 
-### Nouveautés
-- Éditeur visuel de la carte : capteur, titre, icône, colis livrés, boutons Actualiser et Ajouter, nombre d'événements, sans passer par le YAML.
+### What's new
+- Visual editor for the card: sensor, title, icon, delivered parcels, Refresh and Add buttons, number of events, without YAML.
 
 ## 0.1.6
 
-### Nouveautés
-- L'icône Parcel s'affiche à gauche du titre de la carte (option `show_icon`, activée par défaut).
+### What's new
+- The Parcel icon shows left of the card title (`show_icon` option, on by default).
 
 ## 0.1.5
 
-Première version publique de l'intégration Parcel pour Home Assistant, avec sa carte Lovelace.
+First public release of the Parcel integration for Home Assistant, with its Lovelace card.
 
-### Intégration
-- Configuration depuis l'interface avec la clé d'API Parcel (Parcel Premium requis), et ré-authentification si la clé est refusée.
-- Capteur **Colis** : nombre de colis en cours, avec tous les colis en attributs (statut, transporteur, événements, date de livraison prévue).
-- Options : colis à afficher (récents ou en cours uniquement) et intervalle de mise à jour, 10 minutes par défaut et 5 minutes minimum pour respecter la limite de 20 requêtes par heure.
-- Action `parcel.add_delivery` pour ajouter un colis (limite Parcel : 20 ajouts par jour).
-- Action `parcel.refresh` pour forcer une mise à jour.
-- Liste des transporteurs supportés chargée une fois par jour.
-- Interface en français et en anglais.
-
-### Carte `custom:parcel-card`
-- Incluse dans l'intégration et ajoutée automatiquement aux ressources du tableau de bord : rien à installer à part.
-- Liste des colis avec icône et pastille de statut, transporteur, numéro de suivi (copié au clic), dernier événement et date prévue.
-- Clic sur un colis pour afficher l'historique de ses événements.
-- Bouton **Actualiser** et formulaire d'ajout avec recherche du transporteur.
-- Compatible thème clair et sombre.
-
-### Installation
-- Via HACS (dépôt personnalisé, catégorie Intégration) ou en copiant `custom_components/parcel/`. L'archive `parcel.zip` est jointe à la release.
+### What's new
+- Setup from the UI with the Parcel API key (Parcel Premium required), and re-authentication when the key is refused.
+- **Deliveries** sensor: number of active deliveries, with every delivery in the attributes (status, carrier, events, expected date).
+- Options: deliveries to show (recent or active only) and update interval, 10 minutes by default and 5 minutes minimum to respect the limit of 20 requests per hour.
+- `parcel.add_delivery` action to add a delivery (Parcel limit: 20 additions per day).
+- `parcel.refresh` action to force an update.
+- Supported carriers list loaded once a day.
+- `custom:parcel-card` card bundled with the integration and added to the dashboard resources automatically: deliveries with icon and status pill, carrier, tracking number (copied on click), last event and expected date; click a delivery for its events; **Refresh** button and add form with carrier search; light and dark themes.
+- Installation through HACS (custom repository, Integration category) or by copying `custom_components/parcel/`; `parcel.zip` is attached to the release.
+- French and English.
