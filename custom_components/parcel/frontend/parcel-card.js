@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.1.7';
+var PARCEL_CARD_VERSION = '0.2.0';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -208,7 +208,7 @@ class ParcelCard extends HTMLElement {
     var title = this._config.title || t.default_title;
 
     if (!st) {
-      header.innerHTML = '<div class="title">' + this._iconHtml() + parcelEsc(title) + '</div>';
+      header.innerHTML = '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name">' + parcelEsc(title) + '</div></div></div>';
       list.innerHTML = '<div class="empty">' + parcelEsc(t.no_entity) + '</div>';
       return;
     }
@@ -227,8 +227,8 @@ class ParcelCard extends HTMLElement {
     });
 
     header.innerHTML =
-      '<div class="title">' + this._iconHtml() + parcelEsc(title) +
-      ' <span class="count">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</span></div>' +
+      '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name">' + parcelEsc(title) + '</div>' +
+      '<div class="sub">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</div></div></div>' +
       '<div class="buttons">' +
       (this._config.show_refresh
         ? '<ha-icon-button class="refresh-btn' + (this._refreshing ? ' spinning' : '') + '" label="' + parcelEsc(t.refresh) + '" title="' + parcelEsc(t.refresh) + '"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>'
@@ -269,7 +269,7 @@ class ParcelCard extends HTMLElement {
       '<ha-icon class="status-icon" icon="' + style.icon + '" style="color:' + style.color + '"></ha-icon>' +
       '<div class="main">' +
       '<div class="line1"><span class="desc">' + parcelEsc(d.description || d.tracking_number) + '</span>' +
-      '<span class="chip" style="color:' + style.color + ';border-color:' + style.color + '">' + parcelEsc(t.status[key] || key) + '</span></div>' +
+      '<span class="chip" style="--c:' + style.color + '">' + parcelEsc(t.status[key] || key) + '</span></div>' +
       '<div class="line2">' + parcelEsc(d.carrier_name || d.carrier_code) + ' · ' +
       '<span class="tracking" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
       (last
@@ -461,14 +461,16 @@ class ParcelCard extends HTMLElement {
   static _styles() {
     return [
       ':host { display: block; }',
-      'ha-card { padding: 12px 0 8px; overflow: hidden; }',
-      '.header { display: flex; align-items: center; justify-content: space-between; padding: 0 8px 4px 16px; min-height: 40px; }',
-      '.title { display: flex; align-items: center; font-size: 1.15em; font-weight: 500; color: var(--primary-text-color); }',
-      '.logo { width: 28px; height: 28px; margin-right: 10px; flex: none; }',
+      'ha-card { padding: 0 0 8px; overflow: hidden; }',
+      '.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 8px 8px 16px; min-height: 40px; }',
+      '.title { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; }',
+      '.logo { width: 40px; height: 40px; flex: none; }',
+      '.titles { min-width: 0; }',
+      '.name { font-size: 18px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+      '.sub { font-size: 13px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.buttons { display: flex; align-items: center; }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
-      '.count { font-size: 0.8em; font-weight: 400; color: var(--secondary-text-color); margin-left: 6px; }',
       '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
       '.delivery { padding: 8px 16px; cursor: pointer; border-top: 1px solid var(--divider-color, rgba(0,0,0,.12)); }',
       '.delivery:first-child { border-top: none; }',
@@ -478,7 +480,7 @@ class ParcelCard extends HTMLElement {
       '.main { flex: 1; min-width: 0; }',
       '.line1 { display: flex; align-items: center; gap: 8px; justify-content: space-between; }',
       '.desc { font-weight: 500; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
-      '.chip { flex: none; font-size: 0.75em; border: 1px solid; border-radius: 10px; padding: 1px 8px; white-space: nowrap; }',
+      '.chip { flex: none; font-size: 12px; font-weight: 500; border-radius: 12px; padding: 2px 10px; white-space: nowrap; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.line2, .line3, .expected { font-size: 0.875em; color: var(--secondary-text-color); margin-top: 2px; overflow-wrap: anywhere; }',
       '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; }',
       '.expected { color: var(--primary-text-color); }',
@@ -491,14 +493,14 @@ class ParcelCard extends HTMLElement {
       '.form[hidden] { display: none; }',
       '.form label { display: flex; flex-direction: column; gap: 4px; font-size: 0.875em; color: var(--secondary-text-color); }',
       '.form label.check { flex-direction: row; align-items: center; gap: 8px; }',
-      '.form input:not([type=checkbox]) { font: inherit; font-size: 1rem; padding: 8px; border-radius: 6px; border: 1px solid var(--divider-color, #ccc); background: var(--card-background-color, #fff); color: var(--primary-text-color); }',
+      '.form input:not([type=checkbox]) { font: inherit; font-size: 1rem; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--divider-color, #ccc); background: var(--card-background-color, #fff); color: var(--primary-text-color); }',
       '.hint { font-size: 0.75em; color: var(--secondary-text-color); }',
       '.msg { font-size: 0.875em; }',
       '.msg:empty { display: none; }',
       '.msg.error { color: var(--error-color, #db4437); }',
       '.msg.ok { color: var(--success-color, #43a047); }',
       '.actions { display: flex; justify-content: flex-end; gap: 8px; }',
-      '.actions button { font: inherit; padding: 6px 14px; border-radius: 18px; border: 1px solid var(--primary-color); cursor: pointer; background: none; color: var(--primary-color); }',
+      '.actions button { font: inherit; padding: 6px 14px; border-radius: 10px; border: 1px solid var(--primary-color); cursor: pointer; background: none; color: var(--primary-color); }',
       '.actions .submit { background: var(--primary-color); color: var(--text-primary-color, #fff); }',
       '.actions button:disabled { opacity: 0.6; cursor: default; }',
     ].join('\n');
