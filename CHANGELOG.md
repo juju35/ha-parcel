@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+### Changes
+- Parcels fold like the other ha-* cards: the chevron points right when a parcel is folded and down when it is unfolded, and a click anywhere else on the page folds it again, as in ha-carburants-france.
+
 ## 0.2.0
 
 ### Changes

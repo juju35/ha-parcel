@@ -171,6 +171,24 @@ class ParcelCard extends HTMLElement {
     }
   }
 
+  connectedCallback() {
+    // A click elsewhere on the page folds the parcels again (as in ha-carburants-france). A click, not a
+    // pointerdown: folding on press would shift the layout under the pointer before the click.
+    var self = this;
+    this._onOutside = this._onOutside || function (ev) {
+      if (!Object.keys(self._expanded || {}).some(function (k) { return self._expanded[k]; })) return;
+      var path = ev.composedPath ? ev.composedPath() : [];
+      if (path.indexOf(self) !== -1) return;
+      self._expanded = {};
+      self._render();
+    };
+    document.addEventListener('click', this._onOutside, true);
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('click', this._onOutside, true);
+  }
+
   getCardSize() {
     var st = this._lastState;
     var n = st && st.attributes && Array.isArray(st.attributes.deliveries) ? st.attributes.deliveries.length : 0;
@@ -278,7 +296,7 @@ class ParcelCard extends HTMLElement {
         : '') +
       (expected && d.status_code !== 0 ? '<div class="expected">' + parcelEsc(t.expected) + ' : ' + parcelEsc(expected) + '</div>' : '') +
       '</div>' +
-      '<ha-icon class="chevron" icon="' + (expanded ? 'mdi:chevron-up' : 'mdi:chevron-down') + '"></ha-icon>' +
+      '<ha-icon class="chevron' + (expanded ? '' : ' closed') + '" icon="mdi:chevron-down"></ha-icon>' +
       '</div>';
 
     if (expanded) {
@@ -485,7 +503,8 @@ class ParcelCard extends HTMLElement {
       '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; }',
       '.expected { color: var(--primary-text-color); }',
       '.date { color: var(--secondary-text-color); font-size: 0.9em; }',
-      '.chevron { flex: none; color: var(--secondary-text-color); }',
+      '.chevron { flex: none; color: var(--secondary-text-color); transition: transform .2s ease; }',
+      '.chevron.closed { transform: rotate(-90deg); }',
       '.events { list-style: none; margin: 6px 0 0 36px; padding: 0 0 0 12px; border-left: 2px solid var(--divider-color, rgba(0,0,0,.12)); font-size: 0.875em; color: var(--primary-text-color); }',
       '.events li { margin: 4px 0; }',
       '.additional { color: var(--secondary-text-color); }',
