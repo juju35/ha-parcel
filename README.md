@@ -23,6 +23,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 
 ## Prerequisites
 
+- Home Assistant 2024.11 or later
 - A **Parcel Premium** subscription (the API is reserved to it)
 - An API key, generated on [web.parcelapp.net](https://web.parcelapp.net)
 

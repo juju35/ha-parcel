@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.2.3';
+var PARCEL_CARD_VERSION = '0.2.4';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -597,6 +597,7 @@ if (!customElements.get('parcel-card')) {
     name: 'Parcel',
     description: 'Deliveries tracked in Parcel, with a form to add one.',
     preview: true,
+    documentationURL: 'https://github.com/juju35/ha-parcel',
   });
   console.info('%c PARCEL-CARD %c v' + PARCEL_CARD_VERSION + ' ', 'color:#fff;background:#f59e0b;font-weight:700', 'color:#f59e0b;background:#fff');
 }
