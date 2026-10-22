@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant.components import websocket_api
 from homeassistant.components.frontend import add_extra_js_url
 from homeassistant.components.http import StaticPathConfig
@@ -61,9 +60,7 @@ REFRESH_SCHEMA = vol.Schema({vol.Optional(ATTR_CONFIG_ENTRY_ID): cv.string})
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Serve the Lovelace card and register services once."""
-    await hass.http.async_register_static_paths(
-        [StaticPathConfig(FRONTEND_URL, str(CARD_PATH.parent), True)]
-    )
+    await hass.http.async_register_static_paths([StaticPathConfig(FRONTEND_URL, str(CARD_PATH.parent), True)])
     await _async_register_card(hass)
 
     websocket_api.async_register_command(hass, ws_carriers)
@@ -99,9 +96,7 @@ async def _async_register_card(hass: HomeAssistant) -> None:
 
     The file hash in the URL makes browsers fetch the new card after an update.
     """
-    digest = await hass.async_add_executor_job(
-        lambda: hashlib.md5(CARD_PATH.read_bytes()).hexdigest()[:8]
-    )
+    digest = await hass.async_add_executor_job(lambda: hashlib.md5(CARD_PATH.read_bytes()).hexdigest()[:8])
     base_url = f"{FRONTEND_URL}/{CARD_FILENAME}"
     url = f"{base_url}?v={digest}"
 
@@ -116,9 +111,7 @@ async def _async_register_card(hass: HomeAssistant) -> None:
             if not resources.loaded:
                 await resources.async_load()
                 resources.loaded = True
-            existing = [
-                item for item in resources.async_items() if item.get("url", "").split("?")[0] == base_url
-            ]
+            existing = [item for item in resources.async_items() if item.get("url", "").split("?")[0] == base_url]
             if not existing:
                 await resources.async_create_item({"res_type": "module", "url": url})
                 _LOGGER.info("Parcel card added to dashboard resources: %s", url)
@@ -161,11 +154,7 @@ async def _async_reload(hass: HomeAssistant, entry: ParcelConfigEntry) -> None:
 
 
 def _loaded_entries(hass: HomeAssistant) -> list[ParcelConfigEntry]:
-    return [
-        e
-        for e in hass.config_entries.async_entries(DOMAIN)
-        if e.state is ConfigEntryState.LOADED
-    ]
+    return [e for e in hass.config_entries.async_entries(DOMAIN) if e.state is ConfigEntryState.LOADED]
 
 
 def _get_coordinator(hass: HomeAssistant, entry_id: str | None) -> ParcelCoordinator:
@@ -175,23 +164,16 @@ def _get_coordinator(hass: HomeAssistant, entry_id: str | None) -> ParcelCoordin
     if not entries:
         raise ServiceValidationError("No Parcel account is loaded")
     if len(entries) > 1:
-        raise ServiceValidationError(
-            "Several Parcel accounts are configured: set config_entry_id"
-        )
+        raise ServiceValidationError("Several Parcel accounts are configured: set config_entry_id")
     return entries[0].runtime_data
 
 
-@websocket_api.websocket_command(
-    {vol.Required("type"): "parcel/carriers", vol.Optional("config_entry_id"): str}
-)
+@websocket_api.websocket_command({vol.Required("type"): "parcel/carriers", vol.Optional("config_entry_id"): str})
 @websocket_api.async_response
-async def ws_carriers(
-    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
-) -> None:
+async def ws_carriers(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
     """Return the carriers Parcel supports, for the card's add form."""
     carriers: dict[str, str] = {}
     for entry in _loaded_entries(hass):
         if msg.get("config_entry_id") in (None, entry.entry_id):
             carriers.update(await entry.runtime_data.async_ensure_carriers())
     connection.send_result(msg["id"], {"carriers": carriers})
-

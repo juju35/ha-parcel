@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import hashlib
+from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import callback
@@ -76,9 +75,7 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> ConfigFlowResult:
         return await self.async_step_reauth_confirm()
 
-    async def async_step_reauth_confirm(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_reauth_confirm(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors: dict[str, str] = {}
         if user_input is not None:
             api_key = user_input[CONF_API_KEY].strip()
@@ -90,9 +87,7 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
                 )
             errors["base"] = error
 
-        return self.async_show_form(
-            step_id="reauth_confirm", data_schema=API_KEY_SCHEMA, errors=errors
-        )
+        return self.async_show_form(step_id="reauth_confirm", data_schema=API_KEY_SCHEMA, errors=errors)
 
     @staticmethod
     @callback

@@ -111,9 +111,7 @@ var PARCEL_STATUS_STYLE = {
 };
 
 function parcelEsc(s) {
-  return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
-  });
+  return String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
 // Parcel sends placeholders such as "--//--" when the carrier gave no date.
@@ -122,7 +120,7 @@ function parcelDate(s) {
 }
 
 function parcelLang(hass) {
-  var lang = ((hass && (hass.locale && hass.locale.language || hass.language)) || navigator.language || 'en').slice(0, 2);
+  var lang = ((hass && (hass.locale?.language || hass.language)) || navigator.language || 'en').slice(0, 2);
   return ParcelI18n[lang] ? lang : 'en';
 }
 
@@ -138,7 +136,7 @@ class ParcelCard extends HTMLElement {
   }
 
   static _findEntity(hass) {
-    if (!hass || !hass.states) return null;
+    if (!hass?.states) return null;
     var ids = Object.keys(hass.states);
     for (var i = 0; i < ids.length; i++) {
       var st = hass.states[ids[i]];
@@ -172,16 +170,13 @@ class ParcelCard extends HTMLElement {
   }
 
   connectedCallback() {
-    // A click elsewhere on the page folds the parcels again (as in ha-carburants-france). A click, not a
-    // pointerdown: folding on press would shift the layout under the pointer before the click.
-    var self = this;
-    this._onOutside = this._onOutside || function (ev) {
-      if (!Object.keys(self._expanded || {}).some(function (k) { return self._expanded[k]; })) return;
+    this._onOutside = this._onOutside || ((ev) => {
+      if (!Object.keys(this._expanded || {}).some((k) => this._expanded[k])) return;
       var path = ev.composedPath ? ev.composedPath() : [];
-      if (path.indexOf(self) !== -1) return;
-      self._expanded = {};
-      self._render();
-    };
+      if (path.indexOf(this) !== -1) return;
+      this._expanded = {};
+      this._render();
+    });
     document.addEventListener('click', this._onOutside, true);
   }
 
@@ -191,7 +186,7 @@ class ParcelCard extends HTMLElement {
 
   getCardSize() {
     var st = this._lastState;
-    var n = st && st.attributes && Array.isArray(st.attributes.deliveries) ? st.attributes.deliveries.length : 0;
+    var n = st?.attributes && Array.isArray(st.attributes.deliveries) ? st.attributes.deliveries.length : 0;
     return 2 + n;
   }
 
@@ -200,7 +195,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _entityId() {
-    return (this._config && this._config.entity) || ParcelCard._findEntity(this._hass);
+    return (this._config?.entity) || ParcelCard._findEntity(this._hass);
   }
 
   _t() {
@@ -226,17 +221,17 @@ class ParcelCard extends HTMLElement {
     var title = this._config.title || t.default_title;
 
     if (!st) {
-      header.innerHTML = '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name">' + parcelEsc(title) + '</div></div></div>';
-      list.innerHTML = '<div class="empty">' + parcelEsc(t.no_entity) + '</div>';
+      header.innerHTML = `<div class="title">${this._iconHtml()}<div class="titles"><div class="name">${parcelEsc(title)}</div></div></div>`;
+      list.innerHTML = `<div class="empty">${parcelEsc(t.no_entity)}</div>`;
       return;
     }
 
     var deliveries = (st.attributes.deliveries || []).slice();
     if (!this._config.show_delivered) {
-      deliveries = deliveries.filter(function (d) { return d.status_code !== 0; });
+      deliveries = deliveries.filter((d) => d.status_code !== 0);
     }
     // Active first, then by expected date.
-    deliveries.sort(function (a, b) {
+    deliveries.sort((a, b) => {
       var da = a.status_code === 0 ? 1 : 0, db = b.status_code === 0 ? 1 : 0;
       if (da !== db) return da - db;
       var ta = a.timestamp_expected || Date.parse(a.date_expected || '') / 1000 || Infinity;
@@ -249,10 +244,10 @@ class ParcelCard extends HTMLElement {
       '<div class="sub">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</div></div></div>' +
       '<div class="buttons">' +
       (this._config.show_refresh
-        ? '<ha-icon-button class="refresh-btn' + (this._refreshing ? ' spinning' : '') + '" label="' + parcelEsc(t.refresh) + '" title="' + parcelEsc(t.refresh) + '"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>'
+        ? `<ha-icon-button class="refresh-btn${this._refreshing ? ' spinning' : ''}" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
         : '') +
       (this._config.show_add
-        ? '<ha-icon-button class="add-btn" label="' + parcelEsc(t.add) + '" title="' + parcelEsc(t.add) + '"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>'
+        ? `<ha-icon-button class="add-btn" label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>`
         : '') +
       '</div>';
     var addBtn = header.querySelector('.add-btn');
@@ -261,21 +256,20 @@ class ParcelCard extends HTMLElement {
     if (refreshBtn) refreshBtn.addEventListener('click', this._refresh.bind(this));
 
     if (!deliveries.length) {
-      list.innerHTML = '<div class="empty">' + parcelEsc(t.empty) + '</div>';
+      list.innerHTML = `<div class="empty">${parcelEsc(t.empty)}</div>`;
       return;
     }
-    var self = this;
-    list.innerHTML = deliveries.map(function (d) { return self._renderDelivery(d, t); }).join('');
+    list.innerHTML = deliveries.map((d) => this._renderDelivery(d, t)).join('');
   }
 
   _iconHtml() {
-    return this._config.show_icon ? '<img class="logo" src="' + PARCEL_ICON + '" alt="">' : '';
+    return this._config.show_icon ? `<img class="logo" src="${PARCEL_ICON}" alt="">` : '';
   }
 
   _renderDelivery(d, t) {
     var key = d.status || 'unknown';
     var style = PARCEL_STATUS_STYLE[key] || PARCEL_STATUS_STYLE.unknown;
-    var id = d.carrier_code + ':' + d.tracking_number;
+    var id = `${d.carrier_code}:${d.tracking_number}`;
     var expanded = !!this._expanded[id];
     var events = d.events || [];
     var last = events[0];
@@ -291,10 +285,10 @@ class ParcelCard extends HTMLElement {
       '<div class="line2">' + parcelEsc(d.carrier_name || d.carrier_code) + ' · ' +
       '<span class="tracking" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
       (last
-        ? '<div class="line3">' + parcelEsc(last.event) + (last.location ? ' · ' + parcelEsc(last.location) : '') +
-          (parcelDate(last.date) ? ' <span class="date">' + parcelEsc(parcelDate(last.date)) + '</span>' : '') + '</div>'
+        ? '<div class="line3">' + parcelEsc(last.event) + (last.location ? ` · ${parcelEsc(last.location)}` : '') +
+          (parcelDate(last.date) ? ` <span class="date">${parcelEsc(parcelDate(last.date))}</span>` : '') + '</div>'
         : '') +
-      (expected && d.status_code !== 0 ? '<div class="expected">' + parcelEsc(t.expected) + ' ' + parcelEsc(expected) + '</div>' : '') +
+      (expected && d.status_code !== 0 ? `<div class="expected">${parcelEsc(t.expected)} ${parcelEsc(expected)}</div>` : '') +
       '</div>' +
       '<ha-icon class="chevron' + (expanded ? '' : ' closed') + '" icon="mdi:chevron-down"></ha-icon>' +
       '</div>';
@@ -303,31 +297,29 @@ class ParcelCard extends HTMLElement {
       var shown = events.slice(0, Math.max(1, this._config.max_events));
       html += '<ul class="events">' +
         (shown.length
-          ? shown.map(function (e) {
-              return '<li>' + (parcelDate(e.date) ? '<span class="date">' + parcelEsc(parcelDate(e.date)) + '</span> ' : '') + parcelEsc(e.event) +
-                (e.location ? ' · ' + parcelEsc(e.location) : '') +
-                (e.additional ? '<div class="additional">' + parcelEsc(e.additional) + '</div>' : '') + '</li>';
-            }).join('')
-          : '<li>' + parcelEsc(t.no_events) + '</li>') +
+          ? shown.map((e) => '<li>' + (parcelDate(e.date) ? `<span class="date">${parcelEsc(parcelDate(e.date))}</span> ` : '') + parcelEsc(e.event) +
+                (e.location ? ` · ${parcelEsc(e.location)}` : '') +
+                (e.additional ? `<div class="additional">${parcelEsc(e.additional)}</div>` : '') + '</li>').join('')
+          : `<li>${parcelEsc(t.no_events)}</li>`) +
         '</ul>';
     }
-    return html + '</div>';
+    return `${html}</div>`;
   }
 
   _formatExpected(d) {
-    var locale = (this._hass.locale && this._hass.locale.language) || undefined;
+    var locale = (this._hass.locale?.language) || undefined;
     var opts = { weekday: 'short', day: 'numeric', month: 'short' };
-    var fmt = function (ts, raw) {
+    var fmt = (ts, raw) => {
       if (ts) return new Date(ts * 1000).toLocaleString(locale, Object.assign({ hour: '2-digit', minute: '2-digit' }, opts));
       if (!raw) return '';
       var parsed = Date.parse(String(raw).replace(' ', 'T'));
-      if (isNaN(parsed)) return raw;
+      if (Number.isNaN(parsed)) return raw;
       var hasTime = /\d{2}:\d{2}/.test(raw) && !/00:00(:00)?$/.test(raw);
       return new Date(parsed).toLocaleString(locale, hasTime ? Object.assign({ hour: '2-digit', minute: '2-digit' }, opts) : opts);
     };
     var start = fmt(d.timestamp_expected, d.date_expected);
     var end = fmt(d.timestamp_expected_end, d.date_expected_end);
-    return start && end && end !== start ? start + ' – ' + end : start;
+    return start && end && end !== start ? `${start} – ${end}` : start;
   }
 
   _onListClick(ev) {
@@ -348,17 +340,16 @@ class ParcelCard extends HTMLElement {
     if (this._refreshing) return;
     var data = {};
     var st = this._lastState;
-    if (st && st.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
+    if (st?.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
     this._refreshing = true;
     this._render();
-    var self = this;
     var t = this._t();
-    this._hass.callService('parcel', 'refresh', data).catch(function (err) {
-      var btn = self._root.querySelector('.refresh-btn');
-      if (btn) btn.title = t.refresh_failed + ' ' + ((err && err.message) || err);
-    }).finally(function () {
-      self._refreshing = false;
-      var btn = self._root.querySelector('.refresh-btn');
+    this._hass.callService('parcel', 'refresh', data).catch((err) => {
+      var btn = this._root.querySelector('.refresh-btn');
+      if (btn) btn.title = `${t.refresh_failed} ${(err?.message) || err}`;
+    }).finally(() => {
+      this._refreshing = false;
+      var btn = this._root.querySelector('.refresh-btn');
       if (btn) btn.classList.remove('spinning');
     });
   }
@@ -398,22 +389,17 @@ class ParcelCard extends HTMLElement {
   _loadCarriers() {
     if (this._carriers || this._loadingCarriers) return;
     this._loadingCarriers = true;
-    var self = this;
     var st = this._lastState;
     var msg = { type: 'parcel/carriers' };
-    if (st && st.attributes.config_entry_id) msg.config_entry_id = st.attributes.config_entry_id;
-    this._hass.callWS(msg).then(function (res) {
-      self._carriers = res.carriers || {};
-      var codes = Object.keys(self._carriers).sort(function (a, b) {
-        return self._carriers[a].localeCompare(self._carriers[b]);
-      });
-      self._root.querySelector('#parcel-carriers').innerHTML = codes.map(function (c) {
-        return '<option value="' + parcelEsc(self._carriers[c]) + '">' + parcelEsc(c) + '</option>';
-      }).join('');
-    }).catch(function () {
-      self._carriers = null;
-    }).finally(function () {
-      self._loadingCarriers = false;
+    if (st?.attributes.config_entry_id) msg.config_entry_id = st.attributes.config_entry_id;
+    this._hass.callWS(msg).then((res) => {
+      this._carriers = res.carriers || {};
+      var codes = Object.keys(this._carriers).sort((a, b) => this._carriers[a].localeCompare(this._carriers[b]));
+      this._root.querySelector('#parcel-carriers').innerHTML = codes.map((c) => `<option value="${parcelEsc(this._carriers[c])}">${parcelEsc(c)}</option>`).join('');
+    }).catch(() => {
+      this._carriers = null;
+    }).finally(() => {
+      this._loadingCarriers = false;
     });
   }
 
@@ -455,22 +441,21 @@ class ParcelCard extends HTMLElement {
 
     var data = { tracking_number: tracking, carrier_code: code, description: description, send_push_confirmation: push };
     var st = this._lastState;
-    if (st && st.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
+    if (st?.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
 
     btn.disabled = true;
     btn.textContent = t.adding;
     msgEl.textContent = '';
-    var self = this;
-    this._hass.callService('parcel', 'add_delivery', data).then(function () {
+    this._hass.callService('parcel', 'add_delivery', data).then(() => {
       msgEl.className = 'msg ok';
       msgEl.textContent = t.added;
       form.querySelector('[name=tracking]').value = '';
       form.querySelector('[name=carrier]').value = '';
       form.querySelector('[name=description]').value = '';
-    }).catch(function (err) {
+    }).catch((err) => {
       msgEl.className = 'msg error';
-      msgEl.textContent = (err && err.message) || String(err);
-    }).finally(function () {
+      msgEl.textContent = (err?.message) || String(err);
+    }).finally(() => {
       btn.disabled = false;
       btn.textContent = t.submit;
     });
@@ -563,7 +548,7 @@ class ParcelCardEditor extends HTMLElement {
       var t = ParcelI18n[parcelLang(this._hass)].editor;
       this._form = document.createElement('ha-form');
       this._form.schema = PARCEL_EDITOR_SCHEMA;
-      this._form.computeLabel = function (field) { return t[field.name] || field.name; };
+      this._form.computeLabel = (field) => t[field.name] || field.name;
       this._form.addEventListener('value-changed', this._valueChanged.bind(this));
       this.appendChild(this._form);
     }
@@ -575,7 +560,7 @@ class ParcelCardEditor extends HTMLElement {
   _valueChanged(ev) {
     var value = Object.assign({}, ev.detail.value);
     // Keep the YAML short: drop options left at their default.
-    Object.keys(PARCEL_EDITOR_DEFAULTS).forEach(function (key) {
+    Object.keys(PARCEL_EDITOR_DEFAULTS).forEach((key) => {
       if (value[key] === PARCEL_EDITOR_DEFAULTS[key]) delete value[key];
     });
     if (!value.title) delete value.title;
@@ -599,5 +584,5 @@ if (!customElements.get('parcel-card')) {
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
-  console.info('%c PARCEL-CARD %c v' + PARCEL_CARD_VERSION + ' ', 'color:#fff;background:#f59e0b;font-weight:700', 'color:#f59e0b;background:#fff');
+  console.info(`%c PARCEL-CARD %c v${PARCEL_CARD_VERSION} `, 'color:#fff;background:#f59e0b;font-weight:700', 'color:#f59e0b;background:#fff');
 }
