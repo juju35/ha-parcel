@@ -3,14 +3,13 @@
 from unittest.mock import patch
 
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.setup import async_setup_component
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.parcel.const import (
     API_ADD_DELIVERY,
@@ -94,9 +93,7 @@ async def test_add_delivery(hass, aioclient_mock, entry):
 
 async def test_add_delivery_error(hass, aioclient_mock, entry):
     await _setup(hass, aioclient_mock, entry)
-    aioclient_mock.post(
-        API_ADD_DELIVERY, json={"success": False, "error_message": "Invalid tracking number"}
-    )
+    aioclient_mock.post(API_ADD_DELIVERY, json={"success": False, "error_message": "Invalid tracking number"})
     with pytest.raises(HomeAssistantError, match="Invalid tracking number"):
         await hass.services.async_call(
             DOMAIN,
@@ -138,9 +135,7 @@ async def test_config_flow(hass, aioclient_mock):
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
     assert result["type"] is FlowResultType.FORM
     with patch("custom_components.parcel.async_setup_entry", return_value=True):
-        result = await hass.config_entries.flow.async_configure(
-            result["flow_id"], {CONF_API_KEY: " my-key "}
-        )
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: " my-key "})
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"] == {CONF_API_KEY: "my-key"}
     assert result["result"].unique_id != "my-key"

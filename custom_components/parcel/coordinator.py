@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
+from datetime import timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -34,9 +34,7 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
     config_entry: ParcelConfigEntry
 
     def __init__(self, hass: HomeAssistant, entry: ParcelConfigEntry, api: ParcelApi) -> None:
-        minutes = max(
-            MIN_SCAN_INTERVAL, int(entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL))
-        )
+        minutes = max(MIN_SCAN_INTERVAL, int(entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)))
         super().__init__(
             hass,
             _LOGGER,

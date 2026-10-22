@@ -33,9 +33,7 @@ class ParcelApi:
     async def _request(self, method: str, url: str, **kwargs: Any) -> dict[str, Any]:
         headers = {"api-key": self._api_key}
         try:
-            async with self._session.request(
-                method, url, headers=headers, timeout=TIMEOUT, **kwargs
-            ) as resp:
+            async with self._session.request(method, url, headers=headers, timeout=TIMEOUT, **kwargs) as resp:
                 if resp.status == 429:
                     raise ParcelRateLimitError("Parcel API rate limit reached")
                 if resp.status in (401, 403):
