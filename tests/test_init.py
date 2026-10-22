@@ -81,7 +81,7 @@ async def test_add_delivery(hass, aioclient_mock, entry):
         {"tracking_number": " ABC ", "carrier_code": "ups", "description": "Test"},
         blocking=True,
     )
-    call = [c for c in aioclient_mock.mock_calls if str(c[1]) == API_ADD_DELIVERY][0]
+    call = next(c for c in aioclient_mock.mock_calls if str(c[1]) == API_ADD_DELIVERY)
     assert call[2] == {
         "tracking_number": "ABC",
         "carrier_code": "ups",
