@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.0
+
+### Changes
+- The add form opens at the top of the card, between the header and the list, instead of after the list.
+- `parcel.add_delivery` checks the email address first: a malformed address fails in Home Assistant and no longer uses one of the 20 daily additions.
+
+### Fixes
+- A Parcel timeout no longer fails the whole update when the carriers list is slow, and gives "cannot connect" in the setup and a clear error in `parcel.add_delivery`.
+- Carrier search no longer stays empty when the carriers were not loaded yet the first time the form opened.
+- Card: without `entity`, the sensor found is kept instead of being searched for on every update.
+
+### Maintenance
+- New pytest tests (timeouts, rate limit, reauth, `refresh`, email check); unused `VERSION` constant removed.
+- CI hardening: actions pinned by commit SHA, read-only token, Dependabot for actions, duplication check with PR annotations.
+
 ## 0.3.1
 
 ### Maintenance
