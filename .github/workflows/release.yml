@@ -23,7 +23,6 @@ jobs:
         id: version
         run: |
           VERSION="$(jq -r .version custom_components/parcel/manifest.json)"
-          grep -q "VERSION: Final = \"$VERSION\"" custom_components/parcel/const.py
           grep -q "PARCEL_CARD_VERSION = '$VERSION'" custom_components/parcel/frontend/parcel-card.js
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
