@@ -9,7 +9,6 @@ _.async_step_reauth  # unused method (custom_components/parcel/config_flow.py:75
 entry_data  # unused variable (custom_components/parcel/config_flow.py:75)
 _.async_get_options_flow  # unused method (custom_components/parcel/config_flow.py:92)
 _.async_step_init  # unused method (custom_components/parcel/config_flow.py:101)
-VERSION  # unused variable (custom_components/parcel/const.py:9)
 _._async_update_data  # unused method (custom_components/parcel/coordinator.py:50)
 async_setup_entry  # unused function (custom_components/parcel/sensor.py:17)
 _._attr_unique_id  # unused attribute (custom_components/parcel/sensor.py:55)

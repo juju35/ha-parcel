@@ -134,7 +134,7 @@ python scripts/screenshots.py   # renders the card with mock deliveries into scr
 
 ### Releasing
 
-1. Bump the version in `custom_components/parcel/manifest.json`, `const.py` and `PARCEL_CARD_VERSION` in the card
+1. Bump the version in `custom_components/parcel/manifest.json` and `PARCEL_CARD_VERSION` in the card
 2. Add a `## <version>` section at the top of [CHANGELOG.md](CHANGELOG.md)
 3. Push to `main`: the **Release** workflow creates the tag and the GitHub release with the changelog section as notes
 
