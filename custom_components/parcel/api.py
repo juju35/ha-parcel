@@ -42,6 +42,9 @@ class ParcelApi:
                     data = await resp.json(content_type=None)
                 except ValueError as err:
                     raise ParcelError(f"Invalid response from Parcel (HTTP {resp.status})") from err
+        except TimeoutError as err:
+            # aiohttp timeouts are TimeoutError, which isn't an aiohttp.ClientError.
+            raise ParcelError("Timeout while calling Parcel") from err
         except aiohttp.ClientError as err:
             raise ParcelError(f"Cannot reach Parcel: {err}") from err
 
@@ -73,6 +76,8 @@ class ParcelApi:
             async with self._session.get(API_CARRIERS, timeout=TIMEOUT) as resp:
                 resp.raise_for_status()
                 data = await resp.json(content_type=None)
+        except TimeoutError as err:
+            raise ParcelError("Timeout while loading Parcel carriers") from err
         except (aiohttp.ClientError, ValueError) as err:
             raise ParcelError(f"Cannot load Parcel carriers: {err}") from err
 

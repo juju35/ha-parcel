@@ -193,3 +193,34 @@ async def test_carriers_as_objects(hass, aioclient_mock, entry):
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.runtime_data.carriers == {"amzfr": "Amazon France", "colissimo": "Colissimo"}
+
+
+async def test_carriers_timeout_keeps_update(hass, aioclient_mock, entry):
+    """A timeout on the carriers list (TimeoutError, not a ClientError) no longer fails the update."""
+    aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
+    aioclient_mock.get(API_CARRIERS, exc=TimeoutError())
+    assert await async_setup_component(hass, "http", {})
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.state is ConfigEntryState.LOADED
+    assert hass.states.get("sensor.parcel_deliveries").state == "1"
+
+
+async def test_add_delivery_timeout(hass, aioclient_mock, entry):
+    await _setup(hass, aioclient_mock, entry)
+    aioclient_mock.post(API_ADD_DELIVERY, exc=TimeoutError())
+    with pytest.raises(HomeAssistantError, match="Timeout"):
+        await hass.services.async_call(
+            DOMAIN,
+            "add_delivery",
+            {"tracking_number": "x", "carrier_code": "ups", "description": "Test"},
+            blocking=True,
+        )
+
+
+async def test_config_flow_timeout(hass, aioclient_mock):
+    aioclient_mock.get(API_DELIVERIES, exc=TimeoutError())
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "key"})
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "cannot_connect"}
