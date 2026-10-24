@@ -52,7 +52,7 @@ ADD_DELIVERY_SCHEMA = vol.Schema(
         vol.Optional(ATTR_LANGUAGE): vol.All(cv.string, vol.Length(min=2, max=2)),
         vol.Optional(ATTR_SEND_PUSH_CONFIRMATION, default=False): cv.boolean,
         vol.Optional(ATTR_POSTCODE): cv.string,
-        vol.Optional(ATTR_EMAIL): cv.string,
+        vol.Optional(ATTR_EMAIL): vol.All(cv.string, vol.Strip, vol.Email()),
     }
 )
 REFRESH_SCHEMA = vol.Schema({vol.Optional(ATTR_CONFIG_ENTRY_ID): cv.string})

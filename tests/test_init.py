@@ -3,6 +3,7 @@
 from unittest.mock import patch
 
 import pytest
+import voluptuous as vol
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
@@ -224,3 +225,73 @@ async def test_config_flow_timeout(hass, aioclient_mock):
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "key"})
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "cannot_connect"}
+
+
+async def test_add_delivery_rejects_invalid_email(hass, aioclient_mock, entry):
+    """A malformed email fails in Home Assistant, without spending one of the 20 daily additions."""
+    await _setup(hass, aioclient_mock, entry)
+    aioclient_mock.post(API_ADD_DELIVERY, json={"success": True})
+    with pytest.raises(vol.Invalid):
+        await hass.services.async_call(
+            DOMAIN,
+            "add_delivery",
+            {"tracking_number": "x", "carrier_code": "ups", "description": "Test", "email": "not-an-email"},
+            blocking=True,
+        )
+    assert not [c for c in aioclient_mock.mock_calls if str(c[1]) == API_ADD_DELIVERY]
+
+    await hass.services.async_call(
+        DOMAIN,
+        "add_delivery",
+        {"tracking_number": "x", "carrier_code": "ups", "description": "Test", "email": " me@example.org "},
+        blocking=True,
+    )
+    call = next(c for c in aioclient_mock.mock_calls if str(c[1]) == API_ADD_DELIVERY)
+    assert call[2]["email"] == "me@example.org"
+
+
+async def test_rate_limit_fails_update(hass, aioclient_mock, entry):
+    """HTTP 429 makes the update fail (entities unavailable) without asking for a new key."""
+    await _setup(hass, aioclient_mock, entry)
+    coordinator = entry.runtime_data
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, status=429, json={"success": False})
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    assert not coordinator.last_update_success
+    assert "rate limit" in str(coordinator.last_exception)
+    assert hass.states.get("sensor.parcel_deliveries").state == "unavailable"
+    assert not any(f["context"]["source"] == "reauth" for f in hass.config_entries.flow.async_progress())
+
+
+async def test_refresh_service(hass, aioclient_mock, entry):
+    await _setup(hass, aioclient_mock, entry)
+    before = len([c for c in aioclient_mock.mock_calls if str(c[1]).startswith(API_DELIVERIES)])
+    with patch("homeassistant.helpers.update_coordinator.REQUEST_REFRESH_DEFAULT_IMMEDIATE", True):
+        await hass.services.async_call(DOMAIN, "refresh", {"config_entry_id": entry.entry_id}, blocking=True)
+        await hass.async_block_till_done()
+    after = len([c for c in aioclient_mock.mock_calls if str(c[1]).startswith(API_DELIVERIES)])
+    assert after == before + 1
+
+
+async def test_reauth_confirm(hass, aioclient_mock, entry):
+    """A refused key is shown as invalid_auth; a valid one updates the entry and reloads it."""
+    await _setup(hass, aioclient_mock, entry)
+    result = await entry.start_reauth_flow(hass)
+    assert result["step_id"] == "reauth_confirm"
+
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, status=401, json={"success": False})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "bad"})
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "invalid_auth"}
+
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
+    aioclient_mock.get(API_CARRIERS, json=CARRIERS)
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: " new-key "})
+    await hass.async_block_till_done()
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "reauth_successful"
+    assert entry.data == {CONF_API_KEY: "new-key"}
+    assert entry.state is ConfigEntryState.LOADED
