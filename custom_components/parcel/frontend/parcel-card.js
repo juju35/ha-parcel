@@ -207,7 +207,7 @@ class ParcelCard extends HTMLElement {
     this._root = this.attachShadow({ mode: 'open' });
     this._root.innerHTML =
       '<style>' + ParcelCard._styles() + '</style>' +
-      '<ha-card><div class="header"></div><div class="list"></div><div class="form" hidden></div></ha-card>';
+      '<ha-card><div class="header"></div><div class="form" hidden></div><div class="list"></div></ha-card>';
     this._root.querySelector('.list').addEventListener('click', this._onListClick.bind(this));
   }
 
@@ -393,7 +393,10 @@ class ParcelCard extends HTMLElement {
     var msg = { type: 'parcel/carriers' };
     if (st?.attributes.config_entry_id) msg.config_entry_id = st.attributes.config_entry_id;
     this._hass.callWS(msg).then((res) => {
-      this._carriers = res.carriers || {};
+      var carriers = res.carriers || {};
+      // An empty list means the backend couldn't load the carriers yet: don't cache it, the next opening asks again.
+      if (!Object.keys(carriers).length) return;
+      this._carriers = carriers;
       var codes = Object.keys(this._carriers).sort((a, b) => this._carriers[a].localeCompare(this._carriers[b]));
       this._root.querySelector('#parcel-carriers').innerHTML = codes.map((c) => `<option value="${parcelEsc(this._carriers[c])}">${parcelEsc(c)}</option>`).join('');
     }).catch(() => {
@@ -493,7 +496,7 @@ class ParcelCard extends HTMLElement {
       '.events { list-style: none; margin: 4px 0 0 34px; padding: 0 0 0 12px; border-left: 2px solid var(--divider-color, rgba(0,0,0,.12)); font-size: 12px; color: var(--primary-text-color); }',
       '.events li { margin: 4px 0; }',
       '.additional { color: var(--secondary-text-color); }',
-      '.form { padding: 6px 12px 4px; border-top: 1px solid var(--divider-color, rgba(0,0,0,.12)); display: flex; flex-direction: column; gap: 6px; }',
+      '.form { padding: 6px 12px 4px; border-block: 1px solid var(--divider-color, rgba(0,0,0,.12)); display: flex; flex-direction: column; gap: 6px; }',
       '.form[hidden] { display: none; }',
       '.form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--secondary-text-color); }',
       '.form label.check { flex-direction: row; align-items: center; gap: 8px; }',
