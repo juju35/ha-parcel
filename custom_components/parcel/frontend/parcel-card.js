@@ -194,8 +194,12 @@ class ParcelCard extends HTMLElement {
     return { columns: 12, min_columns: 6, rows: 'auto' };
   }
 
+  // Without a configured entity, the Parcel sensor found is kept: scanning all the states on every hass update
+  // (several times a second) is wasted work. It is looked up again only when it disappears.
   _entityId() {
-    return (this._config?.entity) || ParcelCard._findEntity(this._hass);
+    if (this._config?.entity) return this._config.entity;
+    if (!this._autoEntity || !this._hass?.states[this._autoEntity]) this._autoEntity = ParcelCard._findEntity(this._hass);
+    return this._autoEntity;
   }
 
   _t() {
