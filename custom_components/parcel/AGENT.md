@@ -37,4 +37,4 @@ HACS downloads the repository itself (no `zip_release`). Before tagging `vX.Y.Z`
 - Minimum Home Assistant 2024.12.0 (`OptionsFlow.config_entry`); CI also runs the tests on it (`pytest-min-ha`).
 
 ## Tests
-`pip install -r requirements_test.txt && pytest`; card: `node --test test/*.test.mjs` (the card file is evaluated in a `vm` context with stubs).
+`pip install -r requirements_test.txt && pytest`; card: `node --test test/*.test.mjs` (the card file is evaluated in a `vm` context with stubs). Job `tests` runs on Python 3.14, i.e. the latest Home Assistant (2026.3+ needs Python 3.14; 3.13 would silently resolve to 2026.2) and prints its version as an annotation; job `pytest-min-ha` runs the suite on HA 2024.12.0. An autouse fixture (`tests/conftest.py`, `no_deprecated_calls`) fails any test during which Home Assistant reports a deprecated call naming `parcel`, and CI turns those reports into annotations. The http fixture patch only applies where `start_http_server_and_save_config` still exists (gone in 2026.10).
