@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0
+
+### Changes
+- Requires Home Assistant 2024.12 or later (was 2024.11): on 2024.11, **Configure** failed with an error.
+
+### Fixes
+- A re-authentication reloads the integration once instead of twice, so it uses one call to Parcel's deliveries list (20 per hour) instead of two.
+- On Home Assistant versions before 2025.4, the card is added to the dashboard resources again instead of being loaded as an extra script.
+
+### Maintenance
+- Tests run on Home Assistant 2026.10 and on the minimum version (2024.12), and fail on any deprecated Home Assistant call; new tests for the fixes and new card tests.
+
 ## 0.4.0
 
 ### Changes

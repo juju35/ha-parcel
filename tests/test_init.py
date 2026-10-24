@@ -49,6 +49,12 @@ def entry(hass: HomeAssistant) -> MockConfigEntry:
     return entry
 
 
+def _resources(hass):
+    """The Lovelace resources collection: hass.data["lovelace"] is a dict before 2025.2, a dataclass after."""
+    lovelace = hass.data["lovelace"]
+    return lovelace["resources"] if isinstance(lovelace, dict) else lovelace.resources
+
+
 async def _setup(hass, aioclient_mock, entry):
     aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
     aioclient_mock.get(API_CARRIERS, json=CARRIERS)
@@ -166,7 +172,7 @@ async def test_card_added_to_resources(hass, aioclient_mock, entry, stub_fronten
     assert await async_setup_component(hass, "lovelace", {})
     await _setup(hass, aioclient_mock, entry)
     await hass.async_block_till_done()
-    resources = hass.data["lovelace"].resources
+    resources = _resources(hass)
     urls = [item["url"] for item in resources.async_items()]
     assert len(urls) == 1
     assert urls[0].startswith("/parcel_static/parcel-card.js?v=")
@@ -176,7 +182,7 @@ async def test_card_added_to_resources(hass, aioclient_mock, entry, stub_fronten
 
 async def test_card_resource_updated_not_duplicated(hass, aioclient_mock, entry):
     assert await async_setup_component(hass, "lovelace", {})
-    resources = hass.data["lovelace"].resources
+    resources = _resources(hass)
     await resources.async_load()
     resources.loaded = True
     await resources.async_create_item({"res_type": "module", "url": "/parcel_static/parcel-card.js?v=old"})
@@ -295,3 +301,69 @@ async def test_reauth_confirm(hass, aioclient_mock, entry):
     assert result["reason"] == "reauth_successful"
     assert entry.data == {CONF_API_KEY: "new-key"}
     assert entry.state is ConfigEntryState.LOADED
+
+
+async def test_reauth_reloads_once(hass, aioclient_mock, entry):
+    """A reauth reloads the entry once (the update listener): each reload costs a call of the 20 per hour."""
+    from custom_components import parcel
+
+    await _setup(hass, aioclient_mock, entry)
+    result = await entry.start_reauth_flow(hass)
+    with patch("custom_components.parcel.async_setup_entry", wraps=parcel.async_setup_entry) as setup_entry:
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "new-key"})
+        await hass.async_block_till_done()
+    assert result["reason"] == "reauth_successful"
+    assert setup_entry.call_count == 1
+    assert entry.state is ConfigEntryState.LOADED
+
+
+async def test_reauth_after_failed_setup_reloads(hass, aioclient_mock, entry):
+    """When the setup failed on the key, there is no update listener: the reauth reloads the entry itself."""
+    aioclient_mock.get(API_DELIVERIES, status=401, json={"success": False})
+    assert await async_setup_component(hass, "http", {})
+    await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.state is ConfigEntryState.SETUP_ERROR
+    flow = next(f for f in hass.config_entries.flow.async_progress() if f["context"]["source"] == "reauth")
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
+    aioclient_mock.get(API_CARRIERS, json=CARRIERS)
+    result = await hass.config_entries.flow.async_configure(flow["flow_id"], {CONF_API_KEY: "new-key"})
+    await hass.async_block_till_done()
+    assert result["reason"] == "reauth_successful"
+    assert entry.state is ConfigEntryState.LOADED
+
+
+async def test_reauth_with_same_key_reloads(hass, aioclient_mock, entry):
+    """An unchanged key does not fire the update listener: the reauth still reloads the entry once."""
+    await _setup(hass, aioclient_mock, entry)
+    result = await entry.start_reauth_flow(hass)
+    with patch("custom_components.parcel.async_setup_entry", return_value=True) as setup_entry:
+        result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "secret"})
+        await hass.async_block_till_done()
+    assert result["reason"] == "reauth_successful"
+    assert setup_entry.call_count == 1
+
+
+@pytest.mark.parametrize("key", ["mode", "resource_mode"])
+async def test_card_resource_with_lovelace_data_variants(hass, aioclient_mock, entry, stub_frontend, key):
+    """Before 2025.2 hass.data["lovelace"] is a dict, and 2025.2-2025.3 call the field `mode`."""
+    assert await async_setup_component(hass, "lovelace", {})
+    resources = _resources(hass)
+    hass.data["lovelace"] = {key: "storage", "resources": resources, "dashboards": {}}
+    await _setup(hass, aioclient_mock, entry)
+    await hass.async_block_till_done()
+    urls = [item["url"] for item in resources.async_items()]
+    assert len(urls) == 1 and urls[0].startswith("/parcel_static/parcel-card.js?v=")
+    stub_frontend.assert_not_called()
+
+
+async def test_card_resource_yaml_mode_uses_extra_js(hass, aioclient_mock, entry, stub_frontend):
+    """Resources in YAML mode can't be edited: the card is loaded on every page instead."""
+    from homeassistant.components.lovelace.resources import ResourceYAMLCollection
+
+    assert await async_setup_component(hass, "lovelace", {})
+    hass.data["lovelace"] = {"mode": "yaml", "resources": ResourceYAMLCollection([]), "dashboards": {}}
+    await _setup(hass, aioclient_mock, entry)
+    await hass.async_block_till_done()
+    stub_frontend.assert_called_once()
