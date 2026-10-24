@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -80,11 +80,17 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             api_key = user_input[CONF_API_KEY].strip()
             if (error := await self._validate(api_key)) is None:
-                return self.async_update_reload_and_abort(
-                    self._get_reauth_entry(),
-                    unique_id=_unique_id(api_key),
-                    data={CONF_API_KEY: api_key},
+                # A changed loaded entry is reloaded by its update listener; async_update_reload_and_abort
+                # would reload it a second time (each reload costs a call of the 20 per hour).
+                # Reload here only when that listener does not run.
+                entry = self._get_reauth_entry()
+                loaded = entry.state is ConfigEntryState.LOADED
+                changed = self.hass.config_entries.async_update_entry(
+                    entry, unique_id=_unique_id(api_key), data={CONF_API_KEY: api_key}
                 )
+                if not (loaded and changed):
+                    self.hass.config_entries.async_schedule_reload(entry.entry_id)
+                return self.async_abort(reason="reauth_successful")
             errors["base"] = error
 
         return self.async_show_form(step_id="reauth_confirm", data_schema=API_KEY_SCHEMA, errors=errors)
