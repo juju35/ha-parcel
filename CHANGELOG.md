@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1
+
+### Fixes
+- Re-authenticating with an API key that another Parcel entry already uses is refused ("This API key is already used by another Parcel entry.") instead of giving two entries that poll the same account and share its 20 requests per hour.
+
+### Maintenance
+- Tests for the re-authentication fix and for every Home Assistant variant of the dashboard resources; the duplication check runs on Node 22.
+
 ## 0.5.0
 
 ### Changes
