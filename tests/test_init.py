@@ -1,5 +1,6 @@
 """Tests for the Parcel integration."""
 
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import pytest
@@ -368,12 +369,15 @@ async def test_reauth_with_key_of_another_entry_is_refused(hass, aioclient_mock,
     assert entry.unique_id == _unique_id("new-key")
 
 
-@pytest.mark.parametrize("key", ["mode", "resource_mode"])
-async def test_card_resource_with_lovelace_data_variants(hass, aioclient_mock, entry, stub_frontend, key):
-    """Before 2025.2 hass.data["lovelace"] is a dict, and 2025.2-2025.3 call the field `mode`."""
+@pytest.mark.parametrize(
+    ("key", "container"),
+    [("mode", dict), ("resource_mode", dict), ("mode", SimpleNamespace), ("resource_mode", SimpleNamespace)],
+)
+async def test_card_resource_with_lovelace_data_variants(hass, aioclient_mock, entry, stub_frontend, key, container):
+    """hass.data["lovelace"]: a dict before 2025.2, then a dataclass with `mode`, renamed `resource_mode` in 2026.2."""
     assert await async_setup_component(hass, "lovelace", {})
     resources = _resources(hass)
-    hass.data["lovelace"] = {key: "storage", "resources": resources, "dashboards": {}}
+    hass.data["lovelace"] = container(**{key: "storage", "resources": resources, "dashboards": {}})
     await _setup(hass, aioclient_mock, entry)
     await hass.async_block_till_done()
     urls = [item["url"] for item in resources.async_items()]
