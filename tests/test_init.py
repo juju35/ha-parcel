@@ -345,6 +345,29 @@ async def test_reauth_with_same_key_reloads(hass, aioclient_mock, entry):
     assert setup_entry.call_count == 1
 
 
+async def test_reauth_with_key_of_another_entry_is_refused(hass, aioclient_mock, entry):
+    """A key already used by another entry is refused: two entries would poll the same account (20 calls per hour)."""
+    from custom_components.parcel.config_flow import _unique_id
+
+    other = MockConfigEntry(domain=DOMAIN, data={CONF_API_KEY: "other"}, unique_id=_unique_id("other"))
+    other.add_to_hass(hass)
+    await _setup(hass, aioclient_mock, entry)
+    result = await entry.start_reauth_flow(hass)
+    aioclient_mock.clear_requests()
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: " other "})
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"base": "already_configured"}
+    assert aioclient_mock.call_count == 0
+    assert entry.data == {CONF_API_KEY: "secret"} and entry.unique_id == "x"
+
+    aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
+    aioclient_mock.get(API_CARRIERS, json=CARRIERS)
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "new-key"})
+    await hass.async_block_till_done()
+    assert result["reason"] == "reauth_successful"
+    assert entry.unique_id == _unique_id("new-key")
+
+
 @pytest.mark.parametrize("key", ["mode", "resource_mode"])
 async def test_card_resource_with_lovelace_data_variants(hass, aioclient_mock, entry, stub_frontend, key):
     """Before 2025.2 hass.data["lovelace"] is a dict, and 2025.2-2025.3 call the field `mode`."""

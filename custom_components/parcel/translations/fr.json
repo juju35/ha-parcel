@@ -13,6 +13,7 @@
       }
     },
     "error": {
+      "already_configured": "Cette clé d'API est déjà utilisée par une autre entrée Parcel.",
       "invalid_auth": "Clé d'API invalide.",
       "cannot_connect": "Impossible de joindre Parcel, ou la limite de requêtes par heure est atteinte. Réessayez plus tard."
     },
