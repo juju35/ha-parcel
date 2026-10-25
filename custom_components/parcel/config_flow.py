@@ -79,11 +79,15 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             api_key = user_input[CONF_API_KEY].strip()
-            if (error := await self._validate(api_key)) is None:
+            entry = self._get_reauth_entry()
+            # Another entry with this key would poll the same account and share its 20 calls per hour.
+            other = self.hass.config_entries.async_entry_for_domain_unique_id(DOMAIN, _unique_id(api_key))
+            if other is not None and other.entry_id != entry.entry_id:
+                errors["base"] = "already_configured"
+            elif (error := await self._validate(api_key)) is None:
                 # A changed loaded entry is reloaded by its update listener; async_update_reload_and_abort
                 # would reload it a second time (each reload costs a call of the 20 per hour).
                 # Reload here only when that listener does not run.
-                entry = self._get_reauth_entry()
                 loaded = entry.state is ConfigEntryState.LOADED
                 changed = self.hass.config_entries.async_update_entry(
                     entry, unique_id=_unique_id(api_key), data={CONF_API_KEY: api_key}
@@ -91,7 +95,8 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
                 if not (loaded and changed):
                     self.hass.config_entries.async_schedule_reload(entry.entry_id)
                 return self.async_abort(reason="reauth_successful")
-            errors["base"] = error
+            else:
+                errors["base"] = error
 
         return self.async_show_form(step_id="reauth_confirm", data_schema=API_KEY_SCHEMA, errors=errors)
 
