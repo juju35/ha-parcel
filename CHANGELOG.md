@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0
+
+### Maintenance
+- Release workflow: dropped the stale `const.py` mention from the header comment. The `VERSION` constant was removed from `const.py` in 0.4.0, and the workflow only checks `manifest.json` and `PARCEL_CARD_VERSION` in the card, matching the README and `AGENT.md`.
+
 ## 0.6.0
 ### Changes
 - Card header: the Parcel icon is 40 px, the same header box as the other ha-* cards (was 36 px).
