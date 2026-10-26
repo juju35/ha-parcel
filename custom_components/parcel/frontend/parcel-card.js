@@ -474,7 +474,7 @@ class ParcelCard extends HTMLElement {
       'ha-card { padding: 0 0 8px; overflow: hidden; }',
       '.header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 8px 6px 12px; min-height: 36px; }',
       '.title { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }',
-      '.logo { width: 36px; height: 36px; flex: none; }',
+      '.logo { width: 40px; height: 40px; flex: none; object-fit: contain; }',
       '.titles { min-width: 0; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',

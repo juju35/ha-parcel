@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changes
+- Card header: the Parcel icon is 40 px, the same header box as the other ha-* cards (was 36 px).
+
 ## 0.5.1
 
 ### Fixes
