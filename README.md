@@ -104,7 +104,7 @@ Carrier codes are listed in [supported_carriers.json](https://api.parcel.app/ext
 
 ## Screenshots
 
-While parcels refresh, the card animates: the refresh button spins until the update finishes. It settles to a still card once done (and honours `prefers-reduced-motion`).
+While parcels refresh, the card animates: the refresh button spins until the update finishes. It settles to a still card once done.
 
 ![refresh animation](screenshots/refreshing.gif)
 
