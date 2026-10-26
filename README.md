@@ -104,6 +104,10 @@ Carrier codes are listed in [supported_carriers.json](https://api.parcel.app/ext
 
 ## Screenshots
 
+While parcels refresh, the card animates: the refresh button spins until the update finishes. It settles to a still card once done (and honours `prefers-reduced-motion`).
+
+![refresh animation](screenshots/refreshing.gif)
+
 | Light (a delivery expanded) | Dark (French) |
 |---|---|
 | ![card](screenshots/card.png) | ![card dark](screenshots/card-dark.png) |
@@ -129,7 +133,7 @@ The integration polls the Parcel API at the update interval and exposes the deli
 ```bash
 pip install -r requirements_test.txt && pytest
 pip install playwright && playwright install chromium
-python scripts/screenshots.py   # renders the card with mock deliveries into screenshots/
+python scripts/screenshots.py   # renders the card stills and the refreshing.gif animation (needs ffmpeg) into screenshots/
 ```
 
 ### Releasing
