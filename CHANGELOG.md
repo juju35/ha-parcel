@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Changes
+- Card header: the Parcel icon is 40 px, the same header box as the other ha-* cards (was 36 px).
+- Card: the add form buttons are no longer outlined or filled: Cancel uses the neutral tile colour and Add is tinted with the primary colour.
+- Card header: 8 px between the header and the first delivery (was 6 px).
+
 ## 0.5.1
 
 ### Fixes

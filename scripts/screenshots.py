@@ -1,10 +1,12 @@
 """Render the Parcel card with mock deliveries and save the README screenshots.
 
-Usage: python scripts/screenshots.py  (needs `pip install playwright` and `playwright install chromium`)
+Usage: python scripts/screenshots.py  (needs `pip install playwright` and `playwright install chromium`;
+CHROMIUM_PATH=/path/to/chrome to use another browser)
 The clock is frozen on 18 October 2026 in Paris, so expected dates stay the same.
 """
 
 import json
+import os
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -12,12 +14,12 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parent.parent
 CARD_JS = (ROOT / "custom_components/parcel/frontend/parcel-card.js").read_text()
 NOW = "2026-10-18T09:00:00+02:00"
-WIDTH = 410
+WIDTH = 460
 
 THEMES = {
     "light": {
         "--primary-background-color": "#e8eaed",
-        "--secondary-background-color": "#f2f2f2",
+        "--secondary-background-color": "#ececec",
         "--card-background-color": "#ffffff",
         "--primary-text-color": "#212121",
         "--secondary-text-color": "#727272",
@@ -153,8 +155,8 @@ SHOTS = [
     {
         "file": "card-dark",
         "theme": "dark",
-        "lang": "fr",
-        "config": {"title": "Colis", "show_delivered": True},
+        "lang": "en",
+        "config": {"title": "Deliveries", "show_delivered": True},
         "expand": None,
     },
 ]
@@ -173,14 +175,15 @@ def main():
     out_dir = ROOT / "screenshots"
     out_dir.mkdir(exist_ok=True)
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        chromium = os.environ.get("CHROMIUM_PATH")
+        browser = p.chromium.launch(executable_path=chromium) if chromium else p.chromium.launch()
         context = browser.new_context(
             device_scale_factor=2, viewport={"width": 1000, "height": 2400}, timezone_id="Europe/Paris"
         )
         for shot in SHOTS:
             # A new page per capture: the card's top-level declarations would clash in a reused page.
             page = context.new_page()
-            page.on("pageerror", lambda err: print(f"page error: {err}"))
+            page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
             page.clock.set_fixed_time(NOW)
             page.set_content(page_html(shot["theme"]))
             page.add_script_tag(content=HA_ELEMENTS)
@@ -198,7 +201,13 @@ def main():
             if shot["expand"]:
                 page.locator(f'.delivery[data-id="{shot["expand"]}"] .row').click()
             page.wait_for_timeout(300)
-            page.locator("parcel-card").screenshot(path=str(out_dir / f"{shot['file']}.png"), animations="disabled")
+            # The card with the 16 px page padding around it, on the theme background.
+            box = page.locator("#root").bounding_box()
+            page.screenshot(
+                path=str(out_dir / f"{shot['file']}.png"),
+                clip={"x": 0, "y": 0, "width": WIDTH + 32, "height": int(box["height"] + 0.999) + 32},
+                animations="disabled",
+            )
             print(f"screenshots/{shot['file']}.png")
             page.close()
         browser.close()
