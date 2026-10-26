@@ -7,6 +7,8 @@ The clock is frozen on 18 October 2026 in Paris, so expected dates stay the same
 
 import json
 import os
+import subprocess
+import tempfile
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -171,6 +173,61 @@ def page_html(theme):
 </style></head><body><div id="root"></div></body></html>"""
 
 
+def mount(context, shot):
+    # A new page per capture: the card's top-level declarations would clash in a reused page.
+    page = context.new_page()
+    page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
+    page.clock.set_fixed_time(NOW)
+    page.set_content(page_html(shot["theme"]))
+    page.add_script_tag(content=HA_ELEMENTS)
+    page.add_script_tag(content=CARD_JS)
+    page.evaluate(
+        """({config, states, lang}) => {
+          const el = document.createElement("parcel-card");
+          el.setConfig({type: "custom:parcel-card", ...config});
+          el.hass = {states, language: lang, locale: {language: lang},
+                     callService: () => Promise.resolve(), callWS: () => Promise.resolve({})};
+          document.getElementById("root").appendChild(el);
+        }""",
+        {"config": shot["config"], "states": STATES, "lang": shot["lang"]},
+    )
+    if shot.get("expand"):
+        page.locator(f'.delivery[data-id="{shot["expand"]}"] .row').click()
+    return page
+
+
+def animate(context, shot, *, fps=20, seconds=2):
+    """Record the refresh spinner as a looping screenshots/<file>.gif (needs ffmpeg). Every animation is paused and
+    stepped frame by frame, so the GIF is identical whatever the machine's speed."""
+    page = mount(context, shot)
+    page.evaluate(
+        """() => { const el = document.getElementById("root").firstElementChild; el._refreshing = true; el._render(); }"""
+    )
+    page.wait_for_timeout(200)
+    width = shot.get("width", WIDTH)
+    box = page.locator("#root").bounding_box()
+    clip = {"x": 0, "y": 0, "width": width + 32, "height": int(box["height"] + 0.999) + 32}
+    frames = round(fps * seconds)
+    with tempfile.TemporaryDirectory() as frame_dir:
+        for i in range(frames):
+            page.evaluate(
+                "(t) => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = t; } }",
+                (i * 1000) / fps,
+            )
+            page.screenshot(path=f"{frame_dir}/f{i:03d}.png", clip=clip)
+        page.close()
+        out = str(ROOT / "screenshots" / f"{shot['file']}.gif")
+        subprocess.run(
+            [
+                "ffmpeg", "-y", "-loglevel", "error", "-framerate", str(fps), "-i", f"{frame_dir}/f%03d.png",
+                "-vf", f"scale={clip['width']}:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=bayer:bayer_scale=4",
+                "-loop", "0", out,
+            ],
+            check=True,
+        )
+    print(f"screenshots/{shot['file']}.gif")
+
+
 def main():
     out_dir = ROOT / "screenshots"
     out_dir.mkdir(exist_ok=True)
@@ -181,25 +238,7 @@ def main():
             device_scale_factor=2, viewport={"width": 1000, "height": 2400}, timezone_id="Europe/Paris"
         )
         for shot in SHOTS:
-            # A new page per capture: the card's top-level declarations would clash in a reused page.
-            page = context.new_page()
-            page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
-            page.clock.set_fixed_time(NOW)
-            page.set_content(page_html(shot["theme"]))
-            page.add_script_tag(content=HA_ELEMENTS)
-            page.add_script_tag(content=CARD_JS)
-            page.evaluate(
-                """({config, states, lang}) => {
-                  const el = document.createElement("parcel-card");
-                  el.setConfig({type: "custom:parcel-card", ...config});
-                  el.hass = {states, language: lang, locale: {language: lang},
-                             callService: () => Promise.resolve(), callWS: () => Promise.resolve({})};
-                  document.getElementById("root").appendChild(el);
-                }""",
-                {"config": shot["config"], "states": STATES, "lang": shot["lang"]},
-            )
-            if shot["expand"]:
-                page.locator(f'.delivery[data-id="{shot["expand"]}"] .row').click()
+            page = mount(context, shot)
             page.wait_for_timeout(300)
             # The card with the 16 px page padding around it, on the theme background.
             box = page.locator("#root").bounding_box()
@@ -210,6 +249,7 @@ def main():
             )
             print(f"screenshots/{shot['file']}.png")
             page.close()
+        animate(context, {"file": "refreshing", "theme": "light", "lang": "en", "config": {"show_delivered": True}})
         browser.close()
 
 
