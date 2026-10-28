@@ -149,3 +149,42 @@ test('set hass redraws only when the sensor state object changes', () => {
   setHass.call(self, { states: { 'sensor.a': { ...st, state: '2' } } });
   assert.equal(renders, 2);
 });
+
+test('deliveries sort by expected date even when Date.parse is strict (Safari/WebKit)', () => {
+  // Safari/WebKit returns NaN for "YYYY-MM-DD HH:MM:SS" (no "T"): the card is re-evaluated
+  // in a realm emulating that, and the sort must still order by date_expected.
+  const strict = {
+    HTMLElement: class {},
+    customElements: { get: () => true, define() {} },
+    window: {},
+    navigator: { language: 'en' },
+    document: { addEventListener() {}, removeEventListener() {} },
+    console,
+  };
+  vm.createContext(strict);
+  vm.runInContext('const realParse = Date.parse; Date.parse = (s) => (/\\d \\d/.test(String(s)) ? NaN : realParse(s));', strict);
+  vm.runInContext(`${source}\nthis.parcel = { ParcelCard };`, strict);
+  const header = { querySelector: () => null };
+  const list = {};
+  const delivery = (id, extra) => ({ carrier_code: 'ups', tracking_number: id, status_code: 10, events: [], ...extra });
+  const self = Object.assign(Object.create(strict.parcel.ParcelCard.prototype), {
+    _config: { entity: 'sensor.a', show_delivered: true, show_icon: false, show_refresh: false, show_add: false, max_events: 5 },
+    _hass: { locale: { language: 'en' } },
+    _lastState: sensor('sensor.a', {
+      deliveries: [
+        delivery('done', { status_code: 0, date_expected: '2026-10-18 00:00:00' }),
+        delivery('late', { date_expected: '2026-10-22 00:00:00' }),
+        delivery('none', {}),
+        delivery('soon', { date_expected: '2026-10-20 00:00:00' }),
+        delivery('ts', { timestamp_expected: 1793404800 }), // 2026-10-31
+      ],
+    }),
+    _root: { querySelector: (sel) => (sel === '.header' ? header : list) },
+    _expanded: {},
+    _ensureShell() {},
+  });
+  self._render();
+  const order = [...list.innerHTML.matchAll(/data-id="ups:(\w+)"/g)].map((m) => m[1]);
+  // Active sorted by date, unknown date last, delivered after the active ones.
+  assert.deepEqual(order, ['soon', 'late', 'ts', 'none', 'done']);
+});
