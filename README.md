@@ -108,7 +108,7 @@ While parcels refresh, the card animates: the refresh button spins until the upd
 
 ![refresh animation](screenshots/refreshing.gif)
 
-| Light (a delivery expanded) | Dark (French) |
+| Light (a delivery expanded) | Dark |
 |---|---|
 | ![card](screenshots/card.png) | ![card dark](screenshots/card-dark.png) |
 
@@ -135,6 +135,8 @@ pip install -r requirements_test.txt && pytest
 pip install playwright && playwright install chromium
 python scripts/screenshots.py   # renders the card stills and the refreshing.gif animation (needs ffmpeg) into screenshots/
 ```
+
+Python tests live in `tests/` (pytest); the card's JavaScript tests live in `test/` (`node --test test/`).
 
 ### Releasing
 

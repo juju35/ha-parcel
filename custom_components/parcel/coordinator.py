@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -45,7 +45,7 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         self.api = api
         self.filter_mode: str = entry.options.get(CONF_FILTER_MODE, DEFAULT_FILTER_MODE)
         self.carriers: dict[str, str] = {}
-        self._carriers_updated = None
+        self._carriers_updated: datetime | None = None
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
         try:

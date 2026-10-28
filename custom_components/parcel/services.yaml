@@ -12,7 +12,7 @@ add_delivery:
         text:
     description:
       required: true
-      example: "Nouveau casque"
+      example: "New headphones"
       selector:
         text:
     language:

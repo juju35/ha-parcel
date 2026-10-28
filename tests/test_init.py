@@ -272,11 +272,10 @@ async def test_rate_limit_fails_update(hass, aioclient_mock, entry):
 
 
 async def test_refresh_service(hass, aioclient_mock, entry):
+    """The service fetches immediately (no debounce): the call returns after the update."""
     await _setup(hass, aioclient_mock, entry)
     before = len([c for c in aioclient_mock.mock_calls if str(c[1]).startswith(API_DELIVERIES)])
-    with patch("homeassistant.helpers.update_coordinator.REQUEST_REFRESH_DEFAULT_IMMEDIATE", True):
-        await hass.services.async_call(DOMAIN, "refresh", {"config_entry_id": entry.entry_id}, blocking=True)
-        await hass.async_block_till_done()
+    await hass.services.async_call(DOMAIN, "refresh", {"config_entry_id": entry.entry_id}, blocking=True)
     after = len([c for c in aioclient_mock.mock_calls if str(c[1]).startswith(API_DELIVERIES)])
     assert after == before + 1
 

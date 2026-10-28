@@ -84,7 +84,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         await coordinator.async_request_refresh()
 
     async def refresh(call: ServiceCall) -> None:
-        await _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID)).async_request_refresh()
+        # async_refresh (not async_request_refresh): the service returns once the
+        # data is actually fetched, so the card's spinner matches the update.
+        await _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID)).async_refresh()
 
     hass.services.async_register(DOMAIN, SERVICE_ADD_DELIVERY, add_delivery, ADD_DELIVERY_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_REFRESH, refresh, REFRESH_SCHEMA)
@@ -96,7 +98,9 @@ async def _async_register_card(hass: HomeAssistant) -> None:
 
     The file hash in the URL makes browsers fetch the new card after an update.
     """
-    digest = await hass.async_add_executor_job(lambda: hashlib.md5(CARD_PATH.read_bytes()).hexdigest()[:8])
+    digest = await hass.async_add_executor_job(
+        lambda: hashlib.md5(CARD_PATH.read_bytes(), usedforsecurity=False).hexdigest()[:8]
+    )
     base_url = f"{FRONTEND_URL}/{CARD_FILENAME}"
     url = f"{base_url}?v={digest}"
 
