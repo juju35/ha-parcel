@@ -84,7 +84,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         await coordinator.async_request_refresh()
 
     async def refresh(call: ServiceCall) -> None:
-        await _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID)).async_request_refresh()
+        # async_refresh (not async_request_refresh): the service returns once the
+        # data is actually fetched, so the card's spinner matches the update.
+        await _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID)).async_refresh()
 
     hass.services.async_register(DOMAIN, SERVICE_ADD_DELIVERY, add_delivery, ADD_DELIVERY_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_REFRESH, refresh, REFRESH_SCHEMA)
