@@ -41,7 +41,15 @@ test('parcelDate drops the placeholders Parcel sends without a date', () => {
 test('parcelLang follows Home Assistant and falls back to English', () => {
   assert.equal(parcelLang({ locale: { language: 'fr-FR' } }), 'fr');
   assert.equal(parcelLang({ language: 'fr' }), 'fr');
+  assert.equal(parcelLang({ locale: { language: 'de-DE' } }), 'de');
+  assert.equal(parcelLang({ language: 'es' }), 'es');
   assert.equal(parcelLang({ locale: { language: 'xx' } }), 'en');
+});
+
+test('every card language has exactly the English keys', () => {
+  const keys = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? keys(v, `${p}${k}.`) : [`${p}${k}`])).sort();
+  const i18n = vm.runInContext('ParcelI18n', context);
+  for (const lang of ['fr', 'de', 'es']) assert.deepEqual(keys(i18n[lang]), keys(i18n.en), lang);
 });
 
 test('getStubConfig picks the Parcel sensor only', () => {
