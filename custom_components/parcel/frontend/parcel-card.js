@@ -97,6 +97,9 @@ var ParcelI18n = {
   },
 };
 
+// Single source of the config defaults, shared by the card (setConfig) and the editor.
+var PARCEL_DEFAULTS = { show_icon: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
+
 var PARCEL_STATUS_STYLE = {
   delivered: { icon: 'mdi:package-variant-closed-check', color: 'var(--success-color, #43a047)' },
   frozen: { icon: 'mdi:snowflake', color: 'var(--disabled-text-color, #9e9e9e)' },
@@ -148,10 +151,7 @@ class ParcelCard extends HTMLElement {
   }
 
   setConfig(config) {
-    this._config = Object.assign(
-      { show_icon: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 },
-      config || {}
-    );
+    this._config = Object.assign({}, PARCEL_DEFAULTS, config || {});
     this._expanded = this._expanded || {};
     this._lastState = null;
     if (this._hass) this._render();
@@ -171,11 +171,18 @@ class ParcelCard extends HTMLElement {
 
   connectedCallback() {
     this._onOutside = this._onOutside || ((ev) => {
-      if (!Object.keys(this._expanded || {}).some((k) => this._expanded[k])) return;
+      var form = this._root && this._root.querySelector('.form');
+      var formOpen = !!(form && !form.hidden);
+      var anyExpanded = Object.keys(this._expanded || {}).some((k) => this._expanded[k]);
+      if (!formOpen && !anyExpanded) return;
       var path = ev.composedPath ? ev.composedPath() : [];
       if (path.indexOf(this) !== -1) return;
-      this._expanded = {};
-      this._render();
+      // Like the other cards: a click outside collapses the expanded deliveries and the add form.
+      if (formOpen) form.hidden = true;
+      if (anyExpanded) {
+        this._expanded = {};
+        this._render();
+      }
     });
     document.addEventListener('click', this._onOutside, true);
   }
@@ -186,8 +193,10 @@ class ParcelCard extends HTMLElement {
 
   getCardSize() {
     var st = this._lastState;
-    var n = st?.attributes && Array.isArray(st.attributes.deliveries) ? st.attributes.deliveries.length : 0;
-    return 2 + n;
+    var deliveries = st?.attributes && Array.isArray(st.attributes.deliveries) ? st.attributes.deliveries : [];
+    // Count only the rows actually shown.
+    if (this._config && !this._config.show_delivered) deliveries = deliveries.filter((d) => d.status_code !== 0);
+    return 2 + deliveries.length;
   }
 
   getGridOptions() {
@@ -245,7 +254,10 @@ class ParcelCard extends HTMLElement {
 
     header.innerHTML =
       '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name">' + parcelEsc(title) + '</div>' +
-      '<div class="sub">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</div></div></div>' +
+      '<div class="sub">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</div>' +
+      // The refresh error survives re-renders (hass updates) until the next refresh attempt.
+      (this._refreshError ? '<div class="sub error">' + parcelEsc(this._refreshError) + '</div>' : '') +
+      '</div></div>' +
       '<div class="buttons">' +
       (this._config.show_refresh
         ? `<ha-icon-button class="refresh-btn${this._refreshing ? ' spinning' : ''}" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
@@ -346,15 +358,16 @@ class ParcelCard extends HTMLElement {
     var st = this._lastState;
     if (st?.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
     this._refreshing = true;
+    this._refreshError = null;
     this._render();
     var t = this._t();
     this._hass.callService('parcel', 'refresh', data).catch((err) => {
-      var btn = this._root.querySelector('.refresh-btn');
-      if (btn) btn.title = `${t.refresh_failed} ${(err?.message) || err}`;
+      // Kept in state and rendered under the title: a tooltip on the button
+      // would be wiped by the next re-render.
+      this._refreshError = `${t.refresh_failed} ${(err?.message) || err}`;
     }).finally(() => {
       this._refreshing = false;
-      var btn = this._root.querySelector('.refresh-btn');
-      if (btn) btn.classList.remove('spinning');
+      this._render();
     });
   }
 
@@ -478,6 +491,7 @@ class ParcelCard extends HTMLElement {
       '.titles { min-width: 0; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+      '.sub.error { color: var(--error-color, #db4437); }',
       '.buttons { display: flex; align-items: center; }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
@@ -537,8 +551,6 @@ var PARCEL_EDITOR_SCHEMA = [
   { name: 'max_events', selector: { number: { min: 1, max: 20, mode: 'box' } } },
 ];
 
-var PARCEL_EDITOR_DEFAULTS = { show_icon: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
-
 class ParcelCardEditor extends HTMLElement {
   setConfig(config) {
     this._config = Object.assign({}, config);
@@ -563,14 +575,14 @@ class ParcelCardEditor extends HTMLElement {
     }
     this._form.hass = this._hass;
     // Show the defaults as set, so the toggles match what the card does.
-    this._form.data = Object.assign({}, PARCEL_EDITOR_DEFAULTS, this._config);
+    this._form.data = Object.assign({}, PARCEL_DEFAULTS, this._config);
   }
 
   _valueChanged(ev) {
     var value = Object.assign({}, ev.detail.value);
     // Keep the YAML short: drop options left at their default.
-    Object.keys(PARCEL_EDITOR_DEFAULTS).forEach((key) => {
-      if (value[key] === PARCEL_EDITOR_DEFAULTS[key]) delete value[key];
+    Object.keys(PARCEL_DEFAULTS).forEach((key) => {
+      if (value[key] === PARCEL_DEFAULTS[key]) delete value[key];
     });
     if (!value.title) delete value.title;
     if (!value.entity) delete value.entity;
