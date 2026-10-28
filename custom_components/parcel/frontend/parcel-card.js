@@ -234,13 +234,13 @@ class ParcelCard extends HTMLElement {
     if (!this._config.show_delivered) {
       deliveries = deliveries.filter((d) => d.status_code !== 0);
     }
-    // Active first, then by expected date.
+    // Active first, then by expected date. Same ISO normalization as _formatExpected:
+    // "YYYY-MM-DD HH:MM:SS" is not parseable by Safari/WebKit without the "T".
+    var expectedTs = (d) => d.timestamp_expected || Date.parse(String(d.date_expected || '').replace(' ', 'T')) / 1000 || Infinity;
     deliveries.sort((a, b) => {
       var da = a.status_code === 0 ? 1 : 0, db = b.status_code === 0 ? 1 : 0;
       if (da !== db) return da - db;
-      var ta = a.timestamp_expected || Date.parse(a.date_expected || '') / 1000 || Infinity;
-      var tb = b.timestamp_expected || Date.parse(b.date_expected || '') / 1000 || Infinity;
-      return ta - tb;
+      return expectedTs(a) - expectedTs(b);
     });
 
     header.innerHTML =
