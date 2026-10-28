@@ -108,7 +108,7 @@ While parcels refresh, the card animates: the refresh button spins until the upd
 
 ![refresh animation](screenshots/refreshing.gif)
 
-| Light (a delivery expanded) | Dark (French) |
+| Light (a delivery expanded) | Dark |
 |---|---|
 | ![card](screenshots/card.png) | ![card dark](screenshots/card-dark.png) |
 
