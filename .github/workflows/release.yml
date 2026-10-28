@@ -31,6 +31,8 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # HACS installs from the repository (hacs.json has no zip_release):
+      # parcel.zip is only attached as a convenience for manual installs.
       - name: Build zip and notes
         if: steps.version.outputs.exists == 'false'
         run: |
