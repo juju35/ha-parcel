@@ -14,7 +14,7 @@ custom_components/parcel/
 ├── sensor.py          # One sensor: count of undelivered parcels, deliveries in attributes
 ├── config_flow.py     # API key, reauth, options (filter_mode, scan_interval)
 ├── const.py           # Constants, status codes
-├── icons.json / services.yaml / translations/{en,fr}.json
+├── icons.json / services.yaml / translations/{en,fr,de,es}.json
 └── frontend/parcel-card.js   # Vanilla JS card, no dependencies
 ```
 

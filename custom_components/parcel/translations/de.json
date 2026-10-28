@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Erstelle einen API-Schlüssel auf web.parcelapp.net (Parcel Premium ist erforderlich).",
+        "data": { "api_key": "API-Schlüssel" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Der Parcel-API-Schlüssel wurde abgelehnt. Gib einen neuen ein.",
+        "data": { "api_key": "API-Schlüssel" }
+      }
+    },
+    "error": {
+      "already_configured": "Dieser API-Schlüssel wird bereits von einem anderen Parcel-Eintrag verwendet.",
+      "invalid_auth": "Ungültiger API-Schlüssel.",
+      "cannot_connect": "Parcel ist nicht erreichbar oder das stündliche Anfragelimit ist erreicht. Versuche es später erneut."
+    },
+    "abort": {
+      "already_configured": "Dieser API-Schlüssel ist bereits konfiguriert.",
+      "reauth_successful": "API-Schlüssel aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Parcel-Optionen",
+        "data": {
+          "filter_mode": "Anzuzeigende Sendungen",
+          "scan_interval": "Aktualisierungsintervall"
+        },
+        "data_description": {
+          "scan_interval": "Parcel erlaubt 20 Anfragen pro Stunde, daher sind 5 Minuten das Minimum."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Aktuell (aktive und kürzlich zugestellte)",
+        "active": "Nur aktive"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Sendungen" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Sendung hinzufügen",
+      "description": "Fügt eine Sendung zu Parcel hinzu. Parcel erlaubt 20 Hinzufügungen pro Tag.",
+      "fields": {
+        "tracking_number": { "name": "Sendungsnummer", "description": "Die Sendungsnummer des Versanddienstleisters." },
+        "carrier_code": { "name": "Versanddienstleister-Code", "description": "Parcel-Code des Versanddienstleisters, zum Beispiel ups, dhl oder pholder für einen Platzhalter." },
+        "description": { "name": "Beschreibung", "description": "In Parcel angezeigter Name." },
+        "language": { "name": "Sprache", "description": "Zweibuchstabiger Sprachcode für die Sendungsereignisse. Standardmäßig die Sprache von Home Assistant." },
+        "send_push_confirmation": { "name": "Push-Bestätigung", "description": "Sendet eine Push-Benachrichtigung von Parcel, sobald die Sendung hinzugefügt wurde." },
+        "postcode": { "name": "Postleitzahl", "description": "Nur für Versanddienstleister, die sie benötigen." },
+        "email": { "name": "E-Mail", "description": "Nur für Dienste, die sie benötigen, wie den Apple Store." },
+        "config_entry_id": { "name": "Parcel-Konto", "description": "Nur nötig, wenn mehrere Parcel-Konten konfiguriert sind." }
+      }
+    },
+    "refresh": {
+      "name": "Aktualisieren",
+      "description": "Ruft die Sendungen sofort ab. Zählt zum Limit von 20 Anfragen pro Stunde.",
+      "fields": {
+        "config_entry_id": { "name": "Parcel-Konto", "description": "Nur nötig, wenn mehrere Parcel-Konten konfiguriert sind." }
+      }
+    }
+  }
+}

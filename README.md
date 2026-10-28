@@ -19,7 +19,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `parcel.refresh` action to force an update
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: list of deliveries, events on click, add form with carrier search
 - API key entered in the UI, never in YAML
-- English and French
+- English, French, German and Spanish
 
 ## Prerequisites
 
@@ -152,6 +152,8 @@ The integration and the card follow the language of Home Assistant. Currently su
 |---|---|
 | English | `en` |
 | Français | `fr` |
+| Deutsch | `de` |
+| Español | `es` |
 
 Contributions for additional languages are welcome!
 

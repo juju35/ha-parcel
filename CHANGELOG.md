@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0
+
+### Changes
+- German and Spanish translations of the integration (config flow, options, sensor, actions) and of the card.
+
 ## 0.8.0
 
 ### Changes
