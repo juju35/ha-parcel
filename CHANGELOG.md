@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.8.0
+
+### Changes
+- Card: a failed refresh is shown as an error line under the title until the next refresh, instead of a button tooltip that any update wiped.
+- Card: a click outside the card also closes the add form, like the expanded deliveries.
+- `parcel.refresh` returns once the deliveries are actually fetched, so the card's spinner turns until the update finishes.
+
+### Fixes
+- Card: deliveries without an exact expected time are sorted by their expected date again on Safari and the iOS/macOS apps (the date was not parsed there).
+- Card: the size reported to the dashboard no longer counts delivered parcels hidden by `show_delivered: false`.
+- The integration no longer fails to set up on FIPS-mode Python.
+- `parcel.add_delivery`: the description example is in English ("New headphones").
+
+### Maintenance
+- README: refresh animation GIF in the screenshots, corrected dark screenshot caption, note on the `tests/` (pytest) and `test/` (node) folders.
+- Screenshots workflow: hardened apt handling, fork-safe checkout and commits.
+
 ## 0.7.0
 
 ### Maintenance
