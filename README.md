@@ -132,7 +132,7 @@ The integration polls the Parcel API at the update interval and exposes the deli
 
 ```bash
 pip install -r requirements_test.txt && pytest
-pip install playwright && playwright install chromium
+pip install playwright==1.64.1 && playwright install chromium
 python scripts/screenshots.py   # renders the card stills and the refreshing.gif animation (needs ffmpeg) into screenshots/
 ```
 
