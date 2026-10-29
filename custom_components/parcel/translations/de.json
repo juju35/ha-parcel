@@ -39,7 +39,7 @@
   "selector": {
     "filter_mode": {
       "options": {
-        "recent": "Aktuell (aktive und kürzlich zugestellte)",
+        "recent": "Kürzlich (aktive und kürzlich zugestellte)",
         "active": "Nur aktive"
       }
     }
@@ -52,7 +52,7 @@
   "services": {
     "add_delivery": {
       "name": "Sendung hinzufügen",
-      "description": "Fügt eine Sendung zu Parcel hinzu. Parcel erlaubt 20 Hinzufügungen pro Tag.",
+      "description": "Fügt eine Sendung zu Parcel hinzu. Parcel erlaubt maximal 20 neue Sendungen pro Tag.",
       "fields": {
         "tracking_number": { "name": "Sendungsnummer", "description": "Die Sendungsnummer des Versanddienstleisters." },
         "carrier_code": { "name": "Versanddienstleister-Code", "description": "Parcel-Code des Versanddienstleisters, zum Beispiel ups, dhl oder pholder für einen Platzhalter." },
