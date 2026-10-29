@@ -170,6 +170,27 @@ test('_formatExpected reads a date without time as a local date, not UTC midnigh
   );
 });
 
+test('_formatExpected keeps an on-the-hour time and a same-day delivery window', () => {
+  const self = { _hass: { locale: { language: 'en' } } };
+  const hour = /^Tue, Oct 20.*(2:00|14:00)/;
+  // Parcel sends "YYYY-MM-DD HH:MM:SS": "14:00:00" ends with "00:00" but is not midnight.
+  assert.match(card._formatExpected.call(self, { date_expected: '2026-10-20 14:00:00' }), hour);
+  assert.match(card._formatExpected.call(self, { date_expected: '2026-10-20 14:00' }), hour);
+  assert.match(card._formatExpected.call(self, { date_expected: '2026-10-20T09:00:00' }), /^Tue, Oct 20.*9:00/);
+  const window = card._formatExpected.call(self, {
+    date_expected: '2026-10-20 08:00:00',
+    date_expected_end: '2026-10-20 12:00:00',
+  });
+  assert.ok(window.includes('–'), window);
+  assert.match(window, /8:00.*–.*12:00/);
+  // An ISO value with a "+00:00" UTC offset is not midnight either.
+  assert.match(card._formatExpected.call(self, { date_expected: '2026-10-20T18:30:00+00:00' }), /^Tue, Oct 20.*(2:30|14:30)/);
+  // Midnight still means "no time", with or without seconds, with a space or a "T".
+  for (const raw of ['2026-10-20 00:00:00', '2026-10-20 00:00', '2026-10-20T00:00:00', ' 2026-10-20 00:00:00 ']) {
+    assert.equal(card._formatExpected.call(self, { date_expected: raw }), 'Tue, Oct 20', raw);
+  }
+});
+
 test('set hass redraws only when the sensor state object changes', () => {
   let renders = 0;
   const st = sensor('sensor.a');

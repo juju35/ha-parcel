@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.3
+
+### Fixes
+- Card: an expected delivery time on the hour (for example `14:00`) is shown again instead of only the date, and a same-day delivery window such as 08:00 – 12:00 is shown as a range.
+
 ## 0.10.2
 
 ### Fixes
