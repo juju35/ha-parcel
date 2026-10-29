@@ -98,9 +98,12 @@ test('an empty carriers answer is not cached: the next opening asks again', asyn
   const answers = [{ carriers: {} }, { carriers: { ups: 'UPS', colissimo: 'Colissimo' } }];
   const calls = [];
   const self = {
+    _config: { entity: 'sensor.a' },
     _lastState: sensor('sensor.a'),
+    _entryId: card._entryId,
+    _entityId: card._entityId,
     _root: { querySelector: () => datalist },
-    _hass: { callWS: (msg) => { calls.push(msg); return Promise.resolve(answers.shift()); } },
+    _hass: { states: {}, callWS: (msg) => { calls.push(msg); return Promise.resolve(answers.shift()); } },
   };
   card._loadCarriers.call(self);
   await flush();
@@ -121,9 +124,12 @@ test('an empty carriers answer is not cached: the next opening asks again', asyn
 test('a failed carriers request is retried at the next opening', async () => {
   let n = 0;
   const self = {
+    _config: {},
     _lastState: null,
+    _entryId: card._entryId,
+    _entityId: card._entityId,
     _root: { querySelector: () => ({}) },
-    _hass: { callWS: () => (++n === 1 ? Promise.reject(new Error('down')) : Promise.resolve({ carriers: { ups: 'UPS' } })) },
+    _hass: { states: {}, callWS: () => (++n === 1 ? Promise.reject(new Error('down')) : Promise.resolve({ carriers: { ups: 'UPS' } })) },
   };
   card._loadCarriers.call(self);
   await flush();
@@ -254,4 +260,59 @@ test('the language option wins over the Home Assistant language', () => {
   assert.equal(parcelLang({ language: 'fr' }, { language: 'de' }), 'de');
   assert.equal(parcelLang({ language: 'fr' }, { language: '' }), 'fr');
   assert.equal(parcelLang({ language: 'fr' }, { language: 'xx' }), 'en');
+});
+
+// An unavailable sensor has no attributes: the account comes from the entity and device registries.
+const unavailableHass = (extra = {}) => ({
+  states: { 'sensor.parcel_deliveries': { entity_id: 'sensor.parcel_deliveries', state: 'unavailable', attributes: {} } },
+  entities: { 'sensor.parcel_deliveries': { platform: 'parcel', device_id: 'dev1' } },
+  devices: { dev1: { config_entries: ['entry_b'] } },
+  ...extra,
+});
+
+test('with the sensor unavailable, refresh still targets its Parcel account', async () => {
+  const calls = [];
+  const hass = unavailableHass({ callService: (...args) => { calls.push(args); return Promise.resolve(); } });
+  const self = renderable({ _hass: hass });
+  self.setConfig({ entity: 'sensor.parcel_deliveries', show_icon: false });
+  self._refresh();
+  await flush();
+  assert.equal(calls.length, 1);
+  assert.deepEqual({ ...calls[0][2] }, { config_entry_id: 'entry_b' });
+});
+
+test('with the sensor unavailable, the carriers request targets its Parcel account', async () => {
+  const msgs = [];
+  const hass = unavailableHass({ callWS: (msg) => { msgs.push(msg); return Promise.resolve({ carriers: {} }); } });
+  const self = { _hass: hass, _config: { entity: 'sensor.parcel_deliveries' }, _lastState: hass.states['sensor.parcel_deliveries'], _entityId: card._entityId, _entryId: card._entryId };
+  card._loadCarriers.call(self);
+  await flush();
+  assert.deepEqual({ ...msgs[0] }, { type: 'parcel/carriers', config_entry_id: 'entry_b' });
+});
+
+test('with the sensor unavailable, adding a delivery targets its Parcel account', async () => {
+  const calls = [];
+  const hass = unavailableHass({ callService: (...args) => { calls.push(args); return Promise.resolve(); } });
+  const fields = { tracking: { value: '1Z' }, carrier: { value: 'ups' }, description: { value: 'Shoes' }, push: { checked: false } };
+  const form = { querySelector: (sel) => (sel === '.msg' ? {} : sel === '.submit' ? { disabled: false } : fields[sel.slice(6, -1)]) };
+  const self = renderable({ _hass: hass, _carriers: { ups: 'UPS' } });
+  self._root = { querySelector: () => form };
+  self.setConfig.call(Object.assign(self, { _render() {} }), { entity: 'sensor.parcel_deliveries' });
+  self._submit();
+  await flush();
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0][2].config_entry_id, 'entry_b');
+});
+
+test('the account is left out when neither the attribute nor the registries know it', () => {
+  const st = { state: 'unavailable', attributes: {} };
+  const base = { _config: { entity: 'sensor.a' }, _lastState: st, _entityId: card._entityId };
+  // Older Home Assistant without hass.entities / hass.devices.
+  assert.equal(card._entryId.call({ ...base, _hass: { states: { 'sensor.a': st } } }), null);
+  // Entity without a device, or device unknown.
+  assert.equal(card._entryId.call({ ...base, _hass: { states: {}, entities: { 'sensor.a': {} }, devices: {} } }), null);
+  assert.equal(card._entryId.call({ ...base, _hass: { states: {}, entities: { 'sensor.a': { device_id: 'x' } }, devices: {} } }), null);
+  // The attribute wins over the registries.
+  const ok = sensor('sensor.a');
+  assert.equal(card._entryId.call({ ...base, _lastState: ok, _hass: unavailableHass() }), 'abc');
 });
