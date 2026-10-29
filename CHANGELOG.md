@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.1
+
+### Fixes
+- Card: with several Parcel accounts, the Refresh button, the add form and its carrier list now target the card's own account even while its sensor is unavailable after a failed update, instead of failing with "Several Parcel accounts are configured".
+
 ## 0.10.0
 
 ### Changes
