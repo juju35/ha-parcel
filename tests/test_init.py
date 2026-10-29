@@ -280,6 +280,15 @@ async def test_refresh_service(hass, aioclient_mock, entry):
     assert after == before + 1
 
 
+async def test_refresh_service_reports_failure(hass, aioclient_mock, entry):
+    """A failed update (here HTTP 429) makes the service call fail, so the card can show it."""
+    await _setup(hass, aioclient_mock, entry)
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, status=429, json={"success": False})
+    with pytest.raises(HomeAssistantError, match="rate limit"):
+        await hass.services.async_call(DOMAIN, "refresh", {"config_entry_id": entry.entry_id}, blocking=True)
+
+
 async def test_reauth_confirm(hass, aioclient_mock, entry):
     """A refused key is shown as invalid_auth; a valid one updates the entry and reloads it."""
     await _setup(hass, aioclient_mock, entry)

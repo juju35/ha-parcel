@@ -196,3 +196,62 @@ test('deliveries sort by expected date even when Date.parse is strict (Safari/We
   // Active sorted by date, unknown date last, delivered after the active ones.
   assert.deepEqual(order, ['soon', 'late', 'ts', 'none', 'done']);
 });
+
+// Minimal card instance whose _render writes into plain objects.
+const renderable = (extra = {}) => {
+  const header = { innerHTML: '', querySelector: () => null };
+  const list = { innerHTML: '' };
+  return Object.assign(Object.create(ParcelCard.prototype), {
+    _root: { querySelector: (sel) => (sel === '.header' ? header : list) },
+    _ensureShell() {},
+    _expanded: {},
+    header,
+    list,
+    ...extra,
+  });
+};
+
+test('setConfig reads the sensor at once when hass is already set (visual editor)', () => {
+  const self = renderable({ _hass: { states: { 'sensor.a': sensor('sensor.a', { deliveries: [] }) } } });
+  self.setConfig({ entity: 'sensor.a', show_icon: false });
+  assert.equal(self._lastState, self._hass.states['sensor.a']);
+  assert.ok(!self.list.innerHTML.includes('not found'), self.list.innerHTML);
+  // The automatically found sensor too.
+  const auto = renderable({ _hass: { states: { 'sensor.b': sensor('sensor.b') } } });
+  auto.setConfig({ show_icon: false });
+  assert.equal(auto._lastState, auto._hass.states['sensor.b']);
+});
+
+test('an unavailable sensor shows a dedicated message, without a count', () => {
+  const st = { entity_id: 'sensor.a', state: 'unavailable', attributes: { friendly_name: 'Parcel' } };
+  const self = renderable({ _hass: { states: { 'sensor.a': st } } });
+  self.setConfig({ entity: 'sensor.a', show_icon: false });
+  assert.ok(self.list.innerHTML.includes('Parcel is unavailable'), self.list.innerHTML);
+  assert.ok(!self.header.innerHTML.includes('active'), self.header.innerHTML);
+  assert.ok(!self.header.innerHTML.includes('unavailable'), self.header.innerHTML);
+});
+
+test('the active count is a status pill on the right of the header, not a subtitle', () => {
+  const self = renderable({ _hass: { states: { 'sensor.a': sensor('sensor.a', { deliveries: [] }) } } });
+  self.setConfig({ entity: 'sensor.a', show_icon: false, show_refresh: true });
+  const html = self.header.innerHTML;
+  assert.ok(html.includes('<span class="status">1 active</span>'), html);
+  assert.ok(!html.includes('class="sub"'), html);
+  // Inside the right-hand group, before the buttons.
+  assert.ok(html.indexOf('class="buttons"') < html.indexOf('class="status"'), html);
+  assert.ok(html.indexOf('class="status"') < html.indexOf('refresh-btn'), html);
+});
+
+test('an unavailable Parcel sensor is still found through the entity registry', () => {
+  const hass = {
+    states: { 'sensor.other': { state: '3', attributes: {} }, 'sensor.parcel_deliveries': { state: 'unavailable', attributes: {} } },
+    entities: { 'sensor.other': { platform: 'other' }, 'sensor.parcel_deliveries': { platform: 'parcel' } },
+  };
+  assert.equal(ParcelCard._findEntity(hass), 'sensor.parcel_deliveries');
+});
+
+test('the language option wins over the Home Assistant language', () => {
+  assert.equal(parcelLang({ language: 'fr' }, { language: 'de' }), 'de');
+  assert.equal(parcelLang({ language: 'fr' }, { language: '' }), 'fr');
+  assert.equal(parcelLang({ language: 'fr' }, { language: 'xx' }), 'en');
+});

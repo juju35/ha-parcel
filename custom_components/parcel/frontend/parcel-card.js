@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.9.0';
+var PARCEL_CARD_VERSION = '0.10.0';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -9,6 +9,7 @@ var ParcelI18n = {
     default_title: 'Colis',
     empty: 'Aucun colis à afficher',
     no_entity: 'Capteur Parcel introuvable. Ajoutez l\'intégration Parcel ou renseignez « entity ».',
+    unavailable: 'Parcel est indisponible. Les colis s\'afficheront après la prochaine mise à jour réussie.',
     in_progress: 'en cours',
     expected: 'Prévu :',
     add: 'Ajouter un colis',
@@ -36,6 +37,8 @@ var ParcelI18n = {
       show_add: 'Afficher le bouton d\'ajout',
       show_refresh: 'Afficher le bouton Actualiser',
       max_events: 'Événements affichés quand un colis est déplié',
+      language: 'Langue',
+      lang_auto: 'Automatique',
     },
     status: {
       delivered: 'Livré',
@@ -54,6 +57,7 @@ var ParcelI18n = {
     default_title: 'Deliveries',
     empty: 'No deliveries to show',
     no_entity: 'Parcel sensor not found. Add the Parcel integration or set "entity".',
+    unavailable: 'Parcel is unavailable. The deliveries will show up after the next successful update.',
     in_progress: 'active',
     expected: 'Expected:',
     add: 'Add a delivery',
@@ -81,6 +85,8 @@ var ParcelI18n = {
       show_add: 'Show add button',
       show_refresh: 'Show refresh button',
       max_events: 'Events shown when a parcel is expanded',
+      language: 'Language',
+      lang_auto: 'Auto',
     },
     status: {
       delivered: 'Delivered',
@@ -99,6 +105,7 @@ var ParcelI18n = {
     default_title: 'Sendungen',
     empty: 'Keine Sendungen vorhanden',
     no_entity: 'Parcel-Sensor nicht gefunden. Füge die Parcel-Integration hinzu oder setze „entity“.',
+    unavailable: 'Parcel ist nicht verfügbar. Die Sendungen erscheinen nach der nächsten erfolgreichen Aktualisierung.',
     in_progress: 'aktiv',
     expected: 'Erwartet:',
     add: 'Sendung hinzufügen',
@@ -115,7 +122,7 @@ var ParcelI18n = {
     added: 'Sendung hinzugefügt. Sie erscheint nach der nächsten Aktualisierung von Parcel.',
     unknown_carrier: 'Wähle einen Versanddienstleister aus der Liste.',
     required: 'Sendungsnummer, Versanddienstleister und Beschreibung sind erforderlich.',
-    limit: 'Parcel erlaubt 20 Hinzufügungen pro Tag.',
+    limit: 'Parcel erlaubt maximal 20 neue Sendungen pro Tag.',
     no_events: 'Noch keine Ereignisse',
     copy: 'Sendungsnummer kopieren',
     editor: {
@@ -126,6 +133,8 @@ var ParcelI18n = {
       show_add: 'Schaltfläche „Hinzufügen“ anzeigen',
       show_refresh: 'Schaltfläche „Aktualisieren“ anzeigen',
       max_events: 'Angezeigte Ereignisse bei aufgeklappter Sendung',
+      language: 'Sprache',
+      lang_auto: 'Automatisch',
     },
     status: {
       delivered: 'Zugestellt',
@@ -134,7 +143,7 @@ var ParcelI18n = {
       awaiting_pickup: 'Zur Abholung bereit',
       out_for_delivery: 'In Zustellung',
       not_found: 'Nicht gefunden',
-      failed_attempt: 'Zustellversuch fehlgeschlagen',
+      failed_attempt: 'Fehlversuch',
       exception: 'Problem',
       info_received: 'Angekündigt',
       unknown: 'Unbekannt',
@@ -144,6 +153,7 @@ var ParcelI18n = {
     default_title: 'Envíos',
     empty: 'No hay envíos que mostrar',
     no_entity: 'No se encuentra el sensor de Parcel. Añade la integración Parcel o indica «entity».',
+    unavailable: 'Parcel no está disponible. Los envíos aparecerán tras la próxima actualización correcta.',
     in_progress: 'en curso',
     expected: 'Previsto:',
     add: 'Añadir un envío',
@@ -171,6 +181,8 @@ var ParcelI18n = {
       show_add: 'Mostrar el botón Añadir',
       show_refresh: 'Mostrar el botón Actualizar',
       max_events: 'Eventos mostrados al desplegar un envío',
+      language: 'Idioma',
+      lang_auto: 'Automático',
     },
     status: {
       delivered: 'Entregado',
@@ -212,8 +224,9 @@ function parcelDate(s) {
   return /\d/.test(String(s || '')) ? String(s) : '';
 }
 
-function parcelLang(hass) {
-  var lang = ((hass && (hass.locale?.language || hass.language)) || navigator.language || 'en').slice(0, 2);
+// The card's `language` option wins over the Home Assistant language.
+function parcelLang(hass, config) {
+  var lang = (config?.language || (hass && (hass.locale?.language || hass.language)) || navigator.language || 'en').slice(0, 2);
   return ParcelI18n[lang] ? lang : 'en';
 }
 
@@ -237,13 +250,22 @@ class ParcelCard extends HTMLElement {
         return ids[i];
       }
     }
+    // An unavailable sensor (failed update) has no attributes: fall back to the entity registry.
+    var entities = hass.entities || {};
+    var reg = Object.keys(entities);
+    for (var j = 0; j < reg.length; j++) {
+      if (reg[j].indexOf('sensor.') === 0 && entities[reg[j]].platform === 'parcel' && hass.states[reg[j]]) return reg[j];
+    }
     return null;
   }
 
   setConfig(config) {
     this._config = Object.assign({}, PARCEL_DEFAULTS, config || {});
     this._expanded = this._expanded || {};
-    this._lastState = null;
+    // Read the sensor now: with hass already set (visual editor, dashboard change), waiting for the
+    // next hass update would show "sensor not found" meanwhile.
+    var entityId = this._hass ? this._entityId() : null;
+    this._lastState = entityId ? this._hass.states[entityId] || null : null;
     if (this._hass) this._render();
   }
 
@@ -302,7 +324,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _t() {
-    return ParcelI18n[parcelLang(this._hass)];
+    return ParcelI18n[parcelLang(this._hass, this._config)];
   }
 
   _ensureShell() {
@@ -329,7 +351,10 @@ class ParcelCard extends HTMLElement {
       return;
     }
 
-    var deliveries = (st.attributes.deliveries || []).slice();
+    // A failed update (rate limit, Parcel down) leaves the sensor unavailable, without its attributes:
+    // say so instead of showing "unavailable active" and an empty list.
+    var unavailable = st.state === 'unavailable' || st.state === 'unknown';
+    var deliveries = (st.attributes?.deliveries || []).slice();
     if (!this._config.show_delivered) {
       deliveries = deliveries.filter((d) => d.status_code !== 0);
     }
@@ -344,11 +369,12 @@ class ParcelCard extends HTMLElement {
 
     header.innerHTML =
       '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name">' + parcelEsc(title) + '</div>' +
-      '<div class="sub">' + parcelEsc(st.state) + ' ' + parcelEsc(t.in_progress) + '</div>' +
       // The refresh error survives re-renders (hass updates) until the next refresh attempt.
       (this._refreshError ? '<div class="sub error">' + parcelEsc(this._refreshError) + '</div>' : '') +
       '</div></div>' +
       '<div class="buttons">' +
+      // Status pill on the right of the header (card convention), not a subtitle under the title.
+      (unavailable ? '' : `<span class="status">${parcelEsc(st.state)} ${parcelEsc(t.in_progress)}</span>`) +
       (this._config.show_refresh
         ? `<ha-icon-button class="refresh-btn${this._refreshing ? ' spinning' : ''}" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
         : '') +
@@ -361,6 +387,10 @@ class ParcelCard extends HTMLElement {
     var refreshBtn = header.querySelector('.refresh-btn');
     if (refreshBtn) refreshBtn.addEventListener('click', this._refresh.bind(this));
 
+    if (unavailable) {
+      list.innerHTML = `<div class="empty">${parcelEsc(t.unavailable)}</div>`;
+      return;
+    }
     if (!deliveries.length) {
       list.innerHTML = `<div class="empty">${parcelEsc(t.empty)}</div>`;
       return;
@@ -413,7 +443,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _formatExpected(d) {
-    var locale = (this._hass.locale?.language) || undefined;
+    var locale = this._config?.language || this._hass.locale?.language || undefined;
     var opts = { weekday: 'short', day: 'numeric', month: 'short' };
     var fmt = (ts, raw) => {
       if (ts) return new Date(ts * 1000).toLocaleString(locale, Object.assign({ hour: '2-digit', minute: '2-digit' }, opts));
@@ -446,7 +476,7 @@ class ParcelCard extends HTMLElement {
     if (this._refreshing) return;
     var data = {};
     var st = this._lastState;
-    if (st?.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
+    if (st?.attributes?.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
     this._refreshing = true;
     this._refreshError = null;
     this._render();
@@ -498,7 +528,7 @@ class ParcelCard extends HTMLElement {
     this._loadingCarriers = true;
     var st = this._lastState;
     var msg = { type: 'parcel/carriers' };
-    if (st?.attributes.config_entry_id) msg.config_entry_id = st.attributes.config_entry_id;
+    if (st?.attributes?.config_entry_id) msg.config_entry_id = st.attributes.config_entry_id;
     this._hass.callWS(msg).then((res) => {
       var carriers = res.carriers || {};
       // An empty list means the backend couldn't load the carriers yet: don't cache it, the next opening asks again.
@@ -551,7 +581,7 @@ class ParcelCard extends HTMLElement {
 
     var data = { tracking_number: tracking, carrier_code: code, description: description, send_push_confirmation: push };
     var st = this._lastState;
-    if (st?.attributes.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
+    if (st?.attributes?.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
 
     btn.disabled = true;
     btn.textContent = t.adding;
@@ -582,7 +612,9 @@ class ParcelCard extends HTMLElement {
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub.error { color: var(--error-color, #db4437); }',
-      '.buttons { display: flex; align-items: center; }',
+      '.buttons { display: flex; align-items: center; flex: none; }',
+      '.status { font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px; margin-right: 4px;' +
+        ' color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
@@ -625,21 +657,38 @@ class ParcelCard extends HTMLElement {
 }
 
 // ── parcel-card-editor ────────────────────────────────────────────────────────
-var PARCEL_EDITOR_SCHEMA = [
-  { name: 'entity', selector: { entity: { domain: 'sensor', integration: 'parcel' } } },
-  { name: 'title', selector: { text: {} } },
-  {
-    type: 'grid',
-    name: '',
-    schema: [
-      { name: 'show_icon', selector: { boolean: {} } },
-      { name: 'show_delivered', selector: { boolean: {} } },
-      { name: 'show_refresh', selector: { boolean: {} } },
-      { name: 'show_add', selector: { boolean: {} } },
-    ],
-  },
-  { name: 'max_events', selector: { number: { min: 1, max: 20, mode: 'box' } } },
-];
+function parcelEditorSchema(t) {
+  return [
+    { name: 'entity', selector: { entity: { domain: 'sensor', integration: 'parcel' } } },
+    { name: 'title', selector: { text: {} } },
+    {
+      type: 'grid',
+      name: '',
+      schema: [
+        { name: 'show_icon', selector: { boolean: {} } },
+        { name: 'show_delivered', selector: { boolean: {} } },
+        { name: 'show_refresh', selector: { boolean: {} } },
+        { name: 'show_add', selector: { boolean: {} } },
+      ],
+    },
+    { name: 'max_events', selector: { number: { min: 1, max: 20, mode: 'box' } } },
+    {
+      name: 'language',
+      selector: {
+        select: {
+          mode: 'dropdown',
+          options: [
+            { value: '', label: t.lang_auto },
+            { value: 'en', label: 'English' },
+            { value: 'fr', label: 'Français' },
+            { value: 'de', label: 'Deutsch' },
+            { value: 'es', label: 'Español' },
+          ],
+        },
+      },
+    },
+  ];
+}
 
 class ParcelCardEditor extends HTMLElement {
   setConfig(config) {
@@ -656,12 +705,17 @@ class ParcelCardEditor extends HTMLElement {
   _render() {
     if (!this._hass || !this._config) return;
     if (!this._form) {
-      var t = ParcelI18n[parcelLang(this._hass)].editor;
       this._form = document.createElement('ha-form');
-      this._form.schema = PARCEL_EDITOR_SCHEMA;
-      this._form.computeLabel = (field) => t[field.name] || field.name;
       this._form.addEventListener('value-changed', this._valueChanged.bind(this));
       this.appendChild(this._form);
+    }
+    // The labels follow the language picked in the editor: rebuilt only when it changes.
+    var lang = parcelLang(this._hass, this._config);
+    if (lang !== this._lang) {
+      this._lang = lang;
+      var t = ParcelI18n[lang].editor;
+      this._form.schema = parcelEditorSchema(t);
+      this._form.computeLabel = (field) => t[field.name] || field.name;
     }
     this._form.hass = this._hass;
     // Show the defaults as set, so the toggles match what the card does.
@@ -676,6 +730,7 @@ class ParcelCardEditor extends HTMLElement {
     });
     if (!value.title) delete value.title;
     if (!value.entity) delete value.entity;
+    if (!value.language) delete value.language;
     this._config = value;
     this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: value }, bubbles: true, composed: true }));
   }

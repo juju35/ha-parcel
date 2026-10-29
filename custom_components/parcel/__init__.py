@@ -86,7 +86,11 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     async def refresh(call: ServiceCall) -> None:
         # async_refresh (not async_request_refresh): the service returns once the
         # data is actually fetched, so the card's spinner matches the update.
-        await _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID)).async_refresh()
+        coordinator = _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID))
+        await coordinator.async_refresh()
+        # async_refresh never raises: report a failed update (rate limit, timeout, refused key) to the caller.
+        if not coordinator.last_update_success:
+            raise HomeAssistantError(f"Parcel: {coordinator.last_exception}")
 
     hass.services.async_register(DOMAIN, SERVICE_ADD_DELIVERY, add_delivery, ADD_DELIVERY_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_REFRESH, refresh, REFRESH_SCHEMA)

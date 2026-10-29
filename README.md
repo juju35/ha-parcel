@@ -84,6 +84,7 @@ type: custom:parcel-card
 | `show_add` | `true` | Show the add button |
 | `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |
 | `max_events` | `5` | Number of events shown when a delivery is expanded |
+| `language` | Auto | Force language: `en`, `fr`, `de` or `es` (auto-detects from HA settings) |
 
 Click a delivery to see its events, and the tracking number to copy it.
 
@@ -132,7 +133,7 @@ The integration polls the Parcel API at the update interval and exposes the deli
 
 ```bash
 pip install -r requirements_test.txt && pytest
-pip install playwright && playwright install chromium
+pip install playwright==1.64.1 && playwright install chromium
 python scripts/screenshots.py   # renders the card stills and the refreshing.gif animation (needs ffmpeg) into screenshots/
 ```
 
@@ -146,7 +147,7 @@ Python tests live in `tests/` (pytest); the card's JavaScript tests live in `tes
 
 ## Translations
 
-The integration and the card follow the language of Home Assistant. Currently supported:
+The integration and the card follow the language of Home Assistant (the card's `language` option can force another one). Currently supported:
 
 | Language | Code |
 |---|---|
