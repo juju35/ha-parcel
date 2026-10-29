@@ -28,6 +28,8 @@ custom_components/parcel/
 ## Card
 - Served from the `/parcel_static` static path and added to the Lovelace resources collection at startup (like ha-zoraxy), URL versioned with the file's md5. Falls back to `add_extra_js_url` when resources are in YAML mode. `_lovelace_resources()` reads `hass.data["lovelace"]` as a dict (before 2025.2) or a dataclass (`mode`, then `resource_mode` from 2026.2).
 - Reads `sensor.*` with `deliveries` and `config_entry_id` attributes; adds via `parcel.add_delivery`, carriers via websocket `parcel/carriers`.
+- An unavailable sensor (failed update) has no attributes: the card then shows a dedicated message, and finds the sensor through `hass.entities` (`platform: parcel`). `parcel.refresh` raises when the update fails (`async_refresh` itself never raises), which the card shows under the title.
+- Language: the card's `language` option, else Home Assistant's.
 
 ## Release
 HACS downloads the repository itself (no `zip_release`). Before tagging `vX.Y.Z`, bump the version in manifest.json and `PARCEL_CARD_VERSION` in the card (the card URL is versioned with the file's md5, not with the version). Pushing to main publishes release `vX.Y.Z` (tag, generated notes, `parcel.zip`) when that tag doesn't exist yet; the workflow fails if the two versions differ. Tags can't be pushed from Claude sessions, hence this flow. Release notes come from the version's CHANGELOG.md section; rerun them on an existing release with the "Update release notes" workflow (input `tag`).
