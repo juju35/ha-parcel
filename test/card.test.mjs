@@ -231,6 +231,17 @@ test('an unavailable sensor shows a dedicated message, without a count', () => {
   assert.ok(!self.header.innerHTML.includes('unavailable'), self.header.innerHTML);
 });
 
+test('the active count is a status pill on the right of the header, not a subtitle', () => {
+  const self = renderable({ _hass: { states: { 'sensor.a': sensor('sensor.a', { deliveries: [] }) } } });
+  self.setConfig({ entity: 'sensor.a', show_icon: false, show_refresh: true });
+  const html = self.header.innerHTML;
+  assert.ok(html.includes('<span class="status">1 active</span>'), html);
+  assert.ok(!html.includes('class="sub"'), html);
+  // Inside the right-hand group, before the buttons.
+  assert.ok(html.indexOf('class="buttons"') < html.indexOf('class="status"'), html);
+  assert.ok(html.indexOf('class="status"') < html.indexOf('refresh-btn'), html);
+});
+
 test('an unavailable Parcel sensor is still found through the entity registry', () => {
   const hass = {
     states: { 'sensor.other': { state: '3', attributes: {} }, 'sensor.parcel_deliveries': { state: 'unavailable', attributes: {} } },

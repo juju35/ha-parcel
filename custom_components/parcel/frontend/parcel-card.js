@@ -369,11 +369,12 @@ class ParcelCard extends HTMLElement {
 
     header.innerHTML =
       '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name">' + parcelEsc(title) + '</div>' +
-      (unavailable ? '' : `<div class="sub">${parcelEsc(st.state)} ${parcelEsc(t.in_progress)}</div>`) +
       // The refresh error survives re-renders (hass updates) until the next refresh attempt.
       (this._refreshError ? '<div class="sub error">' + parcelEsc(this._refreshError) + '</div>' : '') +
       '</div></div>' +
       '<div class="buttons">' +
+      // Status pill on the right of the header (card convention), not a subtitle under the title.
+      (unavailable ? '' : `<span class="status">${parcelEsc(st.state)} ${parcelEsc(t.in_progress)}</span>`) +
       (this._config.show_refresh
         ? `<ha-icon-button class="refresh-btn${this._refreshing ? ' spinning' : ''}" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
         : '') +
@@ -611,7 +612,9 @@ class ParcelCard extends HTMLElement {
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub.error { color: var(--error-color, #db4437); }',
-      '.buttons { display: flex; align-items: center; }',
+      '.buttons { display: flex; align-items: center; flex: none; }',
+      '.status { font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px; margin-right: 4px;' +
+        ' color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
