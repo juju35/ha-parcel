@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.10.0';
+var PARCEL_CARD_VERSION = '0.10.1';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -323,6 +323,17 @@ class ParcelCard extends HTMLElement {
     return this._autoEntity;
   }
 
+  // Parcel account of the sensor, sent with the actions so several accounts can be used. An unavailable
+  // sensor has no attributes: the account then comes from the entity and device registries.
+  _entryId() {
+    var st = this._lastState;
+    if (st?.attributes?.config_entry_id) return st.attributes.config_entry_id;
+    var entityId = this._entityId();
+    var ent = entityId ? this._hass?.entities?.[entityId] : null;
+    var dev = ent?.device_id ? this._hass?.devices?.[ent.device_id] : null;
+    return (dev && Array.isArray(dev.config_entries) && dev.config_entries[0]) || null;
+  }
+
   _t() {
     return ParcelI18n[parcelLang(this._hass, this._config)];
   }
@@ -475,8 +486,8 @@ class ParcelCard extends HTMLElement {
   _refresh() {
     if (this._refreshing) return;
     var data = {};
-    var st = this._lastState;
-    if (st?.attributes?.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
+    var entryId = this._entryId();
+    if (entryId) data.config_entry_id = entryId;
     this._refreshing = true;
     this._refreshError = null;
     this._render();
@@ -526,9 +537,9 @@ class ParcelCard extends HTMLElement {
   _loadCarriers() {
     if (this._carriers || this._loadingCarriers) return;
     this._loadingCarriers = true;
-    var st = this._lastState;
     var msg = { type: 'parcel/carriers' };
-    if (st?.attributes?.config_entry_id) msg.config_entry_id = st.attributes.config_entry_id;
+    var entryId = this._entryId();
+    if (entryId) msg.config_entry_id = entryId;
     this._hass.callWS(msg).then((res) => {
       var carriers = res.carriers || {};
       // An empty list means the backend couldn't load the carriers yet: don't cache it, the next opening asks again.
@@ -580,8 +591,8 @@ class ParcelCard extends HTMLElement {
     }
 
     var data = { tracking_number: tracking, carrier_code: code, description: description, send_push_confirmation: push };
-    var st = this._lastState;
-    if (st?.attributes?.config_entry_id) data.config_entry_id = st.attributes.config_entry_id;
+    var entryId = this._entryId();
+    if (entryId) data.config_entry_id = entryId;
 
     btn.disabled = true;
     btn.textContent = t.adding;
