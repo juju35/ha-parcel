@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.10.2';
+var PARCEL_CARD_VERSION = '0.10.3';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -469,7 +469,7 @@ class ParcelCard extends HTMLElement {
       if (!raw) return '';
       var parsed = parcelParseDate(raw);
       if (Number.isNaN(parsed)) return raw;
-      var hasTime = /\d{2}:\d{2}/.test(raw) && !/00:00(:00)?$/.test(raw);
+      var hasTime = /\d{2}:\d{2}/.test(raw) && !/(^|[ T])00:00(:00)?$/.test(String(raw).trim());
       return new Date(parsed).toLocaleString(locale, hasTime ? Object.assign({ hour: '2-digit', minute: '2-digit' }, opts) : opts);
     };
     var start = fmt(d.timestamp_expected, d.date_expected);
