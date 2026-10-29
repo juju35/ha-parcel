@@ -4,6 +4,10 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import vm from 'node:vm';
 
+// Run west of UTC: a date-only "YYYY-MM-DD" parsed as UTC midnight shows the day before there,
+// which CI runners (UTC) would never reveal. Node applies a TZ change made at runtime.
+process.env.TZ = 'America/New_York';
+
 const source = readFileSync(new URL('../custom_components/parcel/frontend/parcel-card.js', import.meta.url), 'utf8');
 const context = {
   HTMLElement: class {},
@@ -152,6 +156,20 @@ test('_formatExpected shows a range only when the end differs', () => {
   assert.equal(card._formatExpected.call(self, { date_expected: 'soon' }), 'soon');
 });
 
+test('_formatExpected reads a date without time as a local date, not UTC midnight', () => {
+  const self = { _hass: { locale: { language: 'en' } } };
+  const dateOnly = card._formatExpected.call(self, { date_expected: '2026-10-20' });
+  assert.equal(dateOnly, 'Tue, Oct 20');
+  assert.equal(dateOnly, card._formatExpected.call(self, { date_expected: '2026-10-20 00:00:00' }));
+  assert.equal(card._formatExpected.call(self, { date_expected: '2026-10-20T00:00:00' }), 'Tue, Oct 20');
+  // A real time keeps its hour, and the end of a date-only range is local too.
+  assert.match(card._formatExpected.call(self, { date_expected: '2026-10-20 14:30:00' }), /^Tue, Oct 20.*(2:30|14:30)/);
+  assert.equal(
+    card._formatExpected.call(self, { date_expected: '2026-10-20', date_expected_end: '2026-10-22' }),
+    'Tue, Oct 20 – Thu, Oct 22',
+  );
+});
+
 test('set hass redraws only when the sensor state object changes', () => {
   let renders = 0;
   const st = sensor('sensor.a');
@@ -201,6 +219,27 @@ test('deliveries sort by expected date even when Date.parse is strict (Safari/We
   const order = [...list.innerHTML.matchAll(/data-id="ups:(\w+)"/g)].map((m) => m[1]);
   // Active sorted by date, unknown date last, delivered after the active ones.
   assert.deepEqual(order, ['soon', 'late', 'ts', 'none', 'done']);
+});
+
+test('deliveries sort a date without time as local midnight of that day', () => {
+  // West of UTC, "2026-10-20" read as UTC midnight would land on Oct 19 evening, before a
+  // delivery expected on Oct 19 at 22:00.
+  const header = { querySelector: () => null };
+  const list = {};
+  const delivery = (id, extra) => ({ carrier_code: 'ups', tracking_number: id, status_code: 10, events: [], ...extra });
+  const self = Object.assign(Object.create(ParcelCard.prototype), {
+    _config: { entity: 'sensor.a', show_delivered: true, show_icon: false, show_refresh: false, show_add: false, max_events: 5 },
+    _hass: { locale: { language: 'en' } },
+    _lastState: sensor('sensor.a', {
+      deliveries: [delivery('day', { date_expected: '2026-10-20' }), delivery('eve', { date_expected: '2026-10-19 22:00:00' })],
+    }),
+    _root: { querySelector: (sel) => (sel === '.header' ? header : list) },
+    _expanded: {},
+    _ensureShell() {},
+  });
+  self._render();
+  const order = [...list.innerHTML.matchAll(/data-id="ups:(\w+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ['eve', 'day']);
 });
 
 // Minimal card instance whose _render writes into plain objects.

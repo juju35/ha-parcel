@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.10.1';
+var PARCEL_CARD_VERSION = '0.10.2';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -224,6 +224,15 @@ function parcelDate(s) {
   return /\d/.test(String(s || '')) ? String(s) : '';
 }
 
+// Parse a Parcel expected date into milliseconds (NaN when unparseable). "YYYY-MM-DD HH:MM:SS"
+// needs the "T" for Safari/WebKit, and a date alone ("YYYY-MM-DD") is read by Date.parse as UTC
+// midnight, i.e. the day before west of UTC: give it a local midnight instead.
+function parcelParseDate(raw) {
+  var s = String(raw || '').trim().replace(' ', 'T');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) s += 'T00:00:00';
+  return Date.parse(s);
+}
+
 // The card's `language` option wins over the Home Assistant language.
 function parcelLang(hass, config) {
   var lang = (config?.language || (hass && (hass.locale?.language || hass.language)) || navigator.language || 'en').slice(0, 2);
@@ -369,9 +378,8 @@ class ParcelCard extends HTMLElement {
     if (!this._config.show_delivered) {
       deliveries = deliveries.filter((d) => d.status_code !== 0);
     }
-    // Active first, then by expected date. Same ISO normalization as _formatExpected:
-    // "YYYY-MM-DD HH:MM:SS" is not parseable by Safari/WebKit without the "T".
-    var expectedTs = (d) => d.timestamp_expected || Date.parse(String(d.date_expected || '').replace(' ', 'T')) / 1000 || Infinity;
+    // Active first, then by expected date, parsed like _formatExpected does (parcelParseDate).
+    var expectedTs = (d) => d.timestamp_expected || parcelParseDate(d.date_expected) / 1000 || Infinity;
     deliveries.sort((a, b) => {
       var da = a.status_code === 0 ? 1 : 0, db = b.status_code === 0 ? 1 : 0;
       if (da !== db) return da - db;
@@ -459,7 +467,7 @@ class ParcelCard extends HTMLElement {
     var fmt = (ts, raw) => {
       if (ts) return new Date(ts * 1000).toLocaleString(locale, Object.assign({ hour: '2-digit', minute: '2-digit' }, opts));
       if (!raw) return '';
-      var parsed = Date.parse(String(raw).replace(' ', 'T'));
+      var parsed = parcelParseDate(raw);
       if (Number.isNaN(parsed)) return raw;
       var hasTime = /\d{2}:\d{2}/.test(raw) && !/00:00(:00)?$/.test(raw);
       return new Date(parsed).toLocaleString(locale, hasTime ? Object.assign({ hour: '2-digit', minute: '2-digit' }, opts) : opts);

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.2
+
+### Fixes
+- Card: an expected delivery date without a time (for example `2026-10-20`) no longer shows, and sorts, as the day before in time zones west of UTC (the Americas).
+
 ## 0.10.1
 
 ### Fixes
