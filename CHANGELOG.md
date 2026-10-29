@@ -4,6 +4,7 @@
 
 ### Changes
 - Card: new `language` option (also in the visual editor) to force English, French, German or Spanish instead of the Home Assistant language.
+- Card: the active delivery count is now a status pill on the right of the header instead of a subtitle under the title.
 
 ### Fixes
 - `parcel.refresh` now fails when the update fails (rate limit, timeout, refused key), so the card shows the error under its title instead of silently succeeding.
@@ -14,6 +15,7 @@
 ### Maintenance
 - Screenshots workflow: fork-safe checkout, Playwright pinned to 1.64.1, retried Chromium download and explicit failure after three apt attempts.
 - Branch cleanup workflow: skipped for closed fork pull requests.
+- Screenshots workflow: after pushing a screenshot commit, it re-runs the Lint, Validate and HACS checks on it through `workflow_dispatch` (a push made with `GITHUB_TOKEN` starts no `pull_request` run).
 
 ## 0.9.0
 
