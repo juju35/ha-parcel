@@ -111,7 +111,9 @@ While parcels refresh, the card animates: the refresh button spins until the upd
 |---|---|
 | ![refresh animation](screenshots/refreshing.gif) | ![refresh animation dark](screenshots/refreshing-dark.gif) |
 
-| Light (a delivery expanded) | Dark |
+The stills show the card with one delivery expanded to its events.
+
+| Light | Dark |
 |---|---|
 | ![card](screenshots/card.png) | ![card dark](screenshots/card-dark.png) |
 

@@ -158,8 +158,8 @@ SHOTS = [
         "file": "card-dark",
         "theme": "dark",
         "lang": "en",
-        "config": {"title": "Deliveries", "show_delivered": True},
-        "expand": None,
+        "config": {"show_delivered": True},
+        "expand": "colissimo:6A12345678901",
     },
 ]
 
