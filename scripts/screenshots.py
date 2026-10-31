@@ -259,7 +259,12 @@ def main():
             )
             print(f"screenshots/{shot['file']}.png")
             page.close()
-        animate(context, {"file": "refreshing", "theme": "light", "lang": "en", "config": {"show_delivered": True}})
+        # Every animation in both themes: the light GIF gets a -dark twin with the exact same setup.
+        for theme, suffix in (("light", ""), ("dark", "-dark")):
+            animate(
+                context,
+                {"file": f"refreshing{suffix}", "theme": theme, "lang": "en", "config": {"show_delivered": True}},
+            )
         browser.close()
 
 
