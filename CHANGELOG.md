@@ -3,7 +3,7 @@
 ## 0.10.6 - 2026-11-01
 
 ### Changes
-- Added Italian, Dutch, European Portuguese and Polish translations: `it`, `nl`, `pt` and `pl` for the integration and the card, also offered in the card's `language` option. Brazilian Portuguese (`pt-BR`) falls back to European Portuguese.
+- Added Italian, Dutch, European Portuguese and Polish translations: `it`, `nl`, `pt` and `pl` for the integration and the card, also offered in the card's `language` option. Brazilian Portuguese (`pt-BR`): pt-BR uses the European Portuguese texts, in the integration (`pt-BR.json`, a copy of `pt.json`) and the card.
 
 ## 0.10.5 - 2026-11-01
 

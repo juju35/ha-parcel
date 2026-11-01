@@ -120,7 +120,7 @@ test('the editor offers every card language, Serbian in Cyrillic and in Latin sc
   );
   assert.equal(options.find((o) => o.value === 'it').label, 'Italiano');
   assert.equal(options.find((o) => o.value === 'nl').label, 'Nederlands');
-  assert.equal(options.find((o) => o.value === 'pt').label, 'Português');
+  assert.equal(options.find((o) => o.value === 'pt').label, 'Português (Portugal)');
   assert.equal(options.find((o) => o.value === 'pl').label, 'Polski');
   assert.equal(options.find((o) => o.value === 'sr').label, 'Српски');
   assert.equal(options.find((o) => o.value === 'sr-Latn').label, 'Srpski (latinica)');

@@ -37,7 +37,7 @@ def _strings(data: dict, prefix: str = "") -> dict[str, str]:
     return strings
 
 
-LANGUAGES = ["fr", "de", "es", "sr", "sr-Latn", "it", "nl", "pt", "pl"]
+LANGUAGES = ["fr", "de", "es", "sr", "sr-Latn", "it", "nl", "pt", "pt-BR", "pl"]
 
 
 @pytest.mark.parametrize("lang", LANGUAGES)

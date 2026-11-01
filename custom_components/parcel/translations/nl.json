@@ -55,7 +55,7 @@
       "description": "Voegt een zending toe aan Parcel. Parcel staat 20 toevoegingen per dag toe.",
       "fields": {
         "tracking_number": { "name": "Trackingnummer", "description": "Het trackingnummer van de vervoerder." },
-        "carrier_code": { "name": "Vervoerderscode", "description": "Vervoerderscode van Parcel, bijvoorbeeld ups, dhl of pholder voor een tijdelijke zending." },
+        "carrier_code": { "name": "Vervoerderscode", "description": "Vervoerderscode van Parcel, bijvoorbeeld ups, dhl of pholder voor een zending zonder trackingnummer." },
         "description": { "name": "Omschrijving", "description": "Naam die in Parcel wordt getoond." },
         "language": { "name": "Taal", "description": "Taalcode van twee letters voor de trackinggebeurtenissen. Standaard de taal van Home Assistant." },
         "send_push_confirmation": { "name": "Pushbevestiging", "description": "Parcel stuurt een pushmelding zodra de zending is toegevoegd." },
