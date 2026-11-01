@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Wygeneruj klucz API na web.parcelapp.net (wymagany jest Parcel Premium).",
+        "data": { "api_key": "Klucz API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Klucz API Parcel został odrzucony. Wprowadź nowy.",
+        "data": { "api_key": "Klucz API" }
+      }
+    },
+    "error": {
+      "already_configured": "Ten klucz API jest już używany przez inny wpis Parcel.",
+      "invalid_auth": "Nieprawidłowy klucz API.",
+      "cannot_connect": "Nie można połączyć się z Parcel lub osiągnięto godzinowy limit zapytań. Spróbuj ponownie później."
+    },
+    "abort": {
+      "already_configured": "Ten klucz API jest już skonfigurowany.",
+      "reauth_successful": "Klucz API został zaktualizowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje Parcel",
+        "data": {
+          "filter_mode": "Wyświetlane przesyłki",
+          "scan_interval": "Interwał aktualizacji"
+        },
+        "data_description": {
+          "scan_interval": "Parcel pozwala na 20 zapytań na godzinę, więc minimum to 5 minut."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Ostatnie (w drodze i niedawno doręczone)",
+        "active": "Tylko w drodze"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Przesyłki" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Dodaj przesyłkę",
+      "description": "Dodaje przesyłkę do Parcel. Parcel pozwala na 20 dodań dziennie.",
+      "fields": {
+        "tracking_number": { "name": "Numer przesyłki", "description": "Numer śledzenia przewoźnika." },
+        "carrier_code": { "name": "Kod przewoźnika", "description": "Kod przewoźnika w Parcel, na przykład ups, dhl lub pholder dla przesyłki bez śledzenia." },
+        "description": { "name": "Opis", "description": "Nazwa wyświetlana w Parcel." },
+        "language": { "name": "Język", "description": "Dwuliterowy kod języka dla zdarzeń śledzenia. Domyślnie język Home Assistant." },
+        "send_push_confirmation": { "name": "Potwierdzenie push", "description": "Parcel wyśle powiadomienie push po dodaniu przesyłki." },
+        "postcode": { "name": "Kod pocztowy", "description": "Tylko dla przewoźników, którzy go wymagają." },
+        "email": { "name": "E-mail", "description": "Tylko dla usług, które go wymagają, takich jak Apple Store." },
+        "config_entry_id": { "name": "Konto Parcel", "description": "Potrzebne tylko, gdy skonfigurowano kilka kont Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Odśwież",
+      "description": "Pobiera przesyłki teraz. Wlicza się do limitu 20 zapytań na godzinę.",
+      "fields": {
+        "config_entry_id": { "name": "Konto Parcel", "description": "Potrzebne tylko, gdy skonfigurowano kilka kont Parcel." }
+      }
+    }
+  }
+}

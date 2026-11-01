@@ -18,8 +18,8 @@ const context = {
   console,
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, ParcelCard };`, context);
-const { parcelEsc, parcelDate, parcelLang, ParcelCard } = context.parcel;
+vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard };`, context);
+const { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard } = context.parcel;
 const card = ParcelCard.prototype;
 
 const sensor = (id, extra = {}) => ({
@@ -50,10 +50,104 @@ test('parcelLang follows Home Assistant and falls back to English', () => {
   assert.equal(parcelLang({ locale: { language: 'xx' } }), 'en');
 });
 
+test('parcelLocale gives Intl European Portuguese for pt and keeps full locales', () => {
+  assert.equal(parcelLocale({ locale: { language: 'pt' } }), 'pt-PT');
+  assert.equal(parcelLocale({ language: 'pt' }), 'pt-PT');
+  assert.equal(parcelLocale({ locale: { language: 'pt-BR' } }), 'pt-BR');
+  assert.equal(parcelLocale({ locale: { language: 'fr-CA' } }), 'fr-CA');
+  assert.equal(parcelLocale({ locale: { language: 'xx' } }), 'en');
+  assert.equal(parcelLocale({ locale: { language: 'sr-Latn' } }), 'sr-Latn');
+  assert.equal(parcelLocale({ locale: { language: 'sr-Latn' } }, { language: 'sr' }), 'sr');
+  // The card's language option wins over Home Assistant.
+  assert.equal(parcelLocale({ locale: { language: 'pt-BR' } }, { language: 'fr' }), 'fr');
+  assert.equal(parcelLocale({ locale: { language: 'pt-BR' } }, { language: 'pt' }), 'pt-PT');
+  assert.equal(parcelLocale({ locale: { language: 'en' } }, { language: 'pt-BR' }), 'pt-BR');
+  const date = new Date(2026, 10, 1).toLocaleDateString(parcelLocale({ language: 'pt' }), { day: 'numeric', month: 'short', year: 'numeric' });
+  assert.ok(!date.includes(' de nov. de '), date);
+});
+
+test('parcelLang keeps a full language code it knows, else its part before the dash', () => {
+  assert.equal(parcelLang({ locale: { language: 'fr-FR' } }), 'fr');
+  assert.equal(parcelLang({ locale: { language: 'sr-Latn' } }), 'sr-Latn');
+  assert.equal(parcelLang({ language: 'sr-Latn' }), 'sr-Latn');
+  assert.equal(parcelLang({ locale: { language: 'sr' } }), 'sr');
+  assert.equal(parcelLang({ language: 'fr' }, { language: 'sr-Latn' }), 'sr-Latn');
+});
+
+test('parcelLang resolves Italian, Dutch, Portuguese and Polish, Brazilian Portuguese included', () => {
+  assert.equal(parcelLang({ locale: { language: 'it-IT' } }), 'it');
+  assert.equal(parcelLang({ locale: { language: 'nl-BE' } }), 'nl');
+  assert.equal(parcelLang({ locale: { language: 'pt' } }), 'pt');
+  // No Brazilian dictionary: pt-BR falls back to European Portuguese on purpose.
+  assert.equal(parcelLang({ locale: { language: 'pt-BR' } }), 'pt');
+  assert.equal(parcelLang({ locale: { language: 'pl-PL' } }), 'pl');
+  assert.equal(parcelLang({ locale: { language: 'sr-Latn' } }), 'sr-Latn');
+  assert.equal(parcelLang({ locale: { language: 'ja' } }), 'en');
+  assert.equal(parcelLang({ language: 'fr' }, { language: 'pl' }), 'pl');
+});
+
+const CARD_LANGS = ['fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl'];
+
 test('every card language has exactly the English keys', () => {
   const keys = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? keys(v, `${p}${k}.`) : [`${p}${k}`])).sort();
   const i18n = vm.runInContext('ParcelI18n', context);
-  for (const lang of ['fr', 'de', 'es']) assert.deepEqual(keys(i18n[lang]), keys(i18n.en), lang);
+  for (const lang of CARD_LANGS) assert.deepEqual(keys(i18n[lang] || {}), keys(i18n.en), lang);
+  assert.deepEqual(Object.keys(i18n).sort(), ['en', ...CARD_LANGS].sort());
+});
+
+test('every card language keeps the English placeholders, array lengths and has no empty value', () => {
+  const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' && !Array.isArray(v) ? flat(v, `${p}${k}.`) : [[`${p}${k}`, v]]));
+  const holders = (s) => (String(s).match(/\{\w+\}/g) || []).sort();
+  const i18n = vm.runInContext('ParcelI18n', context);
+  const en = Object.fromEntries(flat(i18n.en));
+  for (const lang of CARD_LANGS) {
+    for (const [key, value] of flat(i18n[lang] || {})) {
+      if (Array.isArray(en[key])) assert.equal(value.length, en[key].length, `${lang} ${key}`);
+      assert.deepEqual(holders(value), holders(en[key]), `${lang} ${key}`);
+      assert.ok(String(value).trim(), `${lang} ${key} is empty`);
+    }
+  }
+});
+
+test('Serbian strings keep the English placeholders and stay in one script', () => {
+  const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? flat(v, `${p}${k}.`) : [[`${p}${k}`, String(v)]]));
+  const holders = (s) => (s.match(/\{\w+\}/g) || []).sort();
+  const i18n = vm.runInContext('ParcelI18n', context);
+  const en = Object.fromEntries(flat(i18n.en));
+  // Proper names, brands and config keys stay in Latin letters in the Cyrillic text.
+  const allowed = /Parcel|entity/g;
+  for (const lang of ['sr', 'sr-Latn']) {
+    const entries = flat(i18n[lang] || {});
+    assert.equal(entries.length, Object.keys(en).length, lang);
+    for (const [key, value] of entries) {
+      assert.deepEqual(holders(value), holders(en[key]), `${lang} ${key}`);
+      if (lang === 'sr') assert.doesNotMatch(value.replace(allowed, ''), /[A-Za-z]/, `${lang} ${key}`);
+      else assert.doesNotMatch(value, /[Ѐ-ӿ]/, `${lang} ${key}`);
+    }
+  }
+});
+
+test('the editor offers every card language, Serbian in Cyrillic and in Latin script', () => {
+  const schema = vm.runInContext('parcelEditorSchema', context)(vm.runInContext('ParcelI18n.en.editor', context));
+  const options = schema.find((f) => f.name === 'language').selector.select.options;
+  assert.deepEqual(
+    [...options.map((o) => o.value)],
+    ['', 'en', 'fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl'],
+  );
+  assert.equal(options.find((o) => o.value === 'it').label, 'Italiano');
+  assert.equal(options.find((o) => o.value === 'nl').label, 'Nederlands');
+  assert.equal(options.find((o) => o.value === 'pt').label, 'Português (Portugal)');
+  assert.equal(options.find((o) => o.value === 'pl').label, 'Polski');
+  assert.equal(options.find((o) => o.value === 'sr').label, 'Српски');
+  assert.equal(options.find((o) => o.value === 'sr-Latn').label, 'Srpski (latinica)');
+});
+
+test('_formatExpected writes Serbian dates in the script of the language', () => {
+  const latn = card._formatExpected.call({ _hass: { locale: { language: 'sr-Latn' } } }, { date_expected: '2026-10-20' });
+  const cyrl = card._formatExpected.call({ _hass: { locale: { language: 'sr' } } }, { date_expected: '2026-10-20' });
+  assert.match(latn, /[a-z]/);
+  assert.doesNotMatch(latn, /[Ѐ-ӿ]/);
+  assert.match(cyrl, /[Ѐ-ӿ]/);
 });
 
 test('getStubConfig picks the Parcel sensor only', () => {
@@ -375,4 +469,147 @@ test('the account is left out when neither the attribute nor the registries know
   // The attribute wins over the registries.
   const ok = sensor('sensor.a');
   assert.equal(card._entryId.call({ ...base, _lastState: ok, _hass: unavailableHass() }), 'abc');
+});
+
+// ── accessibility (review pass 8) ─────────────────────────────────────────────
+const styles = () => ParcelCard._styles();
+const deliveryOf = (id, extra = {}) => ({ carrier_code: 'ups', tracking_number: id, status_code: 10, status: 'in_transit', events: [], ...extra });
+const renderDeliveries = (deliveries, extra = {}) => {
+  const self = renderable({ _hass: { locale: { language: 'en' }, states: { 'sensor.a': sensor('sensor.a', { deliveries }) } }, ...extra });
+  self.setConfig({ entity: 'sensor.a', show_icon: false, show_delivered: true });
+  return self;
+};
+
+test('a delivered row is not faded as a whole: its texts keep a readable contrast', () => {
+  const css = styles();
+  assert.doesNotMatch(css, /\.delivery\.done\s*\{[^}]*opacity/);
+  assert.match(css, /\.delivery\.done \.desc \{[^}]*color: var\(--secondary-text-color\)/);
+});
+
+test('status texts are mixed with the text color, the state color stays on the chip background', () => {
+  const css = styles();
+  const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
+  assert.match(rule('.chip'), /color: color-mix\(in srgb, var\(--c\) 50%, var\(--primary-text-color\)\)/);
+  assert.match(rule('.chip'), /background: color-mix\(in srgb, var\(--c\) 15%, transparent\)/);
+  assert.match(rule('.status'), /color: color-mix\(in srgb, var\(--primary-color\) 50%, var\(--primary-text-color\)\)/);
+  assert.match(rule('.actions .submit'), /color: color-mix\(in srgb, var\(--primary-color\) 50%, var\(--primary-text-color\)\)/);
+  for (const sel of ['.sub.error', '.msg.error', '.msg.ok']) assert.match(rule(sel), /color: color-mix\(in srgb, var\(--(error|success)-color, #[0-9a-f]+\) 50%, var\(--primary-text-color\)\)/, sel);
+});
+
+test('animations and transitions stop with prefers-reduced-motion', () => {
+  const css = styles();
+  const media = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
+  assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'), 'no reduced-motion media query');
+  assert.match(media, /\.refresh-btn\.spinning ha-icon \{[^}]*animation: none/);
+  assert.match(media, /\.chevron \{[^}]*transition: none/);
+});
+
+test('a delivery row and its tracking number are keyboard buttons', () => {
+  const self = renderDeliveries([deliveryOf('A1')]);
+  const html = self.list.innerHTML;
+  assert.match(html, /<div class="row" role="button" tabindex="0" aria-expanded="false">/);
+  assert.match(html, /<span class="tracking" role="button" tabindex="0" data-copy="A1"/);
+  self._expanded['ups:A1'] = true;
+  self._render();
+  assert.match(self.list.innerHTML, /aria-expanded="true"/);
+  const css = styles();
+  assert.match(css, /\.row:focus-visible, \.tracking:focus-visible \{[^}]*outline: 2px solid var\(--primary-color\)/);
+  assert.match(css, /\.delivery:hover \{/);
+});
+
+// A keydown event whose target sits inside a delivery row (or on its tracking number).
+const keyEvent = (key, { copy = null, id = 'ups:A1' } = {}) => {
+  const item = { getAttribute: () => id };
+  const copyEl = copy ? { getAttribute: () => copy, classList: { add() {}, remove() {} } } : null;
+  const ev = {
+    key,
+    prevented: false,
+    stopped: false,
+    preventDefault() { this.prevented = true; },
+    stopPropagation() { this.stopped = true; },
+    target: {
+      closest: (sel) => (sel === '[data-copy]' ? copyEl : sel === '.row' ? {} : sel === '.delivery' ? item : null),
+    },
+  };
+  return ev;
+};
+
+test('Enter and Space on a row toggle it like a click, other keys do nothing', () => {
+  let renders = 0;
+  const self = { _expanded: {}, _render: () => renders++, _onListClick: card._onListClick, _copy: card._copy };
+  const enter = keyEvent('Enter');
+  card._onListKeydown.call(self, enter);
+  assert.equal(self._expanded['ups:A1'], true);
+  assert.ok(enter.prevented);
+  const space = keyEvent(' ');
+  card._onListKeydown.call(self, space);
+  assert.equal(self._expanded['ups:A1'], false);
+  assert.ok(space.prevented, 'Space must not scroll the page');
+  card._onListKeydown.call(self, keyEvent('a'));
+  card._onListKeydown.call(self, keyEvent('Tab'));
+  assert.equal(renders, 2);
+});
+
+test('Enter on the tracking number copies it without toggling the row', async () => {
+  const copied = [];
+  const prev = context.navigator.clipboard;
+  context.navigator.clipboard = { writeText: (s) => { copied.push(s); return Promise.resolve(); } };
+  try {
+    const self = { _expanded: {}, _render() { throw new Error('no toggle'); }, _onListClick: card._onListClick, _copy: card._copy };
+    card._onListKeydown.call(self, keyEvent('Enter', { copy: '1Z999' }));
+    await flush();
+    assert.deepEqual(copied, ['1Z999']);
+    assert.deepEqual(self._expanded, {});
+  } finally {
+    context.navigator.clipboard = prev;
+  }
+});
+
+test('copying gives a visual feedback, and a refused copy is caught', async () => {
+  const prev = context.navigator.clipboard;
+  const classes = new Set();
+  const el = { getAttribute: () => '1Z', classList: { add: (c) => classes.add(c), remove: (c) => classes.delete(c) } };
+  const rejections = [];
+  const onRejection = (err) => rejections.push(err);
+  process.on('unhandledRejection', onRejection);
+  try {
+    context.navigator.clipboard = { writeText: () => Promise.resolve() };
+    card._copy.call({}, el);
+    await flush();
+    assert.ok(classes.has('copied'), 'no feedback after a successful copy');
+    classes.clear();
+    context.navigator.clipboard = { writeText: () => Promise.reject(new Error('NotAllowedError')) };
+    card._copy.call({}, el);
+    await flush();
+    await flush();
+    assert.equal(rejections.length, 0, 'the refused copy leaked an unhandled rejection');
+    assert.ok(!classes.has('copied'));
+    // No clipboard API at all (plain http): nothing thrown.
+    context.navigator.clipboard = undefined;
+    card._copy.call({}, el);
+  } finally {
+    process.off('unhandledRejection', onRejection);
+    context.navigator.clipboard = prev;
+  }
+});
+
+test('a re-render keeps the keyboard focus on the same row or tracking number', () => {
+  const focused = [];
+  const target = { focus: () => focused.push('row') };
+  const deliveries = [deliveryOf('A1'), deliveryOf('B2')];
+  const self = renderDeliveries(deliveries);
+  // The row of B2 has the focus when the sensor updates.
+  const active = { closest: (sel) => (sel === '.row' ? {} : sel === '.delivery' ? { getAttribute: () => 'ups:B2' } : null), matches: () => false };
+  self._root = {
+    activeElement: active,
+    querySelector: (sel) => (sel === '.header' ? self.header : self.list),
+  };
+  self.list.querySelector = (sel) => (sel === '.delivery[data-id="ups:B2"] .row' ? target : null);
+  self._render();
+  assert.deepEqual(focused, ['row']);
+  // The focused row is gone (delivery removed): no error, nothing focused.
+  self._lastState = sensor('sensor.a', { deliveries: [deliveryOf('A1')] });
+  self.list.querySelector = () => null;
+  self._render();
+  assert.deepEqual(focused, ['row']);
 });
