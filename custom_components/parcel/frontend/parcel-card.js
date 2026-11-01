@@ -625,7 +625,8 @@ class ParcelCard extends HTMLElement {
   }
 
   getGridOptions() {
-    return { columns: 12, min_columns: 6, rows: 'auto' };
+    // 6 columns of a phone section (~160 px) cannot hold a 4-letter title, the pill and the two buttons.
+    return { columns: 12, min_columns: 8, rows: 'auto' };
   }
 
   // Without a configured entity, the Parcel sensor found is kept: scanning all the states on every hass update
@@ -704,7 +705,8 @@ class ParcelCard extends HTMLElement {
     var focus = this._focusSelector();
     list.innerHTML = deliveries.map((d) => this._renderDelivery(d, t)).join('');
     var again = focus && list.querySelector ? list.querySelector(focus) : null;
-    if (again) again.focus();
+    // Without preventScroll the browser scrolls the dashboard to the row on every sensor update.
+    if (again) again.focus({ preventScroll: true });
   }
 
   // The header is built once and then updated in place: rebuilding it with innerHTML on every sensor update or
@@ -994,12 +996,17 @@ class ParcelCard extends HTMLElement {
   static _styles() {
     return [
       ':host { display: block; }',
-      'ha-card { padding: 0 0 8px; overflow: hidden; container-type: inline-size; }',
+      // The container query needs size containment, which gives the card no intrinsic width: in an auto-sized
+      // parent (inline-block, grid `auto` column, layout-card) it fell to a few pixels. It falls back to 320 px.
+      'ha-card { padding: 0 0 8px; overflow: hidden; container-type: inline-size; contain-intrinsic-inline-size: 320px; }',
       '.header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 8px 8px 12px; min-height: 36px; }',
-      // Narrow header: the title truncates but keeps a few letters, the pill shrinks, the buttons never do.
-      '.title { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; }',
+      // Narrow header: the title takes what is left (flex-basis 0, so it does not take the pill's room) and keeps a
+      // few letters; the pill shrinks only when it really lacks room; the buttons never do.
+      '.title { flex: 1 1 0; min-width: calc(5ch + 50px); font-size: 16px; display: flex; align-items: center; gap: 10px; }',
       '.logo { width: 40px; height: 40px; flex: none; object-fit: contain; }',
-      '.titles { flex: 1 1 auto; min-width: 4ch; overflow: hidden; }',
+      // 5ch of the 16 px title font is the width of four letters and the ellipsis ("Deli…"). The title block has the
+      // same minimum plus the logo's 40 px and gap: a smaller one let the title slide under the pill.
+      '.titles { flex: 1 1 0; min-width: 5ch; overflow: hidden; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
@@ -1010,9 +1017,11 @@ class ParcelCard extends HTMLElement {
         ' color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
       '.status[hidden] { display: none; }',
       '.status-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }',
-      // Narrow card (6 columns of a section, ~250 px): the pill keeps only a colored dot.
-      '@container (max-width: 300px) { .header { gap: 6px; } .title { gap: 6px; } .logo { width: 32px; height: 32px; }' +
-        ' .buttons { margin-left: -2px; } .status { padding: 5px; } .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--primary-color); }' +
+      // Narrow card (8-9 columns of a phone section, up to a 12-column 320 px phone section): the logo goes and the
+      // pill and the buttons get a little closer, so the pill keeps its whole label next to a 4-letter title.
+      '@container (max-width: 320px) { .header { gap: 4px; } .title { min-width: 5ch; } .logo { display: none; } .buttons { margin-left: -4px; } .status { padding: 5px 8px; } }',
+      // Narrower (the 8-column minimum on a small phone, ~210-240 px): the pill keeps only a colored dot.
+      '@container (max-width: 240px) { .status { padding: 5px; } .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--primary-color); }' +
         ' .status-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',

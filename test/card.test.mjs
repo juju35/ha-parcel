@@ -585,7 +585,9 @@ test('copying gives a visual feedback, and a refused copy is caught', async () =
 
 test('a re-render keeps the keyboard focus on the same description or tracking number', () => {
   const focused = [];
-  const target = { focus: () => focused.push('row') };
+  const options = [];
+  // preventScroll: a sensor update must not scroll the dashboard to the focused row.
+  const target = { focus: (opts) => { focused.push('row'); options.push(opts); } };
   const deliveries = [deliveryOf('A1'), deliveryOf('B2')];
   const self = renderDeliveries(deliveries);
   // The description of B2 has the focus when the sensor updates.
@@ -597,6 +599,7 @@ test('a re-render keeps the keyboard focus on the same description or tracking n
   self.list.querySelector = (sel) => (sel === '.delivery[data-id="ups:B2"] .desc' ? target : null);
   self._render();
   assert.deepEqual(focused, ['row']);
+  assert.equal(options[0]?.preventScroll, true);
   // The focused row is gone (delivery removed): no error, nothing focused.
   self._lastState = sensor('sensor.a', { deliveries: [deliveryOf('A1')] });
   self.list.querySelector = () => null;
@@ -738,9 +741,13 @@ test('narrow header: the title truncates but keeps a few letters, the pill shrin
   const css = styles();
   const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
   assert.match(rule('ha-card'), /container-type: inline-size/);
-  assert.match(rule('.title'), /flex: 1 1 auto/);
-  assert.match(rule('.title'), /min-width: 0/);
-  assert.match(rule('.titles'), /min-width: 4ch/);
+  // flex-basis 0: the title takes what the pill leaves instead of sharing the room with it ("4 active" -> "4 a…").
+  assert.match(rule('.title'), /flex: 1 1 0;/);
+  assert.match(rule('.titles'), /flex: 1 1 0;/);
+  // Four letters and the ellipsis; the title block cannot shrink below it, or the title slid under the pill.
+  assert.match(rule('.titles'), /min-width: 5ch/);
+  assert.match(rule('.title'), /min-width: calc\(5ch \+ 50px\)/);
+  assert.match(rule('.title'), /font-size: 16px/);
   assert.match(rule('.name'), /text-overflow: ellipsis/);
   assert.match(rule('.status'), /flex: 0 1 auto/);
   assert.match(rule('.status'), /min-width: 0/);
@@ -748,14 +755,31 @@ test('narrow header: the title truncates but keeps a few letters, the pill shrin
   assert.match(rule('.status-text'), /text-overflow: ellipsis/);
   assert.match(rule('.buttons'), /flex: none/);
   assert.match(rule('.buttons ha-icon-button'), /flex: none/);
-  // Under the threshold only the colored dot is left; the count stays readable by screen readers.
-  const narrow = css.slice(css.indexOf('@container (max-width: 300px)'));
-  assert.ok(css.includes('@container (max-width: 300px)'), 'no narrow container query');
-  assert.match(narrow, /\.status-text \{[^}]*clip-path: inset\(50%\)/);
-  assert.match(narrow, /\.status::before \{[^}]*border-radius: 50%/);
+  // Up to 320 px the logo goes so the pill keeps its whole label; only under 240 px is the pill reduced to its
+  // colored dot, the count staying readable by screen readers.
+  const query = (w) => css.split('\n').find((l) => l.startsWith(`@container (max-width: ${w}px)`)) || '';
+  assert.match(query(320), /\.logo \{ display: none; \}/);
+  assert.match(query(320), /\.title \{ min-width: 5ch; \}/);
+  assert.doesNotMatch(query(320), /clip-path/);
+  assert.match(query(240), /\.status-text \{[^}]*clip-path: inset\(50%\)/);
+  assert.match(query(240), /\.status::before \{[^}]*border-radius: 50%/);
+  assert.ok(!css.includes('@container (max-width: 300px)'), 'the pill must keep its label down to 240 px');
   // The chip moves under the description instead of squeezing it.
   assert.match(rule('.line1'), /flex-wrap: wrap/);
   assert.match(rule('.desc'), /min-width: 0/);
+});
+
+test('the card keeps a width in auto-sized containers (inline-block, grid auto column, layout-card)', () => {
+  // container-type: inline-size gives the card no intrinsic width of its own: without a fallback it fell to a few
+  // pixels there (measured in Chromium: 0 px in an inline-block, 320 px with the fallback).
+  const rule = styles().split('\n').find((l) => l.startsWith('ha-card {')) || '';
+  assert.match(rule, /container-type: inline-size/);
+  assert.match(rule, /contain-intrinsic-inline-size: 320px/);
+});
+
+test('the card asks for 8 columns at least: 6 phone columns (~160 px) cannot hold its header', () => {
+  // 160 px - 20 px padding - 96 px of buttons leaves 44 px: not enough for a 4-letter title (44 px) and the pill.
+  assert.deepEqual({ ...card.getGridOptions() }, { columns: 12, min_columns: 8, rows: 'auto' });
 });
 
 test('the active count is a status pill between the title and the buttons, not a subtitle', () => {
