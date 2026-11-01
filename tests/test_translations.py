@@ -37,15 +37,24 @@ def _strings(data: dict, prefix: str = "") -> dict[str, str]:
     return strings
 
 
-@pytest.mark.parametrize("lang", ["fr", "de", "es", "sr", "sr-Latn"])
+LANGUAGES = ["fr", "de", "es", "sr", "sr-Latn", "it", "nl", "pt", "pl"]
+
+
+@pytest.mark.parametrize("lang", LANGUAGES)
 def test_translation_keys_match_english(lang: str) -> None:
-    """The translation exists and has the same keys and placeholders as en.json."""
+    """The translation exists and has the same keys and placeholders as en.json, with no empty text."""
     english = _load("en")
     other = _load(lang)
     assert _keys(other) == _keys(english)
     english_strings = _strings(english)
     for path, text in _strings(other).items():
+        assert text.strip(), path
         assert sorted(PLACEHOLDER.findall(text)) == sorted(PLACEHOLDER.findall(english_strings[path])), path
+
+
+def test_every_translation_file_is_tested() -> None:
+    """No translation file is left out of the parity test."""
+    assert sorted(p.stem for p in TRANSLATIONS.glob("*.json")) == sorted(["en", *LANGUAGES])
 
 
 def test_serbian_stays_in_one_script() -> None:

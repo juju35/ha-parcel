@@ -55,14 +55,42 @@ test('parcelLang keeps a full language code it knows, else its part before the d
   assert.equal(parcelLang({ locale: { language: 'sr-Latn' } }), 'sr-Latn');
   assert.equal(parcelLang({ language: 'sr-Latn' }), 'sr-Latn');
   assert.equal(parcelLang({ locale: { language: 'sr' } }), 'sr');
-  assert.equal(parcelLang({ locale: { language: 'pt-BR' } }), 'en');
   assert.equal(parcelLang({ language: 'fr' }, { language: 'sr-Latn' }), 'sr-Latn');
 });
+
+test('parcelLang resolves Italian, Dutch, Portuguese and Polish, Brazilian Portuguese included', () => {
+  assert.equal(parcelLang({ locale: { language: 'it-IT' } }), 'it');
+  assert.equal(parcelLang({ locale: { language: 'nl-BE' } }), 'nl');
+  assert.equal(parcelLang({ locale: { language: 'pt' } }), 'pt');
+  // No Brazilian dictionary: pt-BR falls back to European Portuguese on purpose.
+  assert.equal(parcelLang({ locale: { language: 'pt-BR' } }), 'pt');
+  assert.equal(parcelLang({ locale: { language: 'pl-PL' } }), 'pl');
+  assert.equal(parcelLang({ locale: { language: 'sr-Latn' } }), 'sr-Latn');
+  assert.equal(parcelLang({ locale: { language: 'ja' } }), 'en');
+  assert.equal(parcelLang({ language: 'fr' }, { language: 'pl' }), 'pl');
+});
+
+const CARD_LANGS = ['fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl'];
 
 test('every card language has exactly the English keys', () => {
   const keys = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? keys(v, `${p}${k}.`) : [`${p}${k}`])).sort();
   const i18n = vm.runInContext('ParcelI18n', context);
-  for (const lang of ['fr', 'de', 'es', 'sr', 'sr-Latn']) assert.deepEqual(keys(i18n[lang] || {}), keys(i18n.en), lang);
+  for (const lang of CARD_LANGS) assert.deepEqual(keys(i18n[lang] || {}), keys(i18n.en), lang);
+  assert.deepEqual(Object.keys(i18n).sort(), ['en', ...CARD_LANGS].sort());
+});
+
+test('every card language keeps the English placeholders, array lengths and has no empty value', () => {
+  const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' && !Array.isArray(v) ? flat(v, `${p}${k}.`) : [[`${p}${k}`, v]]));
+  const holders = (s) => (String(s).match(/\{\w+\}/g) || []).sort();
+  const i18n = vm.runInContext('ParcelI18n', context);
+  const en = Object.fromEntries(flat(i18n.en));
+  for (const lang of CARD_LANGS) {
+    for (const [key, value] of flat(i18n[lang] || {})) {
+      if (Array.isArray(en[key])) assert.equal(value.length, en[key].length, `${lang} ${key}`);
+      assert.deepEqual(holders(value), holders(en[key]), `${lang} ${key}`);
+      assert.ok(String(value).trim(), `${lang} ${key} is empty`);
+    }
+  }
 });
 
 test('Serbian strings keep the English placeholders and stay in one script', () => {
@@ -83,13 +111,17 @@ test('Serbian strings keep the English placeholders and stay in one script', () 
   }
 });
 
-test('the editor offers Serbian in Cyrillic and in Latin script', () => {
+test('the editor offers every card language, Serbian in Cyrillic and in Latin script', () => {
   const schema = vm.runInContext('parcelEditorSchema', context)(vm.runInContext('ParcelI18n.en.editor', context));
   const options = schema.find((f) => f.name === 'language').selector.select.options;
   assert.deepEqual(
     [...options.map((o) => o.value)],
-    ['', 'en', 'fr', 'de', 'es', 'sr', 'sr-Latn'],
+    ['', 'en', 'fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl'],
   );
+  assert.equal(options.find((o) => o.value === 'it').label, 'Italiano');
+  assert.equal(options.find((o) => o.value === 'nl').label, 'Nederlands');
+  assert.equal(options.find((o) => o.value === 'pt').label, 'Português');
+  assert.equal(options.find((o) => o.value === 'pl').label, 'Polski');
   assert.equal(options.find((o) => o.value === 'sr').label, 'Српски');
   assert.equal(options.find((o) => o.value === 'sr-Latn').label, 'Srpski (latinica)');
 });

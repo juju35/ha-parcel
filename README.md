@@ -84,7 +84,7 @@ type: custom:parcel-card
 | `show_add` | `true` | Show the add button |
 | `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |
 | `max_events` | `5` | Number of events shown when a delivery is expanded |
-| `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr` or `sr-Latn` (auto-detects from HA settings) |
+| `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt` or `pl` (auto-detects from HA settings) |
 
 Click a delivery to see its events, and the tracking number to copy it.
 
@@ -161,6 +161,12 @@ The integration and the card follow the language of Home Assistant (the card's `
 | Español | `es` |
 | Српски | `sr` |
 | Srpski (latinica) | `sr-Latn` |
+| Italiano | `it` |
+| Nederlands | `nl` |
+| Português (Portugal) | `pt` |
+| Polski | `pl` |
+
+Brazilian Portuguese (`pt-BR`) falls back to European Portuguese (`pt`).
 
 Contributions for additional languages are welcome!
 
