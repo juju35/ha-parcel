@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.7 - 2026-11-01
+
+### Fixes
+- Card: the Refresh and Add buttons keep the keyboard focus: the header is no longer rebuilt when the sensor updates or a refresh runs, only its texts change.
+- Card: on a narrow card (6 columns of a section) the title stays readable: the active count shrinks to a colored dot (the count stays in its tooltip and for screen readers), the buttons never shrink, and a delivery's status chip moves under its description instead of squeezing it.
+- Card: screen readers announce the tracking number's copy button again: the delivery description is now the expand button (Enter or Space), instead of the whole row containing the copy button. A click anywhere on the row still expands it.
+- Polish: the active count and the "Active only" option say "aktywne" ("active") instead of "w drodze" ("on the way"), which left out parcels awaiting pickup or with a failed attempt.
 ## 0.10.6 - 2026-11-01
 
 ### Changes
