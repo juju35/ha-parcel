@@ -772,9 +772,17 @@ test('narrow header: the title truncates but keeps a few letters, the pill shrin
 test('the card keeps a width in auto-sized containers (inline-block, grid auto column, layout-card)', () => {
   // container-type: inline-size gives the card no intrinsic width of its own: without a fallback it fell to a few
   // pixels there (measured in Chromium: 0 px in an inline-block, 320 px with the fallback).
-  const rule = styles().split('\n').find((l) => l.startsWith('ha-card {')) || '';
-  assert.match(rule, /container-type: inline-size/);
-  assert.match(rule, /contain-intrinsic-inline-size: 320px/);
+  const css = styles();
+  const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
+  assert.match(rule('ha-card'), /container-type: inline-size/);
+  // The fallback is a preferred width only (a 0 px high grid line up to 320 px), never a minimum:
+  // contain-intrinsic-* or a min-width in px made the card overflow a `1fr 1fr` grid (two 322 px cards in 320 px).
+  assert.match(rule(':host::before'), /content: "";/);
+  assert.match(rule(':host::before'), /display: grid;/);
+  assert.match(rule(':host::before'), /grid-template-columns: minmax\(0, 320px\);/);
+  assert.match(rule(':host::before'), /height: 0;/);
+  assert.doesNotMatch(css, /contain-intrinsic/);
+  assert.doesNotMatch(rule(':host'), /min-width: *[1-9]/);
 });
 
 test('the card asks for 8 columns at least: 6 phone columns (~160 px) cannot hold its header', () => {
