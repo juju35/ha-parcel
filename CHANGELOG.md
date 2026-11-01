@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.4
+
+### Fixes
+- Card: delivered parcels are readable again: the row is no longer faded as a whole, only its title is shown in the secondary text color.
+- Card: the status chips, the active count, the Add button and the error and success messages use a darker (light theme) or lighter (dark theme) shade of their color, so their text stays readable while the colored backgrounds are kept.
+- Card: a delivery row and its tracking number can be used with the keyboard: Tab to reach them, Enter or Space to expand the row or copy the number, with a visible focus ring and a hover highlight. The focus stays in place when the card updates.
+- Card: copying a tracking number shows a check mark for a second, and a copy refused by the browser or the companion app no longer logs an error.
+- Card: the Refresh spinner and the expand arrow animation stop when the system asks to reduce motion.
+
 ## 0.10.3
 
 ### Fixes

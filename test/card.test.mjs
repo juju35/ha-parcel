@@ -376,3 +376,146 @@ test('the account is left out when neither the attribute nor the registries know
   const ok = sensor('sensor.a');
   assert.equal(card._entryId.call({ ...base, _lastState: ok, _hass: unavailableHass() }), 'abc');
 });
+
+// ── accessibility (review pass 8) ─────────────────────────────────────────────
+const styles = () => ParcelCard._styles();
+const deliveryOf = (id, extra = {}) => ({ carrier_code: 'ups', tracking_number: id, status_code: 10, status: 'in_transit', events: [], ...extra });
+const renderDeliveries = (deliveries, extra = {}) => {
+  const self = renderable({ _hass: { locale: { language: 'en' }, states: { 'sensor.a': sensor('sensor.a', { deliveries }) } }, ...extra });
+  self.setConfig({ entity: 'sensor.a', show_icon: false, show_delivered: true });
+  return self;
+};
+
+test('a delivered row is not faded as a whole: its texts keep a readable contrast', () => {
+  const css = styles();
+  assert.doesNotMatch(css, /\.delivery\.done\s*\{[^}]*opacity/);
+  assert.match(css, /\.delivery\.done \.desc \{[^}]*color: var\(--secondary-text-color\)/);
+});
+
+test('status texts are mixed with the text color, the state color stays on the chip background', () => {
+  const css = styles();
+  const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
+  assert.match(rule('.chip'), /color: color-mix\(in srgb, var\(--c\) 50%, var\(--primary-text-color\)\)/);
+  assert.match(rule('.chip'), /background: color-mix\(in srgb, var\(--c\) 15%, transparent\)/);
+  assert.match(rule('.status'), /color: color-mix\(in srgb, var\(--primary-color\) 50%, var\(--primary-text-color\)\)/);
+  assert.match(rule('.actions .submit'), /color: color-mix\(in srgb, var\(--primary-color\) 50%, var\(--primary-text-color\)\)/);
+  for (const sel of ['.sub.error', '.msg.error', '.msg.ok']) assert.match(rule(sel), /color: color-mix\(in srgb, var\(--(error|success)-color, #[0-9a-f]+\) 50%, var\(--primary-text-color\)\)/, sel);
+});
+
+test('animations and transitions stop with prefers-reduced-motion', () => {
+  const css = styles();
+  const media = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
+  assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'), 'no reduced-motion media query');
+  assert.match(media, /\.refresh-btn\.spinning ha-icon \{[^}]*animation: none/);
+  assert.match(media, /\.chevron \{[^}]*transition: none/);
+});
+
+test('a delivery row and its tracking number are keyboard buttons', () => {
+  const self = renderDeliveries([deliveryOf('A1')]);
+  const html = self.list.innerHTML;
+  assert.match(html, /<div class="row" role="button" tabindex="0" aria-expanded="false">/);
+  assert.match(html, /<span class="tracking" role="button" tabindex="0" data-copy="A1"/);
+  self._expanded['ups:A1'] = true;
+  self._render();
+  assert.match(self.list.innerHTML, /aria-expanded="true"/);
+  const css = styles();
+  assert.match(css, /\.row:focus-visible, \.tracking:focus-visible \{[^}]*outline: 2px solid var\(--primary-color\)/);
+  assert.match(css, /\.delivery:hover \{/);
+});
+
+// A keydown event whose target sits inside a delivery row (or on its tracking number).
+const keyEvent = (key, { copy = null, id = 'ups:A1' } = {}) => {
+  const item = { getAttribute: () => id };
+  const copyEl = copy ? { getAttribute: () => copy, classList: { add() {}, remove() {} } } : null;
+  const ev = {
+    key,
+    prevented: false,
+    stopped: false,
+    preventDefault() { this.prevented = true; },
+    stopPropagation() { this.stopped = true; },
+    target: {
+      closest: (sel) => (sel === '[data-copy]' ? copyEl : sel === '.row' ? {} : sel === '.delivery' ? item : null),
+    },
+  };
+  return ev;
+};
+
+test('Enter and Space on a row toggle it like a click, other keys do nothing', () => {
+  let renders = 0;
+  const self = { _expanded: {}, _render: () => renders++, _onListClick: card._onListClick, _copy: card._copy };
+  const enter = keyEvent('Enter');
+  card._onListKeydown.call(self, enter);
+  assert.equal(self._expanded['ups:A1'], true);
+  assert.ok(enter.prevented);
+  const space = keyEvent(' ');
+  card._onListKeydown.call(self, space);
+  assert.equal(self._expanded['ups:A1'], false);
+  assert.ok(space.prevented, 'Space must not scroll the page');
+  card._onListKeydown.call(self, keyEvent('a'));
+  card._onListKeydown.call(self, keyEvent('Tab'));
+  assert.equal(renders, 2);
+});
+
+test('Enter on the tracking number copies it without toggling the row', async () => {
+  const copied = [];
+  const prev = context.navigator.clipboard;
+  context.navigator.clipboard = { writeText: (s) => { copied.push(s); return Promise.resolve(); } };
+  try {
+    const self = { _expanded: {}, _render() { throw new Error('no toggle'); }, _onListClick: card._onListClick, _copy: card._copy };
+    card._onListKeydown.call(self, keyEvent('Enter', { copy: '1Z999' }));
+    await flush();
+    assert.deepEqual(copied, ['1Z999']);
+    assert.deepEqual(self._expanded, {});
+  } finally {
+    context.navigator.clipboard = prev;
+  }
+});
+
+test('copying gives a visual feedback, and a refused copy is caught', async () => {
+  const prev = context.navigator.clipboard;
+  const classes = new Set();
+  const el = { getAttribute: () => '1Z', classList: { add: (c) => classes.add(c), remove: (c) => classes.delete(c) } };
+  const rejections = [];
+  const onRejection = (err) => rejections.push(err);
+  process.on('unhandledRejection', onRejection);
+  try {
+    context.navigator.clipboard = { writeText: () => Promise.resolve() };
+    card._copy.call({}, el);
+    await flush();
+    assert.ok(classes.has('copied'), 'no feedback after a successful copy');
+    classes.clear();
+    context.navigator.clipboard = { writeText: () => Promise.reject(new Error('NotAllowedError')) };
+    card._copy.call({}, el);
+    await flush();
+    await flush();
+    assert.equal(rejections.length, 0, 'the refused copy leaked an unhandled rejection');
+    assert.ok(!classes.has('copied'));
+    // No clipboard API at all (plain http): nothing thrown.
+    context.navigator.clipboard = undefined;
+    card._copy.call({}, el);
+  } finally {
+    process.off('unhandledRejection', onRejection);
+    context.navigator.clipboard = prev;
+  }
+});
+
+test('a re-render keeps the keyboard focus on the same row or tracking number', () => {
+  const focused = [];
+  const target = { focus: () => focused.push('row') };
+  const deliveries = [deliveryOf('A1'), deliveryOf('B2')];
+  const self = renderDeliveries(deliveries);
+  // The row of B2 has the focus when the sensor updates.
+  const active = { closest: (sel) => (sel === '.row' ? {} : sel === '.delivery' ? { getAttribute: () => 'ups:B2' } : null), matches: () => false };
+  self._root = {
+    activeElement: active,
+    querySelector: (sel) => (sel === '.header' ? self.header : self.list),
+  };
+  self.list.querySelector = (sel) => (sel === '.delivery[data-id="ups:B2"] .row' ? target : null);
+  self._render();
+  assert.deepEqual(focused, ['row']);
+  // The focused row is gone (delivery removed): no error, nothing focused.
+  self._lastState = sensor('sensor.a', { deliveries: [deliveryOf('A1')] });
+  self.list.querySelector = () => null;
+  self._render();
+  assert.deepEqual(focused, ['row']);
+});

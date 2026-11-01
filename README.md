@@ -141,7 +141,7 @@ pip install playwright==1.64.1 && playwright install chromium
 python scripts/screenshots.py   # renders the card stills and the refreshing.gif / refreshing-dark.gif animations (needs ffmpeg) into screenshots/
 ```
 
-Python tests live in `tests/` (pytest); the card's JavaScript tests live in `test/` (`node --test test/`).
+Python tests live in `tests/` (pytest); the card's JavaScript tests live in `test/` (`node --test test/*.test.mjs`).
 
 ### Releasing
 
