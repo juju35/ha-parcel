@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Generišite API ključ na web.parcelapp.net (potreban je Parcel Premium).",
+        "data": { "api_key": "API ključ" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Parcel je odbio API ključ. Unesite novi.",
+        "data": { "api_key": "API ključ" }
+      }
+    },
+    "error": {
+      "already_configured": "Ovaj API ključ već koristi drugi Parcel unos.",
+      "invalid_auth": "Nevažeći API ključ.",
+      "cannot_connect": "Parcel nije dostupan ili je dostignuto ograničenje zahteva po satu. Pokušajte ponovo kasnije."
+    },
+    "abort": {
+      "already_configured": "Ovaj API ključ je već podešen.",
+      "reauth_successful": "API ključ je ažuriran."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Parcel opcije",
+        "data": {
+          "filter_mode": "Pošiljke za prikaz",
+          "scan_interval": "Interval ažuriranja"
+        },
+        "data_description": {
+          "scan_interval": "Parcel dozvoljava 20 zahteva po satu, pa je 5 minuta minimum."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Nedavne (aktivne i nedavno isporučene)",
+        "active": "Samo aktivne"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Pošiljke" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Dodaj pošiljku",
+      "description": "Dodaje pošiljku u Parcel. Parcel dozvoljava 20 dodavanja dnevno.",
+      "fields": {
+        "tracking_number": { "name": "Broj za praćenje", "description": "Broj za praćenje kod prevoznika." },
+        "carrier_code": { "name": "Kod prevoznika", "description": "Parcel kod prevoznika, na primer ups, dhl ili pholder za privremenu pošiljku." },
+        "description": { "name": "Opis", "description": "Naziv koji se prikazuje u Parcel-u." },
+        "language": { "name": "Jezik", "description": "Dvoslovni kod jezika za događaje praćenja. Podrazumevano je jezik Home Assistant-a." },
+        "send_push_confirmation": { "name": "Potvrda obaveštenjem", "description": "Parcel šalje obaveštenje kada je pošiljka dodata." },
+        "postcode": { "name": "Poštanski broj", "description": "Samo za prevoznike koji ga zahtevaju." },
+        "email": { "name": "E-pošta", "description": "Samo za usluge koje je zahtevaju, kao što je Apple Store." },
+        "config_entry_id": { "name": "Parcel nalog", "description": "Potrebno samo kada je podešeno više Parcel naloga." }
+      }
+    },
+    "refresh": {
+      "name": "Osveži",
+      "description": "Odmah preuzima pošiljke. Računa se u ograničenje od 20 zahteva po satu.",
+      "fields": {
+        "config_entry_id": { "name": "Parcel nalog", "description": "Potrebno samo kada je podešeno više Parcel naloga." }
+      }
+    }
+  }
+}

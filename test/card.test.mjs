@@ -50,10 +50,56 @@ test('parcelLang follows Home Assistant and falls back to English', () => {
   assert.equal(parcelLang({ locale: { language: 'xx' } }), 'en');
 });
 
+test('parcelLang keeps a full language code it knows, else its part before the dash', () => {
+  assert.equal(parcelLang({ locale: { language: 'fr-FR' } }), 'fr');
+  assert.equal(parcelLang({ locale: { language: 'sr-Latn' } }), 'sr-Latn');
+  assert.equal(parcelLang({ language: 'sr-Latn' }), 'sr-Latn');
+  assert.equal(parcelLang({ locale: { language: 'sr' } }), 'sr');
+  assert.equal(parcelLang({ locale: { language: 'pt-BR' } }), 'en');
+  assert.equal(parcelLang({ language: 'fr' }, { language: 'sr-Latn' }), 'sr-Latn');
+});
+
 test('every card language has exactly the English keys', () => {
   const keys = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? keys(v, `${p}${k}.`) : [`${p}${k}`])).sort();
   const i18n = vm.runInContext('ParcelI18n', context);
-  for (const lang of ['fr', 'de', 'es']) assert.deepEqual(keys(i18n[lang]), keys(i18n.en), lang);
+  for (const lang of ['fr', 'de', 'es', 'sr', 'sr-Latn']) assert.deepEqual(keys(i18n[lang] || {}), keys(i18n.en), lang);
+});
+
+test('Serbian strings keep the English placeholders and stay in one script', () => {
+  const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? flat(v, `${p}${k}.`) : [[`${p}${k}`, String(v)]]));
+  const holders = (s) => (s.match(/\{\w+\}/g) || []).sort();
+  const i18n = vm.runInContext('ParcelI18n', context);
+  const en = Object.fromEntries(flat(i18n.en));
+  // Proper names, brands and config keys stay in Latin letters in the Cyrillic text.
+  const allowed = /Parcel|entity/g;
+  for (const lang of ['sr', 'sr-Latn']) {
+    const entries = flat(i18n[lang] || {});
+    assert.equal(entries.length, Object.keys(en).length, lang);
+    for (const [key, value] of entries) {
+      assert.deepEqual(holders(value), holders(en[key]), `${lang} ${key}`);
+      if (lang === 'sr') assert.doesNotMatch(value.replace(allowed, ''), /[A-Za-z]/, `${lang} ${key}`);
+      else assert.doesNotMatch(value, /[Ѐ-ӿ]/, `${lang} ${key}`);
+    }
+  }
+});
+
+test('the editor offers Serbian in Cyrillic and in Latin script', () => {
+  const schema = vm.runInContext('parcelEditorSchema', context)(vm.runInContext('ParcelI18n.en.editor', context));
+  const options = schema.find((f) => f.name === 'language').selector.select.options;
+  assert.deepEqual(
+    [...options.map((o) => o.value)],
+    ['', 'en', 'fr', 'de', 'es', 'sr', 'sr-Latn'],
+  );
+  assert.equal(options.find((o) => o.value === 'sr').label, 'Српски');
+  assert.equal(options.find((o) => o.value === 'sr-Latn').label, 'Srpski (latinica)');
+});
+
+test('_formatExpected writes Serbian dates in the script of the language', () => {
+  const latn = card._formatExpected.call({ _hass: { locale: { language: 'sr-Latn' } } }, { date_expected: '2026-10-20' });
+  const cyrl = card._formatExpected.call({ _hass: { locale: { language: 'sr' } } }, { date_expected: '2026-10-20' });
+  assert.match(latn, /[a-z]/);
+  assert.doesNotMatch(latn, /[Ѐ-ӿ]/);
+  assert.match(cyrl, /[Ѐ-ӿ]/);
 });
 
 test('getStubConfig picks the Parcel sensor only', () => {

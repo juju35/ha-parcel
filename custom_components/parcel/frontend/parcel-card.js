@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.10.4';
+var PARCEL_CARD_VERSION = '0.10.5';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -197,6 +197,102 @@ var ParcelI18n = {
       unknown: 'Desconocido',
     },
   },
+  sr: {
+    default_title: 'Пошиљке',
+    empty: 'Нема пошиљки за приказ',
+    no_entity: 'Parcel сензор није пронађен. Додајте интеграцију Parcel или подесите „entity“.',
+    unavailable: 'Parcel је недоступан. Пошиљке ће се појавити после следећег успешног ажурирања.',
+    in_progress: 'у току',
+    expected: 'Очекује се:',
+    add: 'Додај пошиљку',
+    refresh: 'Освежи',
+    refresh_failed: 'Освежавање није успело:',
+    tracking_number: 'Број за праћење',
+    carrier: 'Превозник',
+    carrier_search: 'Претражи превознике',
+    description: 'Опис',
+    push: 'Parcel обавештење о потврди',
+    submit: 'Додај',
+    cancel: 'Откажи',
+    adding: 'Додавање…',
+    added: 'Пошиљка је додата. Појавиће се после следећег ажурирања Parcel-а.',
+    unknown_carrier: 'Изаберите превозника са листе.',
+    required: 'Број за праћење, превозник и опис су обавезни.',
+    limit: 'Parcel дозвољава 20 додавања дневно.',
+    no_events: 'Још нема догађаја',
+    copy: 'Копирај број за праћење',
+    editor: {
+      entity: 'Parcel сензор',
+      title: 'Наслов',
+      show_icon: 'Прикажи иконицу',
+      show_delivered: 'Прикажи испоручене пошиљке',
+      show_add: 'Прикажи дугме за додавање',
+      show_refresh: 'Прикажи дугме за освежавање',
+      max_events: 'Догађаји приказани када се пошиљка прошири',
+      language: 'Језик',
+      lang_auto: 'Аутоматски',
+    },
+    status: {
+      delivered: 'Испоручено',
+      frozen: 'Без ажурирања',
+      in_transit: 'У транзиту',
+      awaiting_pickup: 'Чека преузимање',
+      out_for_delivery: 'На достави',
+      not_found: 'Није пронађено',
+      failed_attempt: 'Неуспела достава',
+      exception: 'Проблем',
+      info_received: 'Најављено',
+      unknown: 'Непознато',
+    },
+  },
+  'sr-Latn': {
+    default_title: 'Pošiljke',
+    empty: 'Nema pošiljki za prikaz',
+    no_entity: 'Parcel senzor nije pronađen. Dodajte integraciju Parcel ili podesite „entity“.',
+    unavailable: 'Parcel je nedostupan. Pošiljke će se pojaviti posle sledećeg uspešnog ažuriranja.',
+    in_progress: 'u toku',
+    expected: 'Očekuje se:',
+    add: 'Dodaj pošiljku',
+    refresh: 'Osveži',
+    refresh_failed: 'Osvežavanje nije uspelo:',
+    tracking_number: 'Broj za praćenje',
+    carrier: 'Prevoznik',
+    carrier_search: 'Pretraži prevoznike',
+    description: 'Opis',
+    push: 'Parcel obaveštenje o potvrdi',
+    submit: 'Dodaj',
+    cancel: 'Otkaži',
+    adding: 'Dodavanje…',
+    added: 'Pošiljka je dodata. Pojaviće se posle sledećeg ažuriranja Parcel-a.',
+    unknown_carrier: 'Izaberite prevoznika sa liste.',
+    required: 'Broj za praćenje, prevoznik i opis su obavezni.',
+    limit: 'Parcel dozvoljava 20 dodavanja dnevno.',
+    no_events: 'Još nema događaja',
+    copy: 'Kopiraj broj za praćenje',
+    editor: {
+      entity: 'Parcel senzor',
+      title: 'Naslov',
+      show_icon: 'Prikaži ikonicu',
+      show_delivered: 'Prikaži isporučene pošiljke',
+      show_add: 'Prikaži dugme za dodavanje',
+      show_refresh: 'Prikaži dugme za osvežavanje',
+      max_events: 'Događaji prikazani kada se pošiljka proširi',
+      language: 'Jezik',
+      lang_auto: 'Automatski',
+    },
+    status: {
+      delivered: 'Isporučeno',
+      frozen: 'Bez ažuriranja',
+      in_transit: 'U tranzitu',
+      awaiting_pickup: 'Čeka preuzimanje',
+      out_for_delivery: 'Na dostavi',
+      not_found: 'Nije pronađeno',
+      failed_attempt: 'Neuspela dostava',
+      exception: 'Problem',
+      info_received: 'Najavljeno',
+      unknown: 'Nepoznato',
+    },
+  },
 };
 
 // Single source of the config defaults, shared by the card (setConfig) and the editor.
@@ -233,9 +329,12 @@ function parcelParseDate(raw) {
   return Date.parse(s);
 }
 
-// The card's `language` option wins over the Home Assistant language.
+// The card's `language` option wins over the Home Assistant language. A full code the card knows
+// (sr-Latn) is kept, otherwise its part before the dash (fr-FR gives fr), otherwise English.
 function parcelLang(hass, config) {
-  var lang = (config?.language || (hass && (hass.locale?.language || hass.language)) || navigator.language || 'en').slice(0, 2);
+  var lang = String(config?.language || (hass && (hass.locale?.language || hass.language)) || navigator.language || 'en');
+  if (ParcelI18n[lang]) return lang;
+  lang = lang.split('-')[0];
   return ParcelI18n[lang] ? lang : 'en';
 }
 
@@ -743,6 +842,8 @@ function parcelEditorSchema(t) {
             { value: 'fr', label: 'Français' },
             { value: 'de', label: 'Deutsch' },
             { value: 'es', label: 'Español' },
+            { value: 'sr', label: 'Српски' },
+            { value: 'sr-Latn', label: 'Srpski (latinica)' },
           ],
         },
       },

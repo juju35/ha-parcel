@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.5 - 2026-11-01
+
+### Changes
+- Added Serbian (Cyrillic and Latin) translations: `sr` and `sr-Latn` for the integration and the card, also offered in the card's `language` option. The card keeps a full language code it knows (`sr-Latn`) before falling back to the part before the dash.
+
 ## 0.10.4
 
 ### Fixes
