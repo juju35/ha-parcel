@@ -1,17 +1,17 @@
 """Render the Parcel card with mock deliveries and save the README screenshots.
 
-Usage: python scripts/screenshots.py  (needs `pip install playwright` and `playwright install chromium`;
+Usage: python scripts/screenshots.py  (needs `pip install playwright pillow` and `playwright install chromium`;
 CHROMIUM_PATH=/path/to/chrome to use another browser)
+A screenshot is rewritten only when its decoded pixels change, so a re-render never commits identical images.
 The clock is frozen on 18 October 2026 in Paris, so expected dates stay the same.
 """
 
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-
-from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
 CARD_JS = (ROOT / "custom_components/parcel/frontend/parcel-card.js").read_text()
@@ -164,6 +164,42 @@ SHOTS = [
 ]
 
 
+def _frames(path):
+    """Decoded RGBA pixels of every frame, with each frame's duration: what the image looks like, not its bytes."""
+    from PIL import Image, ImageSequence
+
+    with Image.open(path) as image:
+        return [
+            (frame.info.get("duration"), frame.convert("RGBA").size, frame.convert("RGBA").tobytes())
+            for frame in ImageSequence.Iterator(image)
+        ]
+
+
+def replace_if_changed(new, out):
+    """Move the fresh render `new` onto `out` only when its pixels differ (or `out` is missing); return whether
+    `out` changed. Encoders do not give the same bytes twice for the same image, which made the screenshots
+    workflow commit images that looked exactly the same."""
+    new, out = Path(new), Path(out)
+    if out.exists() and _frames(new) == _frames(out):
+        new.unlink()
+        return False
+    shutil.move(str(new), str(out))
+    return True
+
+
+# Pauses every animation at `t` ms and returns how many it paused. document.getAnimations() leaves out shadow trees,
+# where the card's spinner lives: it kept turning in real time and each run gave other GIF frames.
+PAUSE_ANIMATIONS = """(t) => {
+  const all = (root) => [
+    ...root.getAnimations(),
+    ...[...root.querySelectorAll("*")].filter((el) => el.shadowRoot).flatMap((el) => all(el.shadowRoot)),
+  ];
+  const animations = all(document);
+  for (const a of animations) { a.pause(); a.currentTime = t; }
+  return animations.length;
+}"""
+
+
 def page_html(theme):
     variables = "".join(f"{k}:{v};" for k, v in {**THEMES[theme], **COMMON}.items())
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
@@ -212,13 +248,10 @@ def animate(context, shot, *, fps=20, seconds=2):
     frames = round(fps * seconds)
     with tempfile.TemporaryDirectory() as frame_dir:
         for i in range(frames):
-            page.evaluate(
-                "(t) => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = t; } }",
-                (i * 1000) / fps,
-            )
+            page.evaluate(f"(t) => ({PAUSE_ANIMATIONS})(t)", (i * 1000) / fps)
             page.screenshot(path=f"{frame_dir}/f{i:03d}.png", clip=clip)
         page.close()
-        out = str(ROOT / "screenshots" / f"{shot['file']}.gif")
+        out = f"{frame_dir}/{shot['file']}.gif"
         subprocess.run(
             [
                 "ffmpeg",
@@ -237,12 +270,16 @@ def animate(context, shot, *, fps=20, seconds=2):
             ],
             check=True,
         )
-    print(f"screenshots/{shot['file']}.gif")
+        changed = replace_if_changed(out, ROOT / "screenshots" / f"{shot['file']}.gif")
+    print(f"screenshots/{shot['file']}.gif" + ("" if changed else " (unchanged)"))
 
 
 def main():
     out_dir = ROOT / "screenshots"
     out_dir.mkdir(exist_ok=True)
+    # Imported here: the file helpers above (and their tests) do not need Playwright.
+    from playwright.sync_api import sync_playwright
+
     with sync_playwright() as p:
         chromium = os.environ.get("CHROMIUM_PATH")
         browser = p.chromium.launch(executable_path=chromium) if chromium else p.chromium.launch()
@@ -254,12 +291,15 @@ def main():
             page.wait_for_timeout(300)
             # The card with the 16 px page padding around it, on the theme background.
             box = page.locator("#root").bounding_box()
-            page.screenshot(
-                path=str(out_dir / f"{shot['file']}.png"),
-                clip={"x": 0, "y": 0, "width": WIDTH + 32, "height": int(box["height"] + 0.999) + 32},
-                animations="disabled",
-            )
-            print(f"screenshots/{shot['file']}.png")
+            with tempfile.TemporaryDirectory() as tmp:
+                fresh = Path(tmp) / f"{shot['file']}.png"
+                page.screenshot(
+                    path=str(fresh),
+                    clip={"x": 0, "y": 0, "width": WIDTH + 32, "height": int(box["height"] + 0.999) + 32},
+                    animations="disabled",
+                )
+                changed = replace_if_changed(fresh, out_dir / f"{shot['file']}.png")
+            print(f"screenshots/{shot['file']}.png" + ("" if changed else " (unchanged)"))
             page.close()
         # Every animation in both themes: the light GIF gets a -dark twin with the exact same setup.
         for theme, suffix in (("light", ""), ("dark", "-dark")):

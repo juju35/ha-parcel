@@ -35,7 +35,8 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.13"
-      - run: pip install playwright==1.64.1
+      # Pillow compares the decoded pixels, so an identical render never rewrites (and commits) a screenshot.
+      - run: pip install playwright==1.64.1 pillow==11.3.0
       # Download the browser binary (no apt here) separately from its system libraries, so the apt work all sits in
       # the one time-boxed, retried step below and a hung mirror can never stall an unguarded install. The download
       # itself is time-boxed and retried too, so a slow CDN cannot block the job indefinitely.
