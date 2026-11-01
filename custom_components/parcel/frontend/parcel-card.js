@@ -996,9 +996,13 @@ class ParcelCard extends HTMLElement {
   static _styles() {
     return [
       ':host { display: block; }',
-      // The container query needs size containment, which gives the card no intrinsic width: in an auto-sized
-      // parent (inline-block, grid `auto` column, layout-card) it fell to a few pixels. It falls back to 320 px.
-      'ha-card { padding: 0 0 8px; overflow: hidden; container-type: inline-size; contain-intrinsic-inline-size: 320px; }',
+      // The container query needs size containment, which gives ha-card no intrinsic width: in an auto-sized parent
+      // (inline-block, grid `auto` column, layout-card) the card fell to a few pixels. This empty, 0 px high line
+      // gives the host a preferred width of 320 px (max-content) but no minimum (min-content 0), so a `1fr 1fr` grid
+      // can still shrink it, even with the card wrapped in a div. contain-intrinsic-inline-size gave both: the card
+      // then refused to shrink and overflowed such a grid.
+      ':host::before { content: ""; display: grid; grid-template-columns: minmax(0, 320px); height: 0; }',
+      'ha-card { padding: 0 0 8px; overflow: hidden; container-type: inline-size; }',
       '.header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 8px 8px 12px; min-height: 36px; }',
       // Narrow header: the title takes what is left (flex-basis 0, so it does not take the pill's room) and keeps a
       // few letters; the pill shrinks only when it really lacks room; the buttons never do.
