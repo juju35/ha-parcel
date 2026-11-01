@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.10.6 - 2026-11-01
+
+### Changes
+- Added Italian, Dutch, European Portuguese and Polish translations: `it`, `nl`, `pt` and `pl` for the integration and the card, also offered in the card's `language` option. Brazilian Portuguese (`pt-BR`): pt-BR uses the European Portuguese texts, in the integration (`pt-BR.json`, a copy of `pt.json`) and the card.
+
+## 0.10.5 - 2026-11-01
+
+### Changes
+- Added Serbian (Cyrillic and Latin) translations: `sr` and `sr-Latn` for the integration and the card, also offered in the card's `language` option. The card keeps a full language code it knows (`sr-Latn`) before falling back to the part before the dash.
+
+## 0.10.4
+
+### Fixes
+- Card: delivered parcels are readable again: the row is no longer faded as a whole, only its title is shown in the secondary text color.
+- Card: the status chips, the active count, the Add button and the error and success messages use a darker (light theme) or lighter (dark theme) shade of their color, so their text stays readable while the colored backgrounds are kept.
+- Card: a delivery row and its tracking number can be used with the keyboard: Tab to reach them, Enter or Space to expand the row or copy the number, with a visible focus ring and a hover highlight. The focus stays in place when the card updates.
+- Card: copying a tracking number shows a check mark for a second, and a copy refused by the browser or the companion app no longer logs an error.
+- Card: the Refresh spinner and the expand arrow animation stop when the system asks to reduce motion.
+
 ## 0.10.3
 
 ### Fixes

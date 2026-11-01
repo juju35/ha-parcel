@@ -193,6 +193,8 @@ def mount(context, shot):
     )
     if shot.get("expand"):
         page.locator(f'.delivery[data-id="{shot["expand"]}"] .row').click()
+        # Move the pointer off the card so the stills do not show the row hover state.
+        page.mouse.move(0, 0)
     return page
 
 

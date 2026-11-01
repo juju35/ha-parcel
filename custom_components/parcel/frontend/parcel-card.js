@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.10.3';
+var PARCEL_CARD_VERSION = '0.10.6';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -197,6 +197,294 @@ var ParcelI18n = {
       unknown: 'Desconocido',
     },
   },
+  sr: {
+    default_title: 'Пошиљке',
+    empty: 'Нема пошиљки за приказ',
+    no_entity: 'Parcel сензор није пронађен. Додајте интеграцију Parcel или подесите „entity“.',
+    unavailable: 'Parcel је недоступан. Пошиљке ће се појавити после следећег успешног ажурирања.',
+    in_progress: 'у току',
+    expected: 'Очекује се:',
+    add: 'Додај пошиљку',
+    refresh: 'Освежи',
+    refresh_failed: 'Освежавање није успело:',
+    tracking_number: 'Број за праћење',
+    carrier: 'Превозник',
+    carrier_search: 'Претражи превознике',
+    description: 'Опис',
+    push: 'Parcel обавештење о потврди',
+    submit: 'Додај',
+    cancel: 'Откажи',
+    adding: 'Додавање…',
+    added: 'Пошиљка је додата. Појавиће се после следећег ажурирања Parcel-а.',
+    unknown_carrier: 'Изаберите превозника са листе.',
+    required: 'Број за праћење, превозник и опис су обавезни.',
+    limit: 'Parcel дозвољава 20 додавања дневно.',
+    no_events: 'Још нема догађаја',
+    copy: 'Копирај број за праћење',
+    editor: {
+      entity: 'Parcel сензор',
+      title: 'Наслов',
+      show_icon: 'Прикажи иконицу',
+      show_delivered: 'Прикажи испоручене пошиљке',
+      show_add: 'Прикажи дугме за додавање',
+      show_refresh: 'Прикажи дугме за освежавање',
+      max_events: 'Догађаји приказани када се пошиљка прошири',
+      language: 'Језик',
+      lang_auto: 'Аутоматски',
+    },
+    status: {
+      delivered: 'Испоручено',
+      frozen: 'Без ажурирања',
+      in_transit: 'У транзиту',
+      awaiting_pickup: 'Чека преузимање',
+      out_for_delivery: 'На достави',
+      not_found: 'Није пронађено',
+      failed_attempt: 'Неуспела достава',
+      exception: 'Проблем',
+      info_received: 'Најављено',
+      unknown: 'Непознато',
+    },
+  },
+  'sr-Latn': {
+    default_title: 'Pošiljke',
+    empty: 'Nema pošiljki za prikaz',
+    no_entity: 'Parcel senzor nije pronađen. Dodajte integraciju Parcel ili podesite „entity“.',
+    unavailable: 'Parcel je nedostupan. Pošiljke će se pojaviti posle sledećeg uspešnog ažuriranja.',
+    in_progress: 'u toku',
+    expected: 'Očekuje se:',
+    add: 'Dodaj pošiljku',
+    refresh: 'Osveži',
+    refresh_failed: 'Osvežavanje nije uspelo:',
+    tracking_number: 'Broj za praćenje',
+    carrier: 'Prevoznik',
+    carrier_search: 'Pretraži prevoznike',
+    description: 'Opis',
+    push: 'Parcel obaveštenje o potvrdi',
+    submit: 'Dodaj',
+    cancel: 'Otkaži',
+    adding: 'Dodavanje…',
+    added: 'Pošiljka je dodata. Pojaviće se posle sledećeg ažuriranja Parcel-a.',
+    unknown_carrier: 'Izaberite prevoznika sa liste.',
+    required: 'Broj za praćenje, prevoznik i opis su obavezni.',
+    limit: 'Parcel dozvoljava 20 dodavanja dnevno.',
+    no_events: 'Još nema događaja',
+    copy: 'Kopiraj broj za praćenje',
+    editor: {
+      entity: 'Parcel senzor',
+      title: 'Naslov',
+      show_icon: 'Prikaži ikonicu',
+      show_delivered: 'Prikaži isporučene pošiljke',
+      show_add: 'Prikaži dugme za dodavanje',
+      show_refresh: 'Prikaži dugme za osvežavanje',
+      max_events: 'Događaji prikazani kada se pošiljka proširi',
+      language: 'Jezik',
+      lang_auto: 'Automatski',
+    },
+    status: {
+      delivered: 'Isporučeno',
+      frozen: 'Bez ažuriranja',
+      in_transit: 'U tranzitu',
+      awaiting_pickup: 'Čeka preuzimanje',
+      out_for_delivery: 'Na dostavi',
+      not_found: 'Nije pronađeno',
+      failed_attempt: 'Neuspela dostava',
+      exception: 'Problem',
+      info_received: 'Najavljeno',
+      unknown: 'Nepoznato',
+    },
+  },
+  it: {
+    default_title: 'Spedizioni',
+    empty: 'Nessuna spedizione da mostrare',
+    no_entity: 'Sensore Parcel non trovato. Aggiungi l\'integrazione Parcel o imposta «entity».',
+    unavailable: 'Parcel non è disponibile. Le spedizioni appariranno dopo il prossimo aggiornamento riuscito.',
+    in_progress: 'in corso',
+    expected: 'Prevista:',
+    add: 'Aggiungi una spedizione',
+    refresh: 'Aggiorna',
+    refresh_failed: 'Aggiornamento non riuscito:',
+    tracking_number: 'Numero di tracciamento',
+    carrier: 'Corriere',
+    carrier_search: 'Cerca un corriere',
+    description: 'Descrizione',
+    push: 'Notifica push di conferma Parcel',
+    submit: 'Aggiungi',
+    cancel: 'Annulla',
+    adding: 'Aggiunta in corso…',
+    added: 'Spedizione aggiunta. Apparirà dopo il prossimo aggiornamento di Parcel.',
+    unknown_carrier: 'Scegli un corriere dall\'elenco.',
+    required: 'Numero di tracciamento, corriere e descrizione sono obbligatori.',
+    limit: 'Parcel consente 20 aggiunte al giorno.',
+    no_events: 'Ancora nessun evento',
+    copy: 'Copia il numero di tracciamento',
+    editor: {
+      entity: 'Sensore Parcel',
+      title: 'Titolo',
+      show_icon: 'Mostra l\'icona',
+      show_delivered: 'Mostra le spedizioni consegnate',
+      show_add: 'Mostra il pulsante Aggiungi',
+      show_refresh: 'Mostra il pulsante Aggiorna',
+      max_events: 'Eventi mostrati quando una spedizione è espansa',
+      language: 'Lingua',
+      lang_auto: 'Automatica',
+    },
+    status: {
+      delivered: 'Consegnata',
+      frozen: 'Nessun aggiornamento',
+      in_transit: 'In transito',
+      awaiting_pickup: 'Da ritirare',
+      out_for_delivery: 'In consegna',
+      not_found: 'Non trovata',
+      failed_attempt: 'Tentativo fallito',
+      exception: 'Problema',
+      info_received: 'Annunciata',
+      unknown: 'Sconosciuta',
+    },
+  },
+  nl: {
+    default_title: 'Zendingen',
+    empty: 'Geen zendingen om weer te geven',
+    no_entity: 'Parcel-sensor niet gevonden. Voeg de Parcel-integratie toe of stel „entity” in.',
+    unavailable: 'Parcel is niet beschikbaar. De zendingen verschijnen na de volgende geslaagde update.',
+    in_progress: 'actief',
+    expected: 'Verwacht:',
+    add: 'Zending toevoegen',
+    refresh: 'Vernieuwen',
+    refresh_failed: 'Vernieuwen mislukt:',
+    tracking_number: 'Trackingnummer',
+    carrier: 'Vervoerder',
+    carrier_search: 'Vervoerder zoeken',
+    description: 'Omschrijving',
+    push: 'Pushbevestiging van Parcel',
+    submit: 'Toevoegen',
+    cancel: 'Annuleren',
+    adding: 'Toevoegen…',
+    added: 'Zending toegevoegd. Deze verschijnt na de volgende update van Parcel.',
+    unknown_carrier: 'Kies een vervoerder uit de lijst.',
+    required: 'Trackingnummer, vervoerder en omschrijving zijn verplicht.',
+    limit: 'Parcel staat 20 toevoegingen per dag toe.',
+    no_events: 'Nog geen gebeurtenissen',
+    copy: 'Trackingnummer kopiëren',
+    editor: {
+      entity: 'Parcel-sensor',
+      title: 'Titel',
+      show_icon: 'Pictogram tonen',
+      show_delivered: 'Bezorgde zendingen tonen',
+      show_add: 'Knop Toevoegen tonen',
+      show_refresh: 'Knop Vernieuwen tonen',
+      max_events: 'Getoonde gebeurtenissen bij een uitgeklapte zending',
+      language: 'Taal',
+      lang_auto: 'Automatisch',
+    },
+    status: {
+      delivered: 'Bezorgd',
+      frozen: 'Geen updates',
+      in_transit: 'Onderweg',
+      awaiting_pickup: 'Klaar om op te halen',
+      out_for_delivery: 'Wordt bezorgd',
+      not_found: 'Niet gevonden',
+      failed_attempt: 'Bezorgpoging mislukt',
+      exception: 'Probleem',
+      info_received: 'Aangemeld',
+      unknown: 'Onbekend',
+    },
+  },
+  pt: {
+    default_title: 'Encomendas',
+    empty: 'Nenhuma encomenda a mostrar',
+    no_entity: 'Sensor do Parcel não encontrado. Adicione a integração Parcel ou indique «entity».',
+    unavailable: 'O Parcel está indisponível. As encomendas aparecerão após a próxima atualização bem-sucedida.',
+    in_progress: 'em curso',
+    expected: 'Prevista:',
+    add: 'Adicionar uma encomenda',
+    refresh: 'Atualizar',
+    refresh_failed: 'Não foi possível atualizar:',
+    tracking_number: 'Número de seguimento',
+    carrier: 'Transportadora',
+    carrier_search: 'Procurar uma transportadora',
+    description: 'Descrição',
+    push: 'Notificação push de confirmação do Parcel',
+    submit: 'Adicionar',
+    cancel: 'Cancelar',
+    adding: 'A adicionar…',
+    added: 'Encomenda adicionada. Aparecerá após a próxima atualização do Parcel.',
+    unknown_carrier: 'Escolha uma transportadora da lista.',
+    required: 'O número de seguimento, a transportadora e a descrição são obrigatórios.',
+    limit: 'O Parcel permite 20 adições por dia.',
+    no_events: 'Ainda não há eventos',
+    copy: 'Copiar o número de seguimento',
+    editor: {
+      entity: 'Sensor do Parcel',
+      title: 'Título',
+      show_icon: 'Mostrar o ícone',
+      show_delivered: 'Mostrar as encomendas entregues',
+      show_add: 'Mostrar o botão Adicionar',
+      show_refresh: 'Mostrar o botão Atualizar',
+      max_events: 'Eventos mostrados ao expandir uma encomenda',
+      language: 'Idioma',
+      lang_auto: 'Automático',
+    },
+    status: {
+      delivered: 'Entregue',
+      frozen: 'Sem atualizações',
+      in_transit: 'Em trânsito',
+      awaiting_pickup: 'Pronta a levantar',
+      out_for_delivery: 'Em distribuição',
+      not_found: 'Não encontrada',
+      failed_attempt: 'Tentativa falhada',
+      exception: 'Problema',
+      info_received: 'Anunciada',
+      unknown: 'Desconhecida',
+    },
+  },
+  pl: {
+    default_title: 'Przesyłki',
+    empty: 'Brak przesyłek do wyświetlenia',
+    no_entity: 'Nie znaleziono sensora Parcel. Dodaj integrację Parcel lub ustaw „entity”.',
+    unavailable: 'Parcel jest niedostępny. Przesyłki pojawią się po następnej udanej aktualizacji.',
+    in_progress: 'w drodze',
+    expected: 'Przewidywana dostawa:',
+    add: 'Dodaj przesyłkę',
+    refresh: 'Odśwież',
+    refresh_failed: 'Odświeżanie nie powiodło się:',
+    tracking_number: 'Numer przesyłki',
+    carrier: 'Przewoźnik',
+    carrier_search: 'Szukaj przewoźnika',
+    description: 'Opis',
+    push: 'Powiadomienie push z potwierdzeniem Parcel',
+    submit: 'Dodaj',
+    cancel: 'Anuluj',
+    adding: 'Dodawanie…',
+    added: 'Dodano przesyłkę. Pojawi się po następnej aktualizacji Parcel.',
+    unknown_carrier: 'Wybierz przewoźnika z listy.',
+    required: 'Numer przesyłki, przewoźnik i opis są wymagane.',
+    limit: 'Parcel pozwala na 20 dodań dziennie.',
+    no_events: 'Brak zdarzeń',
+    copy: 'Kopiuj numer przesyłki',
+    editor: {
+      entity: 'Sensor Parcel',
+      title: 'Tytuł',
+      show_icon: 'Pokaż ikonę',
+      show_delivered: 'Pokaż doręczone przesyłki',
+      show_add: 'Pokaż przycisk dodawania',
+      show_refresh: 'Pokaż przycisk odświeżania',
+      max_events: 'Zdarzenia wyświetlane po rozwinięciu przesyłki',
+      language: 'Język',
+      lang_auto: 'Automatycznie',
+    },
+    status: {
+      delivered: 'Doręczono',
+      frozen: 'Brak aktualizacji',
+      in_transit: 'W transporcie',
+      awaiting_pickup: 'Do odbioru',
+      out_for_delivery: 'W doręczeniu',
+      not_found: 'Nie znaleziono',
+      failed_attempt: 'Nieudane doręczenie',
+      exception: 'Problem',
+      info_received: 'Zarejestrowano',
+      unknown: 'Nieznany',
+    },
+  },
 };
 
 // Single source of the config defaults, shared by the card (setConfig) and the editor.
@@ -233,10 +521,26 @@ function parcelParseDate(raw) {
   return Date.parse(s);
 }
 
-// The card's `language` option wins over the Home Assistant language.
+// The card's `language` option wins over the Home Assistant language. A full code the card knows
+// (sr-Latn) is kept, otherwise its part before the dash (fr-FR gives fr, pt-BR gives the European
+// Portuguese pt), otherwise English.
 function parcelLang(hass, config) {
-  var lang = (config?.language || (hass && (hass.locale?.language || hass.language)) || navigator.language || 'en').slice(0, 2);
+  var lang = String(config?.language || (hass && (hass.locale?.language || hass.language)) || navigator.language || 'en');
+  if (ParcelI18n[lang]) return lang;
+  lang = lang.split('-')[0];
   return ParcelI18n[lang] ? lang : 'en';
+}
+
+// Locale for Intl / toLocale*: the full code (fr-CA, pt-BR) of the card's `language` option, else of
+// Home Assistant, when its base is the card's resolved language, otherwise the resolved language.
+// Plain "pt" is European Portuguese in Home Assistant but Brazilian in Intl, so it becomes pt-PT.
+// The sr / sr-Latn scripts never mix.
+function parcelLocale(hass, config) {
+  var lang = parcelLang(hass, config);
+  var full = String(config?.language || (hass && (hass.locale?.language || hass.language)) || '');
+  var sameScript = /-Latn\b/i.test(full) === /-Latn\b/i.test(lang);
+  var locale = full && full.split('-')[0] === lang.split('-')[0] && sameScript ? full : lang;
+  return locale === 'pt' ? 'pt-PT' : locale;
 }
 
 // ── parcel-card ───────────────────────────────────────────────────────────────
@@ -353,7 +657,9 @@ class ParcelCard extends HTMLElement {
     this._root.innerHTML =
       '<style>' + ParcelCard._styles() + '</style>' +
       '<ha-card><div class="header"></div><div class="form" hidden></div><div class="list"></div></ha-card>';
-    this._root.querySelector('.list').addEventListener('click', this._onListClick.bind(this));
+    var list = this._root.querySelector('.list');
+    list.addEventListener('click', this._onListClick.bind(this));
+    list.addEventListener('keydown', this._onListKeydown.bind(this));
   }
 
   _render() {
@@ -414,7 +720,22 @@ class ParcelCard extends HTMLElement {
       list.innerHTML = `<div class="empty">${parcelEsc(t.empty)}</div>`;
       return;
     }
+    // innerHTML replaces the focused row: put the keyboard focus back on the same row or tracking number.
+    var focus = this._focusSelector();
     list.innerHTML = deliveries.map((d) => this._renderDelivery(d, t)).join('');
+    var again = focus && list.querySelector ? list.querySelector(focus) : null;
+    if (again) again.focus();
+  }
+
+  // Selector of the delivery row or tracking number that has the focus, to find it again after a re-render.
+  _focusSelector() {
+    var el = this._root?.activeElement;
+    if (!el || !el.closest) return null;
+    var item = el.closest('.delivery');
+    if (!item) return null;
+    var base = `.delivery[data-id="${String(item.getAttribute('data-id')).replace(/["\\]/g, '\\$&')}"]`;
+    if (el.closest('[data-copy]')) return `${base} .tracking`;
+    return el.closest('.row') ? `${base} .row` : null;
   }
 
   _iconHtml() {
@@ -432,13 +753,13 @@ class ParcelCard extends HTMLElement {
 
     var html =
       '<div class="delivery' + (d.status_code === 0 ? ' done' : '') + '" data-id="' + parcelEsc(id) + '">' +
-      '<div class="row">' +
+      '<div class="row" role="button" tabindex="0" aria-expanded="' + expanded + '">' +
       '<ha-icon class="status-icon" icon="' + style.icon + '" style="color:' + style.color + '"></ha-icon>' +
       '<div class="main">' +
       '<div class="line1"><span class="desc">' + parcelEsc(d.description || d.tracking_number) + '</span>' +
       '<span class="chip" style="--c:' + style.color + '">' + parcelEsc(t.status[key] || key) + '</span></div>' +
       '<div class="line2">' + parcelEsc(d.carrier_name || d.carrier_code) + ' · ' +
-      '<span class="tracking" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
+      '<span class="tracking" role="button" tabindex="0" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
       (last
         ? '<div class="line3">' + parcelEsc(last.event) + (last.location ? ` · ${parcelEsc(last.location)}` : '') +
           (parcelDate(last.date) ? ` <span class="date">${parcelEsc(parcelDate(last.date))}</span>` : '') + '</div>'
@@ -462,7 +783,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _formatExpected(d) {
-    var locale = this._config?.language || this._hass.locale?.language || undefined;
+    var locale = parcelLocale(this._hass, this._config);
     var opts = { weekday: 'short', day: 'numeric', month: 'short' };
     var fmt = (ts, raw) => {
       if (ts) return new Date(ts * 1000).toLocaleString(locale, Object.assign({ hour: '2-digit', minute: '2-digit' }, opts));
@@ -481,7 +802,7 @@ class ParcelCard extends HTMLElement {
     var copy = ev.target.closest('[data-copy]');
     if (copy) {
       ev.stopPropagation();
-      if (navigator.clipboard) navigator.clipboard.writeText(copy.getAttribute('data-copy'));
+      this._copy(copy);
       return;
     }
     var item = ev.target.closest('.delivery');
@@ -489,6 +810,24 @@ class ParcelCard extends HTMLElement {
     var id = item.getAttribute('data-id');
     this._expanded[id] = !this._expanded[id];
     this._render();
+  }
+
+  // Enter and Space act like a click on a row or a tracking number (both are role="button").
+  _onListKeydown(ev) {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    if (!ev.target.closest('[data-copy]') && !ev.target.closest('.row')) return;
+    ev.preventDefault();
+    this._onListClick(ev);
+  }
+
+  // The copy can be refused (iframe, companion app permission, plain http): caught, and a short
+  // check mark confirms a successful copy.
+  _copy(el) {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(el.getAttribute('data-copy')).then(() => {
+      el.classList.add('copied');
+      setTimeout(() => el.classList.remove('copied'), 1000);
+    }).catch(() => {});
   }
 
   _refresh() {
@@ -630,24 +969,29 @@ class ParcelCard extends HTMLElement {
       '.titles { min-width: 0; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-      '.sub.error { color: var(--error-color, #db4437); }',
+      '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
       '.buttons { display: flex; align-items: center; flex: none; }',
+      // State colors stay on the backgrounds; texts are mixed with the text color to stay readable (WCAG 4.5:1).
       '.status { font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px; margin-right: 4px;' +
-        ' color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
+        ' color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
       '.delivery { padding: 6px 12px; cursor: pointer; border-top: 1px solid var(--divider-color, rgba(0,0,0,.12)); }',
       '.delivery:first-child { border-top: none; }',
-      '.delivery.done { opacity: 0.6; }',
+      '.delivery:hover { background: color-mix(in srgb, var(--primary-text-color) 4%, transparent); }',
+      // A delivered row is quieter through its title color only: fading the whole row made its texts unreadable.
+      '.delivery.done .desc { color: var(--secondary-text-color); font-weight: 400; }',
+      '.row:focus-visible, .tracking:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; border-radius: 4px; }',
       '.row { display: flex; align-items: flex-start; gap: 10px; }',
       '.status-icon { flex: none; margin-top: 2px; }',
       '.main { flex: 1; min-width: 0; }',
       '.line1 { display: flex; align-items: center; gap: 8px; justify-content: space-between; }',
       '.desc { font-weight: 500; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
-      '.chip { flex: none; font-size: 11px; font-weight: 500; border-radius: 12px; padding: 1px 8px; white-space: nowrap; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      '.chip { flex: none; font-size: 11px; font-weight: 500; border-radius: 12px; padding: 1px 8px; white-space: nowrap; color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.line2, .line3, .expected { font-size: 12px; color: var(--secondary-text-color); margin-top: 1px; overflow-wrap: anywhere; }',
       '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; }',
+      '.tracking.copied::after { content: " \u2713"; color: var(--primary-text-color); }',
       '.expected { color: var(--primary-text-color); }',
       '.date { color: var(--secondary-text-color); font-size: 12px; }',
       '.chevron { flex: none; color: var(--secondary-text-color); transition: transform .2s ease; }',
@@ -663,14 +1007,15 @@ class ParcelCard extends HTMLElement {
       '.hint { font-size: 12px; color: var(--secondary-text-color); }',
       '.msg { font-size: 13px; }',
       '.msg:empty { display: none; }',
-      '.msg.error { color: var(--error-color, #db4437); }',
-      '.msg.ok { color: var(--success-color, #43a047); }',
+      '.msg.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
+      '.msg.ok { color: color-mix(in srgb, var(--success-color, #43a047) 50%, var(--primary-text-color)); }',
       '.actions { display: flex; justify-content: flex-end; gap: 8px; }',
       '.actions button { font: inherit; padding: 6px 14px; border-radius: 10px; border: none; cursor: pointer;' +
         ' background: var(--secondary-background-color, rgba(127,127,127,.12)); color: var(--primary-text-color); }',
-      '.actions .submit { background: color-mix(in srgb, var(--primary-color) 16%, transparent); color: var(--primary-color); }',
+      '.actions .submit { background: color-mix(in srgb, var(--primary-color) 16%, transparent); color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); }',
       '.actions .submit:hover:not(:disabled) { background: color-mix(in srgb, var(--primary-color) 24%, transparent); }',
       '.actions button:disabled { opacity: 0.6; cursor: default; }',
+      '@media (prefers-reduced-motion: reduce) { .refresh-btn.spinning ha-icon { animation: none; opacity: .5; } .chevron { transition: none; } }',
     ].join('\n');
   }
 }
@@ -702,6 +1047,12 @@ function parcelEditorSchema(t) {
             { value: 'fr', label: 'Français' },
             { value: 'de', label: 'Deutsch' },
             { value: 'es', label: 'Español' },
+            { value: 'sr', label: 'Српски' },
+            { value: 'sr-Latn', label: 'Srpski (latinica)' },
+            { value: 'it', label: 'Italiano' },
+            { value: 'nl', label: 'Nederlands' },
+            { value: 'pt', label: 'Português (Portugal)' },
+            { value: 'pl', label: 'Polski' },
           ],
         },
       },

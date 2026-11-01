@@ -84,7 +84,7 @@ type: custom:parcel-card
 | `show_add` | `true` | Show the add button |
 | `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |
 | `max_events` | `5` | Number of events shown when a delivery is expanded |
-| `language` | Auto | Force language: `en`, `fr`, `de` or `es` (auto-detects from HA settings) |
+| `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt` or `pl` (auto-detects from HA settings) |
 
 Click a delivery to see its events, and the tracking number to copy it.
 
@@ -141,7 +141,7 @@ pip install playwright==1.64.1 && playwright install chromium
 python scripts/screenshots.py   # renders the card stills and the refreshing.gif / refreshing-dark.gif animations (needs ffmpeg) into screenshots/
 ```
 
-Python tests live in `tests/` (pytest); the card's JavaScript tests live in `test/` (`node --test test/`).
+Python tests live in `tests/` (pytest); the card's JavaScript tests live in `test/` (`node --test test/*.test.mjs`).
 
 ### Releasing
 
@@ -159,6 +159,14 @@ The integration and the card follow the language of Home Assistant (the card's `
 | Français | `fr` |
 | Deutsch | `de` |
 | Español | `es` |
+| Српски | `sr` |
+| Srpski (latinica) | `sr-Latn` |
+| Italiano | `it` |
+| Nederlands | `nl` |
+| Português (Portugal) | `pt` |
+| Polski | `pl` |
+
+Brazilian Portuguese (`pt-BR`): pt-BR uses the European Portuguese texts, in the integration and the card.
 
 Contributions for additional languages are welcome!
 

@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Gere uma chave de API em web.parcelapp.net (é necessário o Parcel Premium).",
+        "data": { "api_key": "Chave de API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "A chave de API do Parcel foi recusada. Introduza uma nova.",
+        "data": { "api_key": "Chave de API" }
+      }
+    },
+    "error": {
+      "already_configured": "Esta chave de API já é utilizada por outra entrada do Parcel.",
+      "invalid_auth": "Chave de API inválida.",
+      "cannot_connect": "Não é possível contactar o Parcel, ou foi atingido o limite de pedidos por hora. Tente novamente mais tarde."
+    },
+    "abort": {
+      "already_configured": "Esta chave de API já está configurada.",
+      "reauth_successful": "Chave de API atualizada."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções do Parcel",
+        "data": {
+          "filter_mode": "Encomendas a mostrar",
+          "scan_interval": "Intervalo de atualização"
+        },
+        "data_description": {
+          "scan_interval": "O Parcel permite 20 pedidos por hora, pelo que o mínimo é de 5 minutos."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Recentes (em curso e entregues recentemente)",
+        "active": "Apenas em curso"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Encomendas" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Adicionar encomenda",
+      "description": "Adiciona uma encomenda ao Parcel. O Parcel permite 20 adições por dia.",
+      "fields": {
+        "tracking_number": { "name": "Número de seguimento", "description": "O número de seguimento da transportadora." },
+        "carrier_code": { "name": "Código da transportadora", "description": "Código da transportadora no Parcel, por exemplo ups, dhl ou pholder para uma encomenda sem seguimento." },
+        "description": { "name": "Descrição", "description": "Nome mostrado no Parcel." },
+        "language": { "name": "Idioma", "description": "Código de idioma de duas letras para os eventos de seguimento. Por predefinição, o idioma do Home Assistant." },
+        "send_push_confirmation": { "name": "Confirmação push", "description": "O Parcel envia uma notificação push assim que a encomenda for adicionada." },
+        "postcode": { "name": "Código postal", "description": "Apenas para as transportadoras que o exigem." },
+        "email": { "name": "E-mail", "description": "Apenas para os serviços que o exigem, como a Apple Store." },
+        "config_entry_id": { "name": "Conta Parcel", "description": "Só é necessário quando estão configuradas várias contas Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Atualizar",
+      "description": "Obtém as encomendas agora. Conta para o limite de 20 pedidos por hora.",
+      "fields": {
+        "config_entry_id": { "name": "Conta Parcel", "description": "Só é necessário quando estão configuradas várias contas Parcel." }
+      }
+    }
+  }
+}
