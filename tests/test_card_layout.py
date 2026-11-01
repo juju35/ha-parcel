@@ -12,14 +12,23 @@ PLACE = """({ctx, wrap, width}) => {
   const card = document.querySelector('parcel-card');
   const box = document.createElement('div');
   if (ctx === 'inline-block') box.style.display = 'inline-block';
-  else if (ctx === 'grid-auto') Object.assign(box.style, {display: 'grid', gridTemplateColumns: 'auto', justifyContent: 'start'});
-  else Object.assign(box.style, {display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', width: width + 'px'});
+  else if (ctx === 'grid-auto')
+    Object.assign(box.style, {display: 'grid', gridTemplateColumns: 'auto', justifyContent: 'start'});
+  else
+    Object.assign(box.style, {display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', width: width + 'px'});
   document.body.style.width = 'auto';
   document.body.appendChild(box);
   const cards = [card];
-  if (ctx === 'grid-1fr') { const twin = document.createElement('parcel-card'); twin.setConfig({type: 'custom:parcel-card'}); cards.push(twin); }
+  if (ctx === 'grid-1fr') {
+    const twin = document.createElement('parcel-card');
+    twin.setConfig({type: 'custom:parcel-card'});
+    cards.push(twin);
+  }
   for (const c of cards) {
-    if (wrap) { const div = document.createElement('div'); div.appendChild(c); box.appendChild(div); } else box.appendChild(c);
+    if (!wrap) { box.appendChild(c); continue; }
+    const div = document.createElement('div');
+    div.appendChild(c);
+    box.appendChild(div);
   }
   document.getElementById('root').remove();
   for (const c of cards) if (c !== card) c.hass = card._hass;
