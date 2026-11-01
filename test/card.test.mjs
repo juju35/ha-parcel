@@ -18,8 +18,8 @@ const context = {
   console,
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, ParcelCard };`, context);
-const { parcelEsc, parcelDate, parcelLang, ParcelCard } = context.parcel;
+vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard };`, context);
+const { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard } = context.parcel;
 const card = ParcelCard.prototype;
 
 const sensor = (id, extra = {}) => ({
@@ -48,6 +48,22 @@ test('parcelLang follows Home Assistant and falls back to English', () => {
   assert.equal(parcelLang({ locale: { language: 'de-DE' } }), 'de');
   assert.equal(parcelLang({ language: 'es' }), 'es');
   assert.equal(parcelLang({ locale: { language: 'xx' } }), 'en');
+});
+
+test('parcelLocale gives Intl European Portuguese for pt and keeps full locales', () => {
+  assert.equal(parcelLocale({ locale: { language: 'pt' } }), 'pt-PT');
+  assert.equal(parcelLocale({ language: 'pt' }), 'pt-PT');
+  assert.equal(parcelLocale({ locale: { language: 'pt-BR' } }), 'pt-BR');
+  assert.equal(parcelLocale({ locale: { language: 'fr-CA' } }), 'fr-CA');
+  assert.equal(parcelLocale({ locale: { language: 'xx' } }), 'en');
+  assert.equal(parcelLocale({ locale: { language: 'sr-Latn' } }), 'sr-Latn');
+  assert.equal(parcelLocale({ locale: { language: 'sr-Latn' } }, { language: 'sr' }), 'sr');
+  // The card's language option wins over Home Assistant.
+  assert.equal(parcelLocale({ locale: { language: 'pt-BR' } }, { language: 'fr' }), 'fr');
+  assert.equal(parcelLocale({ locale: { language: 'pt-BR' } }, { language: 'pt' }), 'pt-PT');
+  assert.equal(parcelLocale({ locale: { language: 'en' } }, { language: 'pt-BR' }), 'pt-BR');
+  const date = new Date(2026, 10, 1).toLocaleDateString(parcelLocale({ language: 'pt' }), { day: 'numeric', month: 'short', year: 'numeric' });
+  assert.ok(!date.includes(' de nov. de '), date);
 });
 
 test('parcelLang keeps a full language code it knows, else its part before the dash', () => {

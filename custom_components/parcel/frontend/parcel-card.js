@@ -531,6 +531,18 @@ function parcelLang(hass, config) {
   return ParcelI18n[lang] ? lang : 'en';
 }
 
+// Locale for Intl / toLocale*: the full code (fr-CA, pt-BR) of the card's `language` option, else of
+// Home Assistant, when its base is the card's resolved language, otherwise the resolved language.
+// Plain "pt" is European Portuguese in Home Assistant but Brazilian in Intl, so it becomes pt-PT.
+// The sr / sr-Latn scripts never mix.
+function parcelLocale(hass, config) {
+  var lang = parcelLang(hass, config);
+  var full = String(config?.language || (hass && (hass.locale?.language || hass.language)) || '');
+  var sameScript = /-Latn\b/i.test(full) === /-Latn\b/i.test(lang);
+  var locale = full && full.split('-')[0] === lang.split('-')[0] && sameScript ? full : lang;
+  return locale === 'pt' ? 'pt-PT' : locale;
+}
+
 // ── parcel-card ───────────────────────────────────────────────────────────────
 class ParcelCard extends HTMLElement {
   static getConfigElement() {
@@ -771,7 +783,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _formatExpected(d) {
-    var locale = this._config?.language || this._hass.locale?.language || undefined;
+    var locale = parcelLocale(this._hass, this._config);
     var opts = { weekday: 'short', day: 'numeric', month: 'short' };
     var fmt = (ts, raw) => {
       if (ts) return new Date(ts * 1000).toLocaleString(locale, Object.assign({ hour: '2-digit', minute: '2-digit' }, opts));
