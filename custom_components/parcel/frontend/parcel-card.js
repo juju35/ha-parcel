@@ -353,7 +353,9 @@ class ParcelCard extends HTMLElement {
     this._root.innerHTML =
       '<style>' + ParcelCard._styles() + '</style>' +
       '<ha-card><div class="header"></div><div class="form" hidden></div><div class="list"></div></ha-card>';
-    this._root.querySelector('.list').addEventListener('click', this._onListClick.bind(this));
+    var list = this._root.querySelector('.list');
+    list.addEventListener('click', this._onListClick.bind(this));
+    list.addEventListener('keydown', this._onListKeydown.bind(this));
   }
 
   _render() {
@@ -414,7 +416,22 @@ class ParcelCard extends HTMLElement {
       list.innerHTML = `<div class="empty">${parcelEsc(t.empty)}</div>`;
       return;
     }
+    // innerHTML replaces the focused row: put the keyboard focus back on the same row or tracking number.
+    var focus = this._focusSelector();
     list.innerHTML = deliveries.map((d) => this._renderDelivery(d, t)).join('');
+    var again = focus && list.querySelector ? list.querySelector(focus) : null;
+    if (again) again.focus();
+  }
+
+  // Selector of the delivery row or tracking number that has the focus, to find it again after a re-render.
+  _focusSelector() {
+    var el = this._root?.activeElement;
+    if (!el || !el.closest) return null;
+    var item = el.closest('.delivery');
+    if (!item) return null;
+    var base = `.delivery[data-id="${String(item.getAttribute('data-id')).replace(/["\\]/g, '\\$&')}"]`;
+    if (el.closest('[data-copy]')) return `${base} .tracking`;
+    return el.closest('.row') ? `${base} .row` : null;
   }
 
   _iconHtml() {
@@ -432,13 +449,13 @@ class ParcelCard extends HTMLElement {
 
     var html =
       '<div class="delivery' + (d.status_code === 0 ? ' done' : '') + '" data-id="' + parcelEsc(id) + '">' +
-      '<div class="row">' +
+      '<div class="row" role="button" tabindex="0" aria-expanded="' + expanded + '">' +
       '<ha-icon class="status-icon" icon="' + style.icon + '" style="color:' + style.color + '"></ha-icon>' +
       '<div class="main">' +
       '<div class="line1"><span class="desc">' + parcelEsc(d.description || d.tracking_number) + '</span>' +
       '<span class="chip" style="--c:' + style.color + '">' + parcelEsc(t.status[key] || key) + '</span></div>' +
       '<div class="line2">' + parcelEsc(d.carrier_name || d.carrier_code) + ' · ' +
-      '<span class="tracking" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
+      '<span class="tracking" role="button" tabindex="0" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
       (last
         ? '<div class="line3">' + parcelEsc(last.event) + (last.location ? ` · ${parcelEsc(last.location)}` : '') +
           (parcelDate(last.date) ? ` <span class="date">${parcelEsc(parcelDate(last.date))}</span>` : '') + '</div>'
@@ -481,7 +498,7 @@ class ParcelCard extends HTMLElement {
     var copy = ev.target.closest('[data-copy]');
     if (copy) {
       ev.stopPropagation();
-      if (navigator.clipboard) navigator.clipboard.writeText(copy.getAttribute('data-copy'));
+      this._copy(copy);
       return;
     }
     var item = ev.target.closest('.delivery');
@@ -489,6 +506,24 @@ class ParcelCard extends HTMLElement {
     var id = item.getAttribute('data-id');
     this._expanded[id] = !this._expanded[id];
     this._render();
+  }
+
+  // Enter and Space act like a click on a row or a tracking number (both are role="button").
+  _onListKeydown(ev) {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    if (!ev.target.closest('[data-copy]') && !ev.target.closest('.row')) return;
+    ev.preventDefault();
+    this._onListClick(ev);
+  }
+
+  // The copy can be refused (iframe, companion app permission, plain http): caught, and a short
+  // check mark confirms a successful copy.
+  _copy(el) {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(el.getAttribute('data-copy')).then(() => {
+      el.classList.add('copied');
+      setTimeout(() => el.classList.remove('copied'), 1000);
+    }).catch(() => {});
   }
 
   _refresh() {
@@ -630,24 +665,29 @@ class ParcelCard extends HTMLElement {
       '.titles { min-width: 0; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-      '.sub.error { color: var(--error-color, #db4437); }',
+      '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
       '.buttons { display: flex; align-items: center; flex: none; }',
+      // State colors stay on the backgrounds; texts are mixed with the text color to stay readable (WCAG 4.5:1).
       '.status { font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px; margin-right: 4px;' +
-        ' color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
+        ' color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
       '.delivery { padding: 6px 12px; cursor: pointer; border-top: 1px solid var(--divider-color, rgba(0,0,0,.12)); }',
       '.delivery:first-child { border-top: none; }',
-      '.delivery.done { opacity: 0.6; }',
+      '.delivery:hover { background: color-mix(in srgb, var(--primary-text-color) 4%, transparent); }',
+      // A delivered row is quieter through its title color only: fading the whole row made its texts unreadable.
+      '.delivery.done .desc { color: var(--secondary-text-color); font-weight: 400; }',
+      '.row:focus-visible, .tracking:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; border-radius: 4px; }',
       '.row { display: flex; align-items: flex-start; gap: 10px; }',
       '.status-icon { flex: none; margin-top: 2px; }',
       '.main { flex: 1; min-width: 0; }',
       '.line1 { display: flex; align-items: center; gap: 8px; justify-content: space-between; }',
       '.desc { font-weight: 500; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
-      '.chip { flex: none; font-size: 11px; font-weight: 500; border-radius: 12px; padding: 1px 8px; white-space: nowrap; color: var(--c); background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      '.chip { flex: none; font-size: 11px; font-weight: 500; border-radius: 12px; padding: 1px 8px; white-space: nowrap; color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.line2, .line3, .expected { font-size: 12px; color: var(--secondary-text-color); margin-top: 1px; overflow-wrap: anywhere; }',
       '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; }',
+      '.tracking.copied::after { content: " \u2713"; color: var(--primary-text-color); }',
       '.expected { color: var(--primary-text-color); }',
       '.date { color: var(--secondary-text-color); font-size: 12px; }',
       '.chevron { flex: none; color: var(--secondary-text-color); transition: transform .2s ease; }',
@@ -663,14 +703,15 @@ class ParcelCard extends HTMLElement {
       '.hint { font-size: 12px; color: var(--secondary-text-color); }',
       '.msg { font-size: 13px; }',
       '.msg:empty { display: none; }',
-      '.msg.error { color: var(--error-color, #db4437); }',
-      '.msg.ok { color: var(--success-color, #43a047); }',
+      '.msg.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
+      '.msg.ok { color: color-mix(in srgb, var(--success-color, #43a047) 50%, var(--primary-text-color)); }',
       '.actions { display: flex; justify-content: flex-end; gap: 8px; }',
       '.actions button { font: inherit; padding: 6px 14px; border-radius: 10px; border: none; cursor: pointer;' +
         ' background: var(--secondary-background-color, rgba(127,127,127,.12)); color: var(--primary-text-color); }',
-      '.actions .submit { background: color-mix(in srgb, var(--primary-color) 16%, transparent); color: var(--primary-color); }',
+      '.actions .submit { background: color-mix(in srgb, var(--primary-color) 16%, transparent); color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); }',
       '.actions .submit:hover:not(:disabled) { background: color-mix(in srgb, var(--primary-color) 24%, transparent); }',
       '.actions button:disabled { opacity: 0.6; cursor: default; }',
+      '@media (prefers-reduced-motion: reduce) { .refresh-btn.spinning ha-icon { animation: none; opacity: .5; } .chevron { transition: none; } }',
     ].join('\n');
   }
 }
