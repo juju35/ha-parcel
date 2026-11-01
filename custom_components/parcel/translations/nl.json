@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Maak een API-sleutel aan op web.parcelapp.net (Parcel Premium is vereist).",
+        "data": { "api_key": "API-sleutel" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "De API-sleutel van Parcel is geweigerd. Voer een nieuwe in.",
+        "data": { "api_key": "API-sleutel" }
+      }
+    },
+    "error": {
+      "already_configured": "Deze API-sleutel wordt al gebruikt door een andere Parcel-vermelding.",
+      "invalid_auth": "Ongeldige API-sleutel.",
+      "cannot_connect": "Kan Parcel niet bereiken, of de limiet van verzoeken per uur is bereikt. Probeer het later opnieuw."
+    },
+    "abort": {
+      "already_configured": "Deze API-sleutel is al geconfigureerd.",
+      "reauth_successful": "API-sleutel bijgewerkt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Parcel-opties",
+        "data": {
+          "filter_mode": "Te tonen zendingen",
+          "scan_interval": "Update-interval"
+        },
+        "data_description": {
+          "scan_interval": "Parcel staat 20 verzoeken per uur toe, dus 5 minuten is het minimum."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Recent (actief en onlangs bezorgd)",
+        "active": "Alleen actief"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Zendingen" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Zending toevoegen",
+      "description": "Voegt een zending toe aan Parcel. Parcel staat 20 toevoegingen per dag toe.",
+      "fields": {
+        "tracking_number": { "name": "Trackingnummer", "description": "Het trackingnummer van de vervoerder." },
+        "carrier_code": { "name": "Vervoerderscode", "description": "Vervoerderscode van Parcel, bijvoorbeeld ups, dhl of pholder voor een zending zonder trackingnummer." },
+        "description": { "name": "Omschrijving", "description": "Naam die in Parcel wordt getoond." },
+        "language": { "name": "Taal", "description": "Taalcode van twee letters voor de trackinggebeurtenissen. Standaard de taal van Home Assistant." },
+        "send_push_confirmation": { "name": "Pushbevestiging", "description": "Parcel stuurt een pushmelding zodra de zending is toegevoegd." },
+        "postcode": { "name": "Postcode", "description": "Alleen voor vervoerders die dit vereisen." },
+        "email": { "name": "E-mail", "description": "Alleen voor diensten die dit vereisen, zoals Apple Store." },
+        "config_entry_id": { "name": "Parcel-account", "description": "Alleen nodig als er meerdere Parcel-accounts zijn geconfigureerd." }
+      }
+    },
+    "refresh": {
+      "name": "Vernieuwen",
+      "description": "Haalt de zendingen nu op. Telt mee voor de limiet van 20 verzoeken per uur.",
+      "fields": {
+        "config_entry_id": { "name": "Parcel-account", "description": "Alleen nodig als er meerdere Parcel-accounts zijn geconfigureerd." }
+      }
+    }
+  }
+}

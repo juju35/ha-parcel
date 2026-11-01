@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.10.5';
+var PARCEL_CARD_VERSION = '0.10.6';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -293,6 +293,198 @@ var ParcelI18n = {
       unknown: 'Nepoznato',
     },
   },
+  it: {
+    default_title: 'Spedizioni',
+    empty: 'Nessuna spedizione da mostrare',
+    no_entity: 'Sensore Parcel non trovato. Aggiungi l\'integrazione Parcel o imposta «entity».',
+    unavailable: 'Parcel non è disponibile. Le spedizioni appariranno dopo il prossimo aggiornamento riuscito.',
+    in_progress: 'in corso',
+    expected: 'Prevista:',
+    add: 'Aggiungi una spedizione',
+    refresh: 'Aggiorna',
+    refresh_failed: 'Aggiornamento non riuscito:',
+    tracking_number: 'Numero di tracciamento',
+    carrier: 'Corriere',
+    carrier_search: 'Cerca un corriere',
+    description: 'Descrizione',
+    push: 'Notifica push di conferma Parcel',
+    submit: 'Aggiungi',
+    cancel: 'Annulla',
+    adding: 'Aggiunta in corso…',
+    added: 'Spedizione aggiunta. Apparirà dopo il prossimo aggiornamento di Parcel.',
+    unknown_carrier: 'Scegli un corriere dall\'elenco.',
+    required: 'Numero di tracciamento, corriere e descrizione sono obbligatori.',
+    limit: 'Parcel consente 20 aggiunte al giorno.',
+    no_events: 'Ancora nessun evento',
+    copy: 'Copia il numero di tracciamento',
+    editor: {
+      entity: 'Sensore Parcel',
+      title: 'Titolo',
+      show_icon: 'Mostra l\'icona',
+      show_delivered: 'Mostra le spedizioni consegnate',
+      show_add: 'Mostra il pulsante Aggiungi',
+      show_refresh: 'Mostra il pulsante Aggiorna',
+      max_events: 'Eventi mostrati quando una spedizione è espansa',
+      language: 'Lingua',
+      lang_auto: 'Automatica',
+    },
+    status: {
+      delivered: 'Consegnata',
+      frozen: 'Nessun aggiornamento',
+      in_transit: 'In transito',
+      awaiting_pickup: 'Da ritirare',
+      out_for_delivery: 'In consegna',
+      not_found: 'Non trovata',
+      failed_attempt: 'Tentativo fallito',
+      exception: 'Problema',
+      info_received: 'Annunciata',
+      unknown: 'Sconosciuta',
+    },
+  },
+  nl: {
+    default_title: 'Zendingen',
+    empty: 'Geen zendingen om weer te geven',
+    no_entity: 'Parcel-sensor niet gevonden. Voeg de Parcel-integratie toe of stel „entity” in.',
+    unavailable: 'Parcel is niet beschikbaar. De zendingen verschijnen na de volgende geslaagde update.',
+    in_progress: 'actief',
+    expected: 'Verwacht:',
+    add: 'Zending toevoegen',
+    refresh: 'Vernieuwen',
+    refresh_failed: 'Vernieuwen mislukt:',
+    tracking_number: 'Trackingnummer',
+    carrier: 'Vervoerder',
+    carrier_search: 'Vervoerder zoeken',
+    description: 'Omschrijving',
+    push: 'Pushbevestiging van Parcel',
+    submit: 'Toevoegen',
+    cancel: 'Annuleren',
+    adding: 'Toevoegen…',
+    added: 'Zending toegevoegd. Deze verschijnt na de volgende update van Parcel.',
+    unknown_carrier: 'Kies een vervoerder uit de lijst.',
+    required: 'Trackingnummer, vervoerder en omschrijving zijn verplicht.',
+    limit: 'Parcel staat 20 toevoegingen per dag toe.',
+    no_events: 'Nog geen gebeurtenissen',
+    copy: 'Trackingnummer kopiëren',
+    editor: {
+      entity: 'Parcel-sensor',
+      title: 'Titel',
+      show_icon: 'Pictogram tonen',
+      show_delivered: 'Bezorgde zendingen tonen',
+      show_add: 'Knop Toevoegen tonen',
+      show_refresh: 'Knop Vernieuwen tonen',
+      max_events: 'Getoonde gebeurtenissen bij een uitgeklapte zending',
+      language: 'Taal',
+      lang_auto: 'Automatisch',
+    },
+    status: {
+      delivered: 'Bezorgd',
+      frozen: 'Geen updates',
+      in_transit: 'Onderweg',
+      awaiting_pickup: 'Klaar om op te halen',
+      out_for_delivery: 'Wordt bezorgd',
+      not_found: 'Niet gevonden',
+      failed_attempt: 'Bezorgpoging mislukt',
+      exception: 'Probleem',
+      info_received: 'Aangemeld',
+      unknown: 'Onbekend',
+    },
+  },
+  pt: {
+    default_title: 'Encomendas',
+    empty: 'Nenhuma encomenda a mostrar',
+    no_entity: 'Sensor do Parcel não encontrado. Adicione a integração Parcel ou indique «entity».',
+    unavailable: 'O Parcel está indisponível. As encomendas aparecerão após a próxima atualização bem-sucedida.',
+    in_progress: 'em curso',
+    expected: 'Prevista:',
+    add: 'Adicionar uma encomenda',
+    refresh: 'Atualizar',
+    refresh_failed: 'Não foi possível atualizar:',
+    tracking_number: 'Número de seguimento',
+    carrier: 'Transportadora',
+    carrier_search: 'Procurar uma transportadora',
+    description: 'Descrição',
+    push: 'Notificação push de confirmação do Parcel',
+    submit: 'Adicionar',
+    cancel: 'Cancelar',
+    adding: 'A adicionar…',
+    added: 'Encomenda adicionada. Aparecerá após a próxima atualização do Parcel.',
+    unknown_carrier: 'Escolha uma transportadora da lista.',
+    required: 'O número de seguimento, a transportadora e a descrição são obrigatórios.',
+    limit: 'O Parcel permite 20 adições por dia.',
+    no_events: 'Ainda não há eventos',
+    copy: 'Copiar o número de seguimento',
+    editor: {
+      entity: 'Sensor do Parcel',
+      title: 'Título',
+      show_icon: 'Mostrar o ícone',
+      show_delivered: 'Mostrar as encomendas entregues',
+      show_add: 'Mostrar o botão Adicionar',
+      show_refresh: 'Mostrar o botão Atualizar',
+      max_events: 'Eventos mostrados ao expandir uma encomenda',
+      language: 'Idioma',
+      lang_auto: 'Automático',
+    },
+    status: {
+      delivered: 'Entregue',
+      frozen: 'Sem atualizações',
+      in_transit: 'Em trânsito',
+      awaiting_pickup: 'Pronta a levantar',
+      out_for_delivery: 'Em distribuição',
+      not_found: 'Não encontrada',
+      failed_attempt: 'Tentativa falhada',
+      exception: 'Problema',
+      info_received: 'Anunciada',
+      unknown: 'Desconhecida',
+    },
+  },
+  pl: {
+    default_title: 'Przesyłki',
+    empty: 'Brak przesyłek do wyświetlenia',
+    no_entity: 'Nie znaleziono sensora Parcel. Dodaj integrację Parcel lub ustaw „entity”.',
+    unavailable: 'Parcel jest niedostępny. Przesyłki pojawią się po następnej udanej aktualizacji.',
+    in_progress: 'w drodze',
+    expected: 'Przewidywana dostawa:',
+    add: 'Dodaj przesyłkę',
+    refresh: 'Odśwież',
+    refresh_failed: 'Odświeżanie nie powiodło się:',
+    tracking_number: 'Numer przesyłki',
+    carrier: 'Przewoźnik',
+    carrier_search: 'Szukaj przewoźnika',
+    description: 'Opis',
+    push: 'Powiadomienie push z potwierdzeniem Parcel',
+    submit: 'Dodaj',
+    cancel: 'Anuluj',
+    adding: 'Dodawanie…',
+    added: 'Dodano przesyłkę. Pojawi się po następnej aktualizacji Parcel.',
+    unknown_carrier: 'Wybierz przewoźnika z listy.',
+    required: 'Numer przesyłki, przewoźnik i opis są wymagane.',
+    limit: 'Parcel pozwala na 20 dodań dziennie.',
+    no_events: 'Brak zdarzeń',
+    copy: 'Kopiuj numer przesyłki',
+    editor: {
+      entity: 'Sensor Parcel',
+      title: 'Tytuł',
+      show_icon: 'Pokaż ikonę',
+      show_delivered: 'Pokaż doręczone przesyłki',
+      show_add: 'Pokaż przycisk dodawania',
+      show_refresh: 'Pokaż przycisk odświeżania',
+      max_events: 'Zdarzenia wyświetlane po rozwinięciu przesyłki',
+      language: 'Język',
+      lang_auto: 'Automatycznie',
+    },
+    status: {
+      delivered: 'Doręczono',
+      frozen: 'Brak aktualizacji',
+      in_transit: 'W transporcie',
+      awaiting_pickup: 'Do odbioru',
+      out_for_delivery: 'W doręczeniu',
+      not_found: 'Nie znaleziono',
+      failed_attempt: 'Nieudane doręczenie',
+      exception: 'Problem',
+      info_received: 'Zarejestrowano',
+      unknown: 'Nieznany',
+    },
+  },
 };
 
 // Single source of the config defaults, shared by the card (setConfig) and the editor.
@@ -330,12 +522,25 @@ function parcelParseDate(raw) {
 }
 
 // The card's `language` option wins over the Home Assistant language. A full code the card knows
-// (sr-Latn) is kept, otherwise its part before the dash (fr-FR gives fr), otherwise English.
+// (sr-Latn) is kept, otherwise its part before the dash (fr-FR gives fr, pt-BR gives the European
+// Portuguese pt), otherwise English.
 function parcelLang(hass, config) {
   var lang = String(config?.language || (hass && (hass.locale?.language || hass.language)) || navigator.language || 'en');
   if (ParcelI18n[lang]) return lang;
   lang = lang.split('-')[0];
   return ParcelI18n[lang] ? lang : 'en';
+}
+
+// Locale for Intl / toLocale*: the full code (fr-CA, pt-BR) of the card's `language` option, else of
+// Home Assistant, when its base is the card's resolved language, otherwise the resolved language.
+// Plain "pt" is European Portuguese in Home Assistant but Brazilian in Intl, so it becomes pt-PT.
+// The sr / sr-Latn scripts never mix.
+function parcelLocale(hass, config) {
+  var lang = parcelLang(hass, config);
+  var full = String(config?.language || (hass && (hass.locale?.language || hass.language)) || '');
+  var sameScript = /-Latn\b/i.test(full) === /-Latn\b/i.test(lang);
+  var locale = full && full.split('-')[0] === lang.split('-')[0] && sameScript ? full : lang;
+  return locale === 'pt' ? 'pt-PT' : locale;
 }
 
 // ── parcel-card ───────────────────────────────────────────────────────────────
@@ -578,7 +783,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _formatExpected(d) {
-    var locale = this._config?.language || this._hass.locale?.language || undefined;
+    var locale = parcelLocale(this._hass, this._config);
     var opts = { weekday: 'short', day: 'numeric', month: 'short' };
     var fmt = (ts, raw) => {
       if (ts) return new Date(ts * 1000).toLocaleString(locale, Object.assign({ hour: '2-digit', minute: '2-digit' }, opts));
@@ -844,6 +1049,10 @@ function parcelEditorSchema(t) {
             { value: 'es', label: 'Español' },
             { value: 'sr', label: 'Српски' },
             { value: 'sr-Latn', label: 'Srpski (latinica)' },
+            { value: 'it', label: 'Italiano' },
+            { value: 'nl', label: 'Nederlands' },
+            { value: 'pt', label: 'Português (Portugal)' },
+            { value: 'pl', label: 'Polski' },
           ],
         },
       },
