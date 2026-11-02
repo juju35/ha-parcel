@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.0.1';
+var PARCEL_CARD_VERSION = '1.0.2';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
