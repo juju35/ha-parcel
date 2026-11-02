@@ -1,7 +1,8 @@
 var PARCEL_CARD_VERSION = '1.0.0';
 
-// ── Integration icon (same drawing as brand/icon.png) ────────────────────────
-var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
+// ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
+// (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
+var PARCEL_ACCENT = '#ff7a00';
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 var ParcelI18n = {
@@ -771,7 +772,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _iconHtml() {
-    return this._config.show_icon ? `<img class="logo" src="${PARCEL_ICON}" alt="">` : '';
+    return this._config.show_icon ? '<div class="logo" aria-hidden="true"><ha-icon icon="mdi:package-variant-closed"></ha-icon></div>' : '';
   }
 
   _renderDelivery(d, t) {
@@ -1007,7 +1008,9 @@ class ParcelCard extends HTMLElement {
       // Narrow header: the title takes what is left (flex-basis 0, so it does not take the pill's room) and keeps a
       // few letters; the pill shrinks only when it really lacks room; the buttons never do.
       '.title { flex: 1 1 0; min-width: calc(5ch + 50px); font-size: 16px; display: flex; align-items: center; gap: 10px; }',
-      '.logo { width: 40px; height: 40px; flex: none; object-fit: contain; }',
+      '.logo { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center;' +
+        ' color: ' + PARCEL_ACCENT + '; background: color-mix(in srgb, ' + PARCEL_ACCENT + ' 16%, transparent); }',
+      '.logo ha-icon { --mdc-icon-size: 24px; }',
       // 5ch of the 16 px title font is the width of four letters and the ellipsis ("Deli…"). The title block has the
       // same minimum plus the logo's 40 px and gap: a smaller one let the title slide under the pill.
       '.titles { flex: 1 1 0; min-width: 5ch; overflow: hidden; }',
