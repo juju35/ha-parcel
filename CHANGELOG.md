@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.10.7 - 2026-11-01
+## 1.0.0 - 2026-11-02
+
+First stable release.
 
 ### Fixes
 - Card: the Refresh and Add buttons keep the keyboard focus: the header is no longer rebuilt when the sensor updates or a refresh runs, only its texts change.
