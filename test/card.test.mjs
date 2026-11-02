@@ -315,7 +315,7 @@ test('deliveries sort by expected date even when Date.parse is strict (Safari/We
   const list = {};
   const delivery = (id, extra) => ({ carrier_code: 'ups', tracking_number: id, status_code: 10, events: [], ...extra });
   const self = Object.assign(Object.create(strict.parcel.ParcelCard.prototype), {
-    _config: { entity: 'sensor.a', show_delivered: true, show_icon: false, show_refresh: false, show_add: false, max_events: 5 },
+    _config: { entity: 'sensor.a', show_delivered: true, show_refresh: false, show_add: false, max_events: 5 },
     _hass: { locale: { language: 'en' } },
     _lastState: sensor('sensor.a', {
       deliveries: [
@@ -343,7 +343,7 @@ test('deliveries sort a date without time as local midnight of that day', () => 
   const list = {};
   const delivery = (id, extra) => ({ carrier_code: 'ups', tracking_number: id, status_code: 10, events: [], ...extra });
   const self = Object.assign(Object.create(ParcelCard.prototype), {
-    _config: { entity: 'sensor.a', show_delivered: true, show_icon: false, show_refresh: false, show_add: false, max_events: 5 },
+    _config: { entity: 'sensor.a', show_delivered: true, show_refresh: false, show_add: false, max_events: 5 },
     _hass: { locale: { language: 'en' } },
     _lastState: sensor('sensor.a', {
       deliveries: [delivery('day', { date_expected: '2026-10-20' }), delivery('eve', { date_expected: '2026-10-19 22:00:00' })],
@@ -373,19 +373,19 @@ const renderable = (extra = {}) => {
 
 test('setConfig reads the sensor at once when hass is already set (visual editor)', () => {
   const self = renderable({ _hass: { states: { 'sensor.a': sensor('sensor.a', { deliveries: [] }) } } });
-  self.setConfig({ entity: 'sensor.a', show_icon: false });
+  self.setConfig({ entity: 'sensor.a' });
   assert.equal(self._lastState, self._hass.states['sensor.a']);
   assert.ok(!self.list.innerHTML.includes('not found'), self.list.innerHTML);
   // The automatically found sensor too.
   const auto = renderable({ _hass: { states: { 'sensor.b': sensor('sensor.b') } } });
-  auto.setConfig({ show_icon: false });
+  auto.setConfig({});
   assert.equal(auto._lastState, auto._hass.states['sensor.b']);
 });
 
 test('an unavailable sensor shows a dedicated message, without a count', () => {
   const st = { entity_id: 'sensor.a', state: 'unavailable', attributes: { friendly_name: 'Parcel' } };
   const self = renderable({ _hass: { states: { 'sensor.a': st } } });
-  self.setConfig({ entity: 'sensor.a', show_icon: false });
+  self.setConfig({ entity: 'sensor.a' });
   assert.ok(self.list.innerHTML.includes('Parcel is unavailable'), self.list.innerHTML);
   assert.ok(!self.header.innerHTML.includes('active'), self.header.innerHTML);
   assert.ok(!self.header.innerHTML.includes('unavailable'), self.header.innerHTML);
@@ -418,7 +418,7 @@ test('with the sensor unavailable, refresh still targets its Parcel account', as
   const calls = [];
   const hass = unavailableHass({ callService: (...args) => { calls.push(args); return Promise.resolve(); } });
   const self = renderable({ _hass: hass });
-  self.setConfig({ entity: 'sensor.parcel_deliveries', show_icon: false });
+  self.setConfig({ entity: 'sensor.parcel_deliveries' });
   self._refresh();
   await flush();
   assert.equal(calls.length, 1);
@@ -466,7 +466,7 @@ const styles = () => ParcelCard._styles();
 const deliveryOf = (id, extra = {}) => ({ carrier_code: 'ups', tracking_number: id, status_code: 10, status: 'in_transit', events: [], ...extra });
 const renderDeliveries = (deliveries, extra = {}) => {
   const self = renderable({ _hass: { locale: { language: 'en' }, states: { 'sensor.a': sensor('sensor.a', { deliveries }) } }, ...extra });
-  self.setConfig({ entity: 'sensor.a', show_icon: false, show_delivered: true });
+  self.setConfig({ entity: 'sensor.a', show_delivered: true });
   return self;
 };
 
@@ -652,7 +652,7 @@ const headerCard = (states, config = {}) => {
     header,
     list,
   });
-  self.setConfig({ entity: 'sensor.a', show_icon: false, ...config });
+  self.setConfig({ entity: 'sensor.a', ...config });
   return self;
 };
 
@@ -704,14 +704,14 @@ test('a failed refresh shows its error under the title, and the next attempt cle
 test('the header is rebuilt only when its buttons or its language change', () => {
   const states = { 'sensor.a': sensor('sensor.a') };
   const self = headerCard(states);
-  self.setConfig({ entity: 'sensor.a', show_icon: false, show_add: false });
+  self.setConfig({ entity: 'sensor.a', show_add: false });
   assert.equal(self.header.writes, 2);
   assert.equal(self.header.querySelector('.add-btn'), null);
-  self.setConfig({ entity: 'sensor.a', show_icon: false, show_add: false, language: 'fr' });
+  self.setConfig({ entity: 'sensor.a', show_add: false, language: 'fr' });
   assert.equal(self.header.writes, 3);
   assert.equal(self.header.querySelector('.status-text').textContent, '1 en cours');
   // A new title is only a text change.
-  self.setConfig({ entity: 'sensor.a', show_icon: false, show_add: false, language: 'fr', title: 'Colis' });
+  self.setConfig({ entity: 'sensor.a', show_add: false, language: 'fr', title: 'Colis' });
   assert.equal(self.header.writes, 3);
   assert.equal(self.header.querySelector('.name').textContent, 'Colis');
 });

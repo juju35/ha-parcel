@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Changes
+- Card: the `show_icon` option is removed: the header icon is always shown (still hidden on cards narrower than about 320 px). An existing `show_icon` line is ignored.
+
 ## 1.0.1 - 2026-11-02
 
 ### Changes
