@@ -79,7 +79,6 @@ type: custom:parcel-card
 |---|---|---|
 | `entity` | detected | Parcel sensor to show (useful with several accounts) |
 | `title` | `Deliveries` | Card title |
-| `show_icon` | `true` | Show the Parcel icon next to the title |
 | `show_delivered` | `true` | Show delivered parcels |
 | `show_add` | `true` | Show the add button |
 | `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |

@@ -33,7 +33,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Capteur Parcel',
       title: 'Titre',
-      show_icon: 'Afficher l\'icône',
       show_delivered: 'Afficher les colis livrés',
       show_add: 'Afficher le bouton d\'ajout',
       show_refresh: 'Afficher le bouton Actualiser',
@@ -81,7 +80,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Parcel sensor',
       title: 'Title',
-      show_icon: 'Show icon',
       show_delivered: 'Show delivered parcels',
       show_add: 'Show add button',
       show_refresh: 'Show refresh button',
@@ -129,7 +127,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Parcel-Sensor',
       title: 'Titel',
-      show_icon: 'Symbol anzeigen',
       show_delivered: 'Zugestellte Sendungen anzeigen',
       show_add: 'Schaltfläche „Hinzufügen“ anzeigen',
       show_refresh: 'Schaltfläche „Aktualisieren“ anzeigen',
@@ -177,7 +174,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Sensor de Parcel',
       title: 'Título',
-      show_icon: 'Mostrar el icono',
       show_delivered: 'Mostrar los envíos entregados',
       show_add: 'Mostrar el botón Añadir',
       show_refresh: 'Mostrar el botón Actualizar',
@@ -225,7 +221,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Parcel сензор',
       title: 'Наслов',
-      show_icon: 'Прикажи иконицу',
       show_delivered: 'Прикажи испоручене пошиљке',
       show_add: 'Прикажи дугме за додавање',
       show_refresh: 'Прикажи дугме за освежавање',
@@ -273,7 +268,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Parcel senzor',
       title: 'Naslov',
-      show_icon: 'Prikaži ikonicu',
       show_delivered: 'Prikaži isporučene pošiljke',
       show_add: 'Prikaži dugme za dodavanje',
       show_refresh: 'Prikaži dugme za osvežavanje',
@@ -321,7 +315,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Sensore Parcel',
       title: 'Titolo',
-      show_icon: 'Mostra l\'icona',
       show_delivered: 'Mostra le spedizioni consegnate',
       show_add: 'Mostra il pulsante Aggiungi',
       show_refresh: 'Mostra il pulsante Aggiorna',
@@ -369,7 +362,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Parcel-sensor',
       title: 'Titel',
-      show_icon: 'Pictogram tonen',
       show_delivered: 'Bezorgde zendingen tonen',
       show_add: 'Knop Toevoegen tonen',
       show_refresh: 'Knop Vernieuwen tonen',
@@ -417,7 +409,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Sensor do Parcel',
       title: 'Título',
-      show_icon: 'Mostrar o ícone',
       show_delivered: 'Mostrar as encomendas entregues',
       show_add: 'Mostrar o botão Adicionar',
       show_refresh: 'Mostrar o botão Atualizar',
@@ -465,7 +456,6 @@ var ParcelI18n = {
     editor: {
       entity: 'Sensor Parcel',
       title: 'Tytuł',
-      show_icon: 'Pokaż ikonę',
       show_delivered: 'Pokaż doręczone przesyłki',
       show_add: 'Pokaż przycisk dodawania',
       show_refresh: 'Pokaż przycisk odświeżania',
@@ -489,7 +479,7 @@ var ParcelI18n = {
 };
 
 // Single source of the config defaults, shared by the card (setConfig) and the editor.
-var PARCEL_DEFAULTS = { show_icon: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
+var PARCEL_DEFAULTS = { show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
 
 var PARCEL_STATUS_STYLE = {
   delivered: { icon: 'mdi:package-variant-closed-check', color: 'var(--success-color, #43a047)' },
@@ -714,7 +704,7 @@ class ParcelCard extends HTMLElement {
   // refresh dropped the keyboard focus of its buttons. It is rebuilt only when its buttons or language change.
   _renderHeader(header, t, st, title) {
     var c = this._config;
-    var key = [!!st, c.show_icon, c.show_refresh, c.show_add, parcelLang(this._hass, c)].join('|');
+    var key = [!!st, c.show_refresh, c.show_add, parcelLang(this._hass, c)].join('|');
     if (this._headerKey !== key || !header.querySelector('.title')) {
       this._headerKey = key;
       header.innerHTML =
@@ -772,7 +762,7 @@ class ParcelCard extends HTMLElement {
   }
 
   _iconHtml() {
-    return this._config.show_icon ? '<div class="logo" aria-hidden="true"><ha-icon icon="mdi:package-variant-closed"></ha-icon></div>' : '';
+    return '<div class="logo" aria-hidden="true"><ha-icon icon="mdi:package-variant-closed"></ha-icon></div>';
   }
 
   _renderDelivery(d, t) {
@@ -1086,7 +1076,6 @@ function parcelEditorSchema(t) {
       type: 'grid',
       name: '',
       schema: [
-        { name: 'show_icon', selector: { boolean: {} } },
         { name: 'show_delivered', selector: { boolean: {} } },
         { name: 'show_refresh', selector: { boolean: {} } },
         { name: 'show_add', selector: { boolean: {} } },
