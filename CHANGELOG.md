@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 - 2026-11-02
 
 ### Changes
 - Card: the header icon is now the tinted round package icon of the project's showcase page (orange `mdi:package-variant-closed`), like the generic icons of the other cards. The integration keeps its own icon (`brand/icon.png`).
