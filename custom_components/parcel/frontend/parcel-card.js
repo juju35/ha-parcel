@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '0.10.6';
+var PARCEL_CARD_VERSION = '0.10.7';
 
 // ── Integration icon (same drawing as brand/icon.png) ────────────────────────
 var PARCEL_ICON = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij48cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjU2IiBmaWxsPSIjRjU5RTBCIi8+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjxwYXRoIGQ9Ik0xMjggNTIgTDIwMCA5MCBMMjAwIDE3MCBMMTI4IDIwOCBMNTYgMTcwIEw1NiA5MCBaIi8+PHBhdGggZD0iTTU2IDkwIEwxMjggMTI4IEwyMDAgOTAiLz48cGF0aCBkPSJNMTI4IDEyOCBMMTI4IDIwOCIvPjxwYXRoIGQ9Ik05MiA3MSBMMTY0IDEwOSBMMTY0IDE0MCIvPjwvZz48L3N2Zz4=';
@@ -442,7 +442,7 @@ var ParcelI18n = {
     empty: 'Brak przesyłek do wyświetlenia',
     no_entity: 'Nie znaleziono sensora Parcel. Dodaj integrację Parcel lub ustaw „entity”.',
     unavailable: 'Parcel jest niedostępny. Przesyłki pojawią się po następnej udanej aktualizacji.',
-    in_progress: 'w drodze',
+    in_progress: 'aktywne',
     expected: 'Przewidywana dostawa:',
     add: 'Dodaj przesyłkę',
     refresh: 'Odśwież',
@@ -625,7 +625,8 @@ class ParcelCard extends HTMLElement {
   }
 
   getGridOptions() {
-    return { columns: 12, min_columns: 6, rows: 'auto' };
+    // 6 columns of a phone section (~160 px) cannot hold a 4-letter title, the pill and the two buttons.
+    return { columns: 12, min_columns: 8, rows: 'auto' };
   }
 
   // Without a configured entity, the Parcel sensor found is kept: scanning all the states on every hass update
@@ -671,8 +672,8 @@ class ParcelCard extends HTMLElement {
     var list = this._root.querySelector('.list');
     var title = this._config.title || t.default_title;
 
+    this._renderHeader(header, t, st, title);
     if (!st) {
-      header.innerHTML = `<div class="title">${this._iconHtml()}<div class="titles"><div class="name">${parcelEsc(title)}</div></div></div>`;
       list.innerHTML = `<div class="empty">${parcelEsc(t.no_entity)}</div>`;
       return;
     }
@@ -692,26 +693,6 @@ class ParcelCard extends HTMLElement {
       return expectedTs(a) - expectedTs(b);
     });
 
-    header.innerHTML =
-      '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name">' + parcelEsc(title) + '</div>' +
-      // The refresh error survives re-renders (hass updates) until the next refresh attempt.
-      (this._refreshError ? '<div class="sub error">' + parcelEsc(this._refreshError) + '</div>' : '') +
-      '</div></div>' +
-      '<div class="buttons">' +
-      // Status pill on the right of the header (card convention), not a subtitle under the title.
-      (unavailable ? '' : `<span class="status">${parcelEsc(st.state)} ${parcelEsc(t.in_progress)}</span>`) +
-      (this._config.show_refresh
-        ? `<ha-icon-button class="refresh-btn${this._refreshing ? ' spinning' : ''}" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
-        : '') +
-      (this._config.show_add
-        ? `<ha-icon-button class="add-btn" label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>`
-        : '') +
-      '</div>';
-    var addBtn = header.querySelector('.add-btn');
-    if (addBtn) addBtn.addEventListener('click', this._toggleForm.bind(this));
-    var refreshBtn = header.querySelector('.refresh-btn');
-    if (refreshBtn) refreshBtn.addEventListener('click', this._refresh.bind(this));
-
     if (unavailable) {
       list.innerHTML = `<div class="empty">${parcelEsc(t.unavailable)}</div>`;
       return;
@@ -724,10 +705,61 @@ class ParcelCard extends HTMLElement {
     var focus = this._focusSelector();
     list.innerHTML = deliveries.map((d) => this._renderDelivery(d, t)).join('');
     var again = focus && list.querySelector ? list.querySelector(focus) : null;
-    if (again) again.focus();
+    // Without preventScroll the browser scrolls the dashboard to the row on every sensor update.
+    if (again) again.focus({ preventScroll: true });
   }
 
-  // Selector of the delivery row or tracking number that has the focus, to find it again after a re-render.
+  // The header is built once and then updated in place: rebuilding it with innerHTML on every sensor update or
+  // refresh dropped the keyboard focus of its buttons. It is rebuilt only when its buttons or language change.
+  _renderHeader(header, t, st, title) {
+    var c = this._config;
+    var key = [!!st, c.show_icon, c.show_refresh, c.show_add, parcelLang(this._hass, c)].join('|');
+    if (this._headerKey !== key || !header.querySelector('.title')) {
+      this._headerKey = key;
+      header.innerHTML =
+        '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name"></div>' +
+        // The refresh error survives re-renders (hass updates) until the next refresh attempt.
+        '<div class="sub error" hidden></div></div></div>' +
+        (st
+          // Status pill on the right of the header (card convention), not a subtitle under the title.
+          ? '<span class="status" hidden><span class="status-text"></span></span>' +
+            '<div class="buttons">' +
+            (c.show_refresh
+              ? `<ha-icon-button class="refresh-btn" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
+              : '') +
+            (c.show_add
+              ? `<ha-icon-button class="add-btn" label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>`
+              : '') +
+            '</div>'
+          : '');
+      var addBtn = header.querySelector('.add-btn');
+      if (addBtn) addBtn.addEventListener('click', this._toggleForm.bind(this));
+      var refreshBtn = header.querySelector('.refresh-btn');
+      if (refreshBtn) refreshBtn.addEventListener('click', this._refresh.bind(this));
+    }
+    var name = header.querySelector('.name');
+    if (name) name.textContent = title;
+    var sub = header.querySelector('.sub');
+    if (sub) {
+      sub.hidden = !(st && this._refreshError);
+      sub.textContent = (st && this._refreshError) || '';
+    }
+    var pill = header.querySelector('.status');
+    if (pill) {
+      // An unavailable sensor has no count to show: the list says it is unavailable.
+      var unavailable = st.state === 'unavailable' || st.state === 'unknown';
+      var count = unavailable ? '' : `${st.state} ${t.in_progress}`;
+      pill.hidden = unavailable;
+      // Narrow cards only show the pill's dot: the count stays in its tooltip and for screen readers.
+      pill.title = count;
+      var text = header.querySelector('.status-text');
+      if (text) text.textContent = count;
+    }
+    var refresh = header.querySelector('.refresh-btn');
+    if (refresh) refresh.classList.toggle('spinning', !!this._refreshing);
+  }
+
+  // Selector of the delivery description or tracking number that has the focus, to find it again after a re-render.
   _focusSelector() {
     var el = this._root?.activeElement;
     if (!el || !el.closest) return null;
@@ -735,7 +767,7 @@ class ParcelCard extends HTMLElement {
     if (!item) return null;
     var base = `.delivery[data-id="${String(item.getAttribute('data-id')).replace(/["\\]/g, '\\$&')}"]`;
     if (el.closest('[data-copy]')) return `${base} .tracking`;
-    return el.closest('.row') ? `${base} .row` : null;
+    return el.closest('.desc') ? `${base} .desc` : null;
   }
 
   _iconHtml() {
@@ -753,10 +785,12 @@ class ParcelCard extends HTMLElement {
 
     var html =
       '<div class="delivery' + (d.status_code === 0 ? ' done' : '') + '" data-id="' + parcelEsc(id) + '">' +
-      '<div class="row" role="button" tabindex="0" aria-expanded="' + expanded + '">' +
+      // Only the description is the keyboard toggle: a role="button" row would hide the copy button
+      // inside it from screen readers (nested interactive). A click anywhere on the row still toggles it.
+      '<div class="row">' +
       '<ha-icon class="status-icon" icon="' + style.icon + '" style="color:' + style.color + '"></ha-icon>' +
       '<div class="main">' +
-      '<div class="line1"><span class="desc">' + parcelEsc(d.description || d.tracking_number) + '</span>' +
+      '<div class="line1"><span class="desc" role="button" tabindex="0" aria-expanded="' + expanded + '">' + parcelEsc(d.description || d.tracking_number) + '</span>' +
       '<span class="chip" style="--c:' + style.color + '">' + parcelEsc(t.status[key] || key) + '</span></div>' +
       '<div class="line2">' + parcelEsc(d.carrier_name || d.carrier_code) + ' · ' +
       '<span class="tracking" role="button" tabindex="0" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
@@ -812,10 +846,10 @@ class ParcelCard extends HTMLElement {
     this._render();
   }
 
-  // Enter and Space act like a click on a row or a tracking number (both are role="button").
+  // Enter and Space act like a click on a description or a tracking number (both are role="button").
   _onListKeydown(ev) {
     if (ev.key !== 'Enter' && ev.key !== ' ') return;
-    if (!ev.target.closest('[data-copy]') && !ev.target.closest('.row')) return;
+    if (!ev.target.closest('[data-copy]') && !ev.target.closest('.desc')) return;
     ev.preventDefault();
     this._onListClick(ev);
   }
@@ -962,18 +996,37 @@ class ParcelCard extends HTMLElement {
   static _styles() {
     return [
       ':host { display: block; }',
-      'ha-card { padding: 0 0 8px; overflow: hidden; }',
+      // The container query needs size containment, which gives ha-card no intrinsic width: in an auto-sized parent
+      // (inline-block, grid `auto` column, layout-card) the card fell to a few pixels. This empty, 0 px high line
+      // gives the host a preferred width of 320 px (max-content) but no minimum (min-content 0), so a `1fr 1fr` grid
+      // can still shrink it, even with the card wrapped in a div. contain-intrinsic-inline-size gave both: the card
+      // then refused to shrink and overflowed such a grid.
+      ':host::before { content: ""; display: grid; grid-template-columns: minmax(0, 320px); height: 0; }',
+      'ha-card { padding: 0 0 8px; overflow: hidden; container-type: inline-size; }',
       '.header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 8px 8px 12px; min-height: 36px; }',
-      '.title { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }',
+      // Narrow header: the title takes what is left (flex-basis 0, so it does not take the pill's room) and keeps a
+      // few letters; the pill shrinks only when it really lacks room; the buttons never do.
+      '.title { flex: 1 1 0; min-width: calc(5ch + 50px); font-size: 16px; display: flex; align-items: center; gap: 10px; }',
       '.logo { width: 40px; height: 40px; flex: none; object-fit: contain; }',
-      '.titles { min-width: 0; }',
+      // 5ch of the 16 px title font is the width of four letters and the ellipsis ("Deli…"). The title block has the
+      // same minimum plus the logo's 40 px and gap: a smaller one let the title slide under the pill.
+      '.titles { flex: 1 1 0; min-width: 5ch; overflow: hidden; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
-      '.buttons { display: flex; align-items: center; flex: none; }',
+      '.buttons { display: flex; align-items: center; flex: none; margin-left: -6px; }',
+      '.buttons ha-icon-button { flex: none; }',
       // State colors stay on the backgrounds; texts are mixed with the text color to stay readable (WCAG 4.5:1).
-      '.status { font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px; margin-right: 4px;' +
+      '.status { flex: 0 1 auto; min-width: 0; max-width: 50%; display: flex; align-items: center; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px;' +
         ' color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
+      '.status[hidden] { display: none; }',
+      '.status-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }',
+      // Narrow card (8-9 columns of a phone section, up to a 12-column 320 px phone section): the logo goes and the
+      // pill and the buttons get a little closer, so the pill keeps its whole label next to a 4-letter title.
+      '@container (max-width: 320px) { .header { gap: 4px; } .title { min-width: 5ch; } .logo { display: none; } .buttons { margin-left: -4px; } .status { padding: 5px 8px; } }',
+      // Narrower (the 8-column minimum on a small phone, ~210-240 px): the pill keeps only a colored dot.
+      '@container (max-width: 240px) { .status { padding: 5px; } .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--primary-color); }' +
+        ' .status-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
@@ -982,13 +1035,14 @@ class ParcelCard extends HTMLElement {
       '.delivery:hover { background: color-mix(in srgb, var(--primary-text-color) 4%, transparent); }',
       // A delivered row is quieter through its title color only: fading the whole row made its texts unreadable.
       '.delivery.done .desc { color: var(--secondary-text-color); font-weight: 400; }',
-      '.row:focus-visible, .tracking:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; border-radius: 4px; }',
+      '.desc:focus-visible, .tracking:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; border-radius: 4px; }',
       '.row { display: flex; align-items: flex-start; gap: 10px; }',
       '.status-icon { flex: none; margin-top: 2px; }',
       '.main { flex: 1; min-width: 0; }',
-      '.line1 { display: flex; align-items: center; gap: 8px; justify-content: space-between; }',
-      '.desc { font-weight: 500; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
-      '.chip { flex: none; font-size: 11px; font-weight: 500; border-radius: 12px; padding: 1px 8px; white-space: nowrap; color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      // The chip is secondary: on a narrow card it moves under the description instead of squeezing it.
+      '.line1 { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 2px; justify-content: space-between; }',
+      '.desc { min-width: 0; max-width: 100%; font-weight: 500; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
+      '.chip { flex: none; max-width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: 11px; font-weight: 500; border-radius: 12px; padding: 1px 8px; white-space: nowrap; color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.line2, .line3, .expected { font-size: 12px; color: var(--secondary-text-color); margin-top: 1px; overflow-wrap: anywhere; }',
       '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; }',
       '.tracking.copied::after { content: " \u2713"; color: var(--primary-text-color); }',

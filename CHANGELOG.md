@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.7 - 2026-11-01
+
+### Fixes
+- Card: the Refresh and Add buttons keep the keyboard focus: the header is no longer rebuilt when the sensor updates or a refresh runs, only its texts change.
+- Card: on a narrow card the title stays readable and keeps at least four letters, the buttons never shrink, and a delivery's status chip moves under its description instead of squeezing it. The active count keeps its whole label down to about 240 px wide (the logo is hidden under 320 px to make room) and only shrinks to a colored dot below that (the count stays in its tooltip and for screen readers).
+- Card: the card now asks for at least 8 columns in the Sections view: at 6 columns of a phone section (about 160 px) its title, active count and buttons could not fit.
+- Card: keeping the keyboard focus on a delivery when the sensor updates no longer scrolls the dashboard to it.
+- Card: the card keeps its width (320 px) in containers that size it to its content (inline-block, grid `auto` column, some layout-card setups), where it shrank to a few pixels, and still shrinks to share a row with another card (two-column grid, horizontal stack, layout-card), wrapped in a div or not, instead of overflowing it.
+- Card: screen readers announce the tracking number's copy button again: the delivery description is now the expand button (Enter or Space), instead of the whole row containing the copy button. A click anywhere on the row still expands it.
+- Polish: the active count and the "Active only" option say "aktywne" ("active") instead of "w drodze" ("on the way"), which left out parcels awaiting pickup or with a failed attempt.
 ## 0.10.6 - 2026-11-01
 
 ### Changes

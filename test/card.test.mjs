@@ -391,16 +391,6 @@ test('an unavailable sensor shows a dedicated message, without a count', () => {
   assert.ok(!self.header.innerHTML.includes('unavailable'), self.header.innerHTML);
 });
 
-test('the active count is a status pill on the right of the header, not a subtitle', () => {
-  const self = renderable({ _hass: { states: { 'sensor.a': sensor('sensor.a', { deliveries: [] }) } } });
-  self.setConfig({ entity: 'sensor.a', show_icon: false, show_refresh: true });
-  const html = self.header.innerHTML;
-  assert.ok(html.includes('<span class="status">1 active</span>'), html);
-  assert.ok(!html.includes('class="sub"'), html);
-  // Inside the right-hand group, before the buttons.
-  assert.ok(html.indexOf('class="buttons"') < html.indexOf('class="status"'), html);
-  assert.ok(html.indexOf('class="status"') < html.indexOf('refresh-btn'), html);
-});
 
 test('an unavailable Parcel sensor is still found through the entity registry', () => {
   const hass = {
@@ -504,16 +494,16 @@ test('animations and transitions stop with prefers-reduced-motion', () => {
   assert.match(media, /\.chevron \{[^}]*transition: none/);
 });
 
-test('a delivery row and its tracking number are keyboard buttons', () => {
+test('a delivery description and its tracking number are keyboard buttons', () => {
   const self = renderDeliveries([deliveryOf('A1')]);
   const html = self.list.innerHTML;
-  assert.match(html, /<div class="row" role="button" tabindex="0" aria-expanded="false">/);
+  assert.match(html, /<span class="desc" role="button" tabindex="0" aria-expanded="false">/);
   assert.match(html, /<span class="tracking" role="button" tabindex="0" data-copy="A1"/);
   self._expanded['ups:A1'] = true;
   self._render();
   assert.match(self.list.innerHTML, /aria-expanded="true"/);
   const css = styles();
-  assert.match(css, /\.row:focus-visible, \.tracking:focus-visible \{[^}]*outline: 2px solid var\(--primary-color\)/);
+  assert.match(css, /\.desc:focus-visible, \.tracking:focus-visible \{[^}]*outline: 2px solid var\(--primary-color\)/);
   assert.match(css, /\.delivery:hover \{/);
 });
 
@@ -528,13 +518,13 @@ const keyEvent = (key, { copy = null, id = 'ups:A1' } = {}) => {
     preventDefault() { this.prevented = true; },
     stopPropagation() { this.stopped = true; },
     target: {
-      closest: (sel) => (sel === '[data-copy]' ? copyEl : sel === '.row' ? {} : sel === '.delivery' ? item : null),
+      closest: (sel) => (sel === '[data-copy]' ? copyEl : sel === '.desc' ? {} : sel === '.delivery' ? item : null),
     },
   };
   return ev;
 };
 
-test('Enter and Space on a row toggle it like a click, other keys do nothing', () => {
+test('Enter and Space on a description toggle its row like a click, other keys do nothing', () => {
   let renders = 0;
   const self = { _expanded: {}, _render: () => renders++, _onListClick: card._onListClick, _copy: card._copy };
   const enter = keyEvent('Enter');
@@ -593,23 +583,245 @@ test('copying gives a visual feedback, and a refused copy is caught', async () =
   }
 });
 
-test('a re-render keeps the keyboard focus on the same row or tracking number', () => {
+test('a re-render keeps the keyboard focus on the same description or tracking number', () => {
   const focused = [];
-  const target = { focus: () => focused.push('row') };
+  const options = [];
+  // preventScroll: a sensor update must not scroll the dashboard to the focused row.
+  const target = { focus: (opts) => { focused.push('row'); options.push(opts); } };
   const deliveries = [deliveryOf('A1'), deliveryOf('B2')];
   const self = renderDeliveries(deliveries);
-  // The row of B2 has the focus when the sensor updates.
-  const active = { closest: (sel) => (sel === '.row' ? {} : sel === '.delivery' ? { getAttribute: () => 'ups:B2' } : null), matches: () => false };
+  // The description of B2 has the focus when the sensor updates.
+  const active = { closest: (sel) => (sel === '.desc' ? {} : sel === '.delivery' ? { getAttribute: () => 'ups:B2' } : null), matches: () => false };
   self._root = {
     activeElement: active,
     querySelector: (sel) => (sel === '.header' ? self.header : self.list),
   };
-  self.list.querySelector = (sel) => (sel === '.delivery[data-id="ups:B2"] .row' ? target : null);
+  self.list.querySelector = (sel) => (sel === '.delivery[data-id="ups:B2"] .desc' ? target : null);
   self._render();
   assert.deepEqual(focused, ['row']);
+  assert.equal(options[0]?.preventScroll, true);
   // The focused row is gone (delivery removed): no error, nothing focused.
   self._lastState = sensor('sensor.a', { deliveries: [deliveryOf('A1')] });
   self.list.querySelector = () => null;
   self._render();
   assert.deepEqual(focused, ['row']);
+});
+
+// ── review pass 9 ─────────────────────────────────────────────────────────────
+// Stand-in for the header: assigning innerHTML replaces its elements, like the DOM does; querySelector
+// returns the element of a class present in the markup, the same object until the next innerHTML.
+const fakeEl = () => {
+  const classes = new Set();
+  return {
+    textContent: '',
+    hidden: false,
+    title: '',
+    listeners: 0,
+    addEventListener() { this.listeners++; },
+    focus() {},
+    classList: {
+      contains: (c) => classes.has(c),
+      add: (c) => classes.add(c),
+      remove: (c) => classes.delete(c),
+      toggle: (c, on) => ((on ?? !classes.has(c)) ? classes.add(c) : classes.delete(c)),
+    },
+  };
+};
+const fakeHeader = () => {
+  const header = { writes: 0, els: {}, html: '' };
+  Object.defineProperty(header, 'innerHTML', {
+    get: () => header.html,
+    set: (v) => { header.html = v; header.writes++; header.els = {}; },
+  });
+  header.querySelector = (sel) => {
+    const cls = sel.replace(/^\./, '');
+    if (!new RegExp(`class="[^"]*\\b${cls}\\b`).test(header.html)) return null;
+    header.els[sel] = header.els[sel] || fakeEl();
+    return header.els[sel];
+  };
+  return header;
+};
+const headerCard = (states, config = {}) => {
+  const header = fakeHeader();
+  const list = { innerHTML: '', querySelector: () => null };
+  const self = Object.assign(Object.create(ParcelCard.prototype), {
+    _root: { querySelector: (sel) => (sel === '.header' ? header : list) },
+    _ensureShell() {},
+    _expanded: {},
+    _hass: { locale: { language: 'en' }, states },
+    header,
+    list,
+  });
+  self.setConfig({ entity: 'sensor.a', show_icon: false, ...config });
+  return self;
+};
+
+test('a sensor update keeps the header buttons, so their keyboard focus is not lost', () => {
+  const self = headerCard({ 'sensor.a': sensor('sensor.a', { deliveries: [] }) });
+  const refresh = self.header.querySelector('.refresh-btn');
+  const add = self.header.querySelector('.add-btn');
+  assert.ok(refresh && add);
+  self._lastState = { ...sensor('sensor.a', { deliveries: [] }), state: '3' };
+  self._render();
+  assert.equal(self.header.writes, 1, 'the header was rebuilt by a sensor update');
+  assert.equal(self.header.querySelector('.refresh-btn'), refresh);
+  assert.equal(self.header.querySelector('.add-btn'), add);
+  assert.equal(self.header.querySelector('.status-text').textContent, '3 active');
+  assert.equal(self.header.querySelector('.status').title, '3 active');
+  // One listener each, not one more per render.
+  assert.equal(refresh.listeners, 1);
+});
+
+test('refreshing spins the same refresh button instead of rebuilding the header', async () => {
+  let resolve;
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') });
+  self._hass.callService = () => new Promise((r) => { resolve = r; });
+  const refresh = self.header.querySelector('.refresh-btn');
+  self._refresh();
+  assert.ok(refresh.classList.contains('spinning'));
+  resolve();
+  await flush();
+  assert.ok(!refresh.classList.contains('spinning'));
+  assert.equal(self.header.writes, 1);
+  assert.equal(self.header.querySelector('.refresh-btn'), refresh);
+});
+
+test('a failed refresh shows its error under the title, and the next attempt clears it', async () => {
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') });
+  self._hass.callService = () => Promise.reject(new Error('rate limited'));
+  self._refresh();
+  await flush();
+  await flush();
+  const sub = self.header.querySelector('.sub');
+  assert.ok(!sub.hidden);
+  assert.match(sub.textContent, /rate limited/);
+  self._hass.callService = () => Promise.resolve();
+  self._refresh();
+  assert.ok(sub.hidden);
+  assert.equal(self.header.writes, 1);
+});
+
+test('the header is rebuilt only when its buttons or its language change', () => {
+  const states = { 'sensor.a': sensor('sensor.a') };
+  const self = headerCard(states);
+  self.setConfig({ entity: 'sensor.a', show_icon: false, show_add: false });
+  assert.equal(self.header.writes, 2);
+  assert.equal(self.header.querySelector('.add-btn'), null);
+  self.setConfig({ entity: 'sensor.a', show_icon: false, show_add: false, language: 'fr' });
+  assert.equal(self.header.writes, 3);
+  assert.equal(self.header.querySelector('.status-text').textContent, '1 en cours');
+  // A new title is only a text change.
+  self.setConfig({ entity: 'sensor.a', show_icon: false, show_add: false, language: 'fr', title: 'Colis' });
+  assert.equal(self.header.writes, 3);
+  assert.equal(self.header.querySelector('.name').textContent, 'Colis');
+});
+
+test('the sensor going unavailable hides the count pill, coming back shows it, buttons kept', () => {
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') });
+  const refresh = self.header.querySelector('.refresh-btn');
+  self._lastState = { entity_id: 'sensor.a', state: 'unavailable', attributes: {} };
+  self._render();
+  assert.ok(self.header.querySelector('.status').hidden);
+  assert.match(self.list.innerHTML, /Parcel is unavailable/);
+  self._lastState = { ...sensor('sensor.a'), state: '2' };
+  self._render();
+  assert.ok(!self.header.querySelector('.status').hidden);
+  assert.equal(self.header.querySelector('.status-text').textContent, '2 active');
+  assert.equal(self.header.querySelector('.refresh-btn'), refresh);
+  assert.equal(self.header.writes, 1);
+});
+
+test('the title and the delivery labels are text, never markup', () => {
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') }, { title: '<img src=x onerror=alert(1)>' });
+  assert.ok(!self.header.html.includes('<img src=x'), self.header.html);
+  assert.equal(self.header.querySelector('.name').textContent, '<img src=x onerror=alert(1)>');
+});
+
+test('narrow header: the title truncates but keeps a few letters, the pill shrinks, the buttons never do', () => {
+  const css = styles();
+  const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
+  assert.match(rule('ha-card'), /container-type: inline-size/);
+  // flex-basis 0: the title takes what the pill leaves instead of sharing the room with it ("4 active" -> "4 a…").
+  assert.match(rule('.title'), /flex: 1 1 0;/);
+  assert.match(rule('.titles'), /flex: 1 1 0;/);
+  // Four letters and the ellipsis; the title block cannot shrink below it, or the title slid under the pill.
+  assert.match(rule('.titles'), /min-width: 5ch/);
+  assert.match(rule('.title'), /min-width: calc\(5ch \+ 50px\)/);
+  assert.match(rule('.title'), /font-size: 16px/);
+  assert.match(rule('.name'), /text-overflow: ellipsis/);
+  assert.match(rule('.status'), /flex: 0 1 auto/);
+  assert.match(rule('.status'), /min-width: 0/);
+  assert.match(rule('.status'), /max-width: 50%/);
+  assert.match(rule('.status-text'), /text-overflow: ellipsis/);
+  assert.match(rule('.buttons'), /flex: none/);
+  assert.match(rule('.buttons ha-icon-button'), /flex: none/);
+  // Up to 320 px the logo goes so the pill keeps its whole label; only under 240 px is the pill reduced to its
+  // colored dot, the count staying readable by screen readers.
+  const query = (w) => css.split('\n').find((l) => l.startsWith(`@container (max-width: ${w}px)`)) || '';
+  assert.match(query(320), /\.logo \{ display: none; \}/);
+  assert.match(query(320), /\.title \{ min-width: 5ch; \}/);
+  assert.doesNotMatch(query(320), /clip-path/);
+  assert.match(query(240), /\.status-text \{[^}]*clip-path: inset\(50%\)/);
+  assert.match(query(240), /\.status::before \{[^}]*border-radius: 50%/);
+  assert.ok(!css.includes('@container (max-width: 300px)'), 'the pill must keep its label down to 240 px');
+  // The chip moves under the description instead of squeezing it.
+  assert.match(rule('.line1'), /flex-wrap: wrap/);
+  assert.match(rule('.desc'), /min-width: 0/);
+});
+
+test('the card keeps a width in auto-sized containers (inline-block, grid auto column, layout-card)', () => {
+  // container-type: inline-size gives the card no intrinsic width of its own: without a fallback it fell to a few
+  // pixels there (measured in Chromium: 0 px in an inline-block, 320 px with the fallback).
+  const css = styles();
+  const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
+  assert.match(rule('ha-card'), /container-type: inline-size/);
+  // The fallback is a preferred width only (a 0 px high grid line up to 320 px), never a minimum:
+  // contain-intrinsic-* or a min-width in px made the card overflow a `1fr 1fr` grid (two 322 px cards in 320 px).
+  assert.match(rule(':host::before'), /content: "";/);
+  assert.match(rule(':host::before'), /display: grid;/);
+  assert.match(rule(':host::before'), /grid-template-columns: minmax\(0, 320px\);/);
+  assert.match(rule(':host::before'), /height: 0;/);
+  assert.doesNotMatch(css, /contain-intrinsic/);
+  assert.doesNotMatch(rule(':host'), /min-width: *[1-9]/);
+});
+
+test('the card asks for 8 columns at least: 6 phone columns (~160 px) cannot hold its header', () => {
+  // 160 px - 20 px padding - 96 px of buttons leaves 44 px: not enough for a 4-letter title (44 px) and the pill.
+  assert.deepEqual({ ...card.getGridOptions() }, { columns: 12, min_columns: 8, rows: 'auto' });
+});
+
+test('the active count is a status pill between the title and the buttons, not a subtitle', () => {
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') }, { show_refresh: true });
+  const html = self.header.html;
+  assert.equal(self.header.querySelector('.status-text').textContent, '1 active');
+  assert.ok(!self.header.querySelector('.status').hidden);
+  assert.ok(self.header.querySelector('.sub').hidden, 'no subtitle without a refresh error');
+  assert.ok(html.indexOf('class="status"') < html.indexOf('refresh-btn'), html);
+  assert.ok(html.indexOf('class="title"') < html.indexOf('class="status"'), html);
+  assert.ok(html.indexOf('class="status"') < html.indexOf('class="buttons"'), html);
+  assert.ok(!/class="buttons"[\s\S]*class="status"/.test(html), 'the pill must not be inside the button group');
+});
+
+test('no keyboard button sits inside another one: the description toggles, the tracking number copies', () => {
+  const self = renderDeliveries([deliveryOf('A1', { description: 'Shoes' })]);
+  const html = self.list.innerHTML;
+  assert.match(html, /<div class="row">/);
+  assert.match(html, /<span class="desc" role="button" tabindex="0" aria-expanded="false">Shoes<\/span>/);
+  assert.match(html, /<span class="tracking" role="button" tabindex="0" data-copy="A1"/);
+  // Each role="button" element is closed before the next one opens.
+  const opened = html.match(/role="button"/g).length;
+  assert.equal(opened, 2);
+  assert.ok(html.indexOf('</span>', html.indexOf('class="desc"')) < html.indexOf('class="tracking"'));
+  self._expanded['ups:A1'] = true;
+  self._render();
+  assert.match(self.list.innerHTML, /class="desc" role="button" tabindex="0" aria-expanded="true"/);
+});
+
+test('Polish counts active deliveries as "aktywne", like the other languages say active', () => {
+  const pl = JSON.parse(readFileSync(new URL('../custom_components/parcel/translations/pl.json', import.meta.url), 'utf8'));
+  const text = JSON.stringify(pl);
+  assert.ok(!text.includes('w drodze'), text);
+  assert.equal(pl.selector.filter_mode.options.active, 'Tylko aktywne');
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') }, { language: 'pl' });
+  assert.equal(self.header.querySelector('.status-text').textContent, '1 aktywne');
 });

@@ -63,3 +63,24 @@ def test_serbian_stays_in_one_script() -> None:
         assert not LATIN.search(LATIN_IN_CYRILLIC.sub("", text)), path
     for path, text in _strings(_load("sr-Latn")).items():
         assert not CYRILLIC.search(text), path
+
+
+def test_readme_features_name_every_language() -> None:
+    """The README feature list names every language the integration and the card ship."""
+    readme = (Path(__file__).parents[1] / "README.md").read_text(encoding="utf-8")
+    features = readme.split("## Features", 1)[1].split("\n## ", 1)[0]
+    names = [
+        "English",
+        "French",
+        "German",
+        "Spanish",
+        "Serbian",
+        "Cyrillic",
+        "Latin",
+        "Italian",
+        "Dutch",
+        "Portuguese",
+        "Polish",
+    ]
+    for name in names:
+        assert name in features, name

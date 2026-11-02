@@ -39,8 +39,8 @@
   "selector": {
     "filter_mode": {
       "options": {
-        "recent": "Ostatnie (w drodze i niedawno doręczone)",
-        "active": "Tylko w drodze"
+        "recent": "Ostatnie (aktywne i niedawno doręczone)",
+        "active": "Tylko aktywne"
       }
     }
   },
