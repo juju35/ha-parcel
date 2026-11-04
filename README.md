@@ -6,6 +6,7 @@
 [![Lint](https://github.com/juju35/ha-parcel/actions/workflows/lint.yml/badge.svg)](https://github.com/juju35/ha-parcel/actions/workflows/lint.yml)
 [![Release](https://img.shields.io/github/v/release/juju35/ha-parcel)](https://github.com/juju35/ha-parcel/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/julienstep9)
 
 Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveries tracked in Parcel and add new ones, with a Lovelace card included.
 
