@@ -5,7 +5,7 @@
 [![Validate](https://github.com/juju35/ha-parcel/actions/workflows/validate.yml/badge.svg)](https://github.com/juju35/ha-parcel/actions/workflows/validate.yml)
 [![Lint](https://github.com/juju35/ha-parcel/actions/workflows/lint.yml/badge.svg)](https://github.com/juju35/ha-parcel/actions/workflows/lint.yml)
 [![Release](https://img.shields.io/github/v/release/juju35/ha-parcel)](https://github.com/juju35/ha-parcel/releases/latest)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/juju35/ha-parcel/blob/main/LICENSE)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/julienstep9)
 
 Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveries tracked in Parcel and add new ones, with a Lovelace card included.
@@ -110,13 +110,13 @@ While parcels refresh, the card animates: the refresh button spins until the upd
 
 | Light | Dark |
 |---|---|
-| ![refresh animation](screenshots/refreshing.gif) | ![refresh animation dark](screenshots/refreshing-dark.gif) |
+| ![refresh animation](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/refreshing.gif) | ![refresh animation dark](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/refreshing-dark.gif) |
 
 The stills show the card with one delivery expanded to its events.
 
 | Light | Dark |
 |---|---|
-| ![card](screenshots/card.png) | ![card dark](screenshots/card-dark.png) |
+| ![card](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png) | ![card dark](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-dark.png) |
 
 ## How it works
 
@@ -147,7 +147,7 @@ Python tests live in `tests/` (pytest); the card's JavaScript tests live in `tes
 ### Releasing
 
 1. Bump the version in `custom_components/parcel/manifest.json` and `PARCEL_CARD_VERSION` in the card
-2. Add a `## <version>` section at the top of [CHANGELOG.md](CHANGELOG.md)
+2. Add a `## <version>` section at the top of [CHANGELOG.md](https://github.com/juju35/ha-parcel/blob/main/CHANGELOG.md)
 3. Push to `main`: the **Release** workflow creates the tag and the GitHub release with the changelog section as notes
 
 ## Translations
@@ -185,7 +185,7 @@ Contributions for additional languages are welcome!
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/juju35/ha-parcel/blob/main/LICENSE)
 
 ## Support
 
