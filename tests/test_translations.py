@@ -37,7 +37,32 @@ def _strings(data: dict, prefix: str = "") -> dict[str, str]:
     return strings
 
 
-LANGUAGES = ["fr", "de", "es", "sr", "sr-Latn", "it", "nl", "pt", "pt-BR", "pl"]
+LANGUAGES = [
+    "fr",
+    "de",
+    "es",
+    "sr",
+    "sr-Latn",
+    "it",
+    "nl",
+    "pt",
+    "pt-BR",
+    "pl",
+    "ro",
+    "da",
+    "sv",
+    "bg",
+    "ru",
+    "uk",
+    "hu",
+    "ga",
+    "sk",
+    "cs",
+    "sl",
+    "mt",
+    "lv",
+    "el",
+]
 
 
 @pytest.mark.parametrize("lang", LANGUAGES)
@@ -81,6 +106,20 @@ def test_readme_features_name_every_language() -> None:
         "Dutch",
         "Portuguese",
         "Polish",
+        "Romanian",
+        "Danish",
+        "Swedish",
+        "Bulgarian",
+        "Russian",
+        "Ukrainian",
+        "Hungarian",
+        "Irish",
+        "Slovak",
+        "Czech",
+        "Slovenian",
+        "Maltese",
+        "Latvian",
+        "Greek",
     ]
     for name in names:
         assert name in features, name

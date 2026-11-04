@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Vygenerujte klíč API na web.parcelapp.net (vyžaduje Parcel Premium).",
+        "data": { "api_key": "Klíč API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Klíč API pro Parcel byl odmítnut. Zadejte nový.",
+        "data": { "api_key": "Klíč API" }
+      }
+    },
+    "error": {
+      "already_configured": "Tento klíč API už používá jiný záznam Parcel.",
+      "invalid_auth": "Neplatný klíč API.",
+      "cannot_connect": "Nelze se spojit s Parcel nebo byl dosažen hodinový limit požadavků. Zkuste to znovu později."
+    },
+    "abort": {
+      "already_configured": "Tento klíč API je již nastaven.",
+      "reauth_successful": "Klíč API byl aktualizován."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti Parcel",
+        "data": {
+          "filter_mode": "Zobrazené zásilky",
+          "scan_interval": "Interval aktualizace"
+        },
+        "data_description": {
+          "scan_interval": "Parcel umožňuje 20 požadavků za hodinu, minimum je proto 5 minut."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Nedávné (aktivní a nedávno doručené)",
+        "active": "Pouze aktivní"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Zásilky" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Přidat zásilku",
+      "description": "Přidá zásilku do Parcel. Parcel umožňuje 20 přidání denně.",
+      "fields": {
+        "tracking_number": { "name": "Číslo zásilky", "description": "Sledovací číslo dopravce." },
+        "carrier_code": { "name": "Kód dopravce", "description": "Kód dopravce v Parcel, například ups, dhl nebo pholder pro zásilku bez sledování." },
+        "description": { "name": "Popis", "description": "Název zobrazený v Parcel." },
+        "language": { "name": "Jazyk", "description": "Dvoupísmenný kód jazyka pro události sledování. Výchozí je jazyk Home Assistant." },
+        "send_push_confirmation": { "name": "Push potvrzení", "description": "Parcel po přidání zásilky odešle push oznámení." },
+        "postcode": { "name": "PSČ", "description": "Pouze pro dopravce, kteří ho vyžadují." },
+        "email": { "name": "E-mail", "description": "Pouze pro služby, které ho vyžadují, například Apple Store." },
+        "config_entry_id": { "name": "Účet Parcel", "description": "Potřeba pouze tehdy, když je nastaveno více účtů Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Obnovit",
+      "description": "Načte zásilky hned. Započítává se do limitu 20 požadavků za hodinu.",
+      "fields": {
+        "config_entry_id": { "name": "Účet Parcel", "description": "Potřeba pouze tehdy, když je nastaveno více účtů Parcel." }
+      }
+    }
+  }
+}

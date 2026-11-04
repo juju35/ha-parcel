@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Gin eochair API ar web.parcelapp.net (tá Parcel Premium de dhíth).",
+        "data": { "api_key": "Eochair API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Diúltaíodh d’eochair API Parcel. Cuir isteach ceann nua.",
+        "data": { "api_key": "Eochair API" }
+      }
+    },
+    "error": {
+      "already_configured": "Tá an eochair API seo in úsáid cheana ag iontráil Parcel eile.",
+      "invalid_auth": "Eochair API neamhbhailí.",
+      "cannot_connect": "Ní féidir teacht ar Parcel, nó tá teorainn na n-iarratas in aghaidh na huaire bainte amach. Bain triail eile as ar ball."
+    },
+    "abort": {
+      "already_configured": "Tá an eochair API seo cumraithe cheana.",
+      "reauth_successful": "Nuashonraíodh an eochair API."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Roghanna Parcel",
+        "data": {
+          "filter_mode": "Beartáin le taispeáint",
+          "scan_interval": "Eatramh nuashonraithe"
+        },
+        "data_description": {
+          "scan_interval": "Ceadaíonn Parcel 20 iarratas san uair, mar sin is é 5 nóiméad an t-íosmhéid."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Le déanaí (gníomhach agus seachadta le déanaí)",
+        "active": "Gníomhach amháin"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Beartáin" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Cuir beartán leis",
+      "description": "Cuireann sé beartán le Parcel. Ceadaíonn Parcel 20 beartán a chur leis in aghaidh an lae.",
+      "fields": {
+        "tracking_number": { "name": "Uimhir rianaithe", "description": "Uimhir rianaithe an iompróra." },
+        "carrier_code": { "name": "Cód iompróra", "description": "Cód iompróra Parcel, mar shampla ups, dhl nó pholder do bheartán gan rianú." },
+        "description": { "name": "Cur síos", "description": "An t-ainm a thaispeántar in Parcel." },
+        "language": { "name": "Teanga", "description": "Cód teanga dhá litir d’imeachtaí rianaithe. Teanga Home Assistant de réir réamhshocraithe." },
+        "send_push_confirmation": { "name": "Deimhniú brú", "description": "Seol fógra brú ó Parcel nuair a chuirtear an beartán leis." },
+        "postcode": { "name": "Cód poist", "description": "D’iompróirí a éilíonn é amháin." },
+        "email": { "name": "Ríomhphost", "description": "Do sheirbhísí a éilíonn é amháin, mar shampla Apple Store." },
+        "config_entry_id": { "name": "Cuntas Parcel", "description": "Níl gá leis ach nuair atá roinnt cuntas Parcel cumraithe." }
+      }
+    },
+    "refresh": {
+      "name": "Athnuaigh",
+      "description": "Faigheann sé na beartáin anois. Áirítear é sa teorainn de 20 iarratas san uair.",
+      "fields": {
+        "config_entry_id": { "name": "Cuntas Parcel", "description": "Níl gá leis ach nuair atá roinnt cuntas Parcel cumraithe." }
+      }
+    }
+  }
+}

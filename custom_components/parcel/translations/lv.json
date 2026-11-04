@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Ģenerējiet API atslēgu vietnē web.parcelapp.net (nepieciešams Parcel Premium).",
+        "data": { "api_key": "API atslēga" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Parcel API atslēga tika noraidīta. Ievadiet jaunu.",
+        "data": { "api_key": "API atslēga" }
+      }
+    },
+    "error": {
+      "already_configured": "Šo API atslēgu jau izmanto cits Parcel ieraksts.",
+      "invalid_auth": "Nederīga API atslēga.",
+      "cannot_connect": "Nevar sazināties ar Parcel, vai sasniegts stundas pieprasījumu limits. Mēģiniet vēlreiz vēlāk."
+    },
+    "abort": {
+      "already_configured": "Šī API atslēga jau ir konfigurēta.",
+      "reauth_successful": "API atslēga atjaunināta."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Parcel opcijas",
+        "data": {
+          "filter_mode": "Rādāmie sūtījumi",
+          "scan_interval": "Atjaunināšanas intervāls"
+        },
+        "data_description": {
+          "scan_interval": "Parcel atļauj 20 pieprasījumus stundā, tāpēc minimums ir 5 minūtes."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Nesenie (aktīvie un nesen piegādātie)",
+        "active": "Tikai aktīvie"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Sūtījumi" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Pievienot sūtījumu",
+      "description": "Pievieno sūtījumu Parcel. Parcel atļauj 20 pievienošanas dienā.",
+      "fields": {
+        "tracking_number": { "name": "Izsekošanas numurs", "description": "Pārvadātāja izsekošanas numurs." },
+        "carrier_code": { "name": "Pārvadātāja kods", "description": "Pārvadātāja kods Parcel, piemēram, ups, dhl vai pholder sūtījumam bez izsekošanas." },
+        "description": { "name": "Apraksts", "description": "Nosaukums, kas tiek rādīts Parcel." },
+        "language": { "name": "Valoda", "description": "Divu burtu valodas kods izsekošanas notikumiem. Pēc noklusējuma Home Assistant valoda." },
+        "send_push_confirmation": { "name": "Push apstiprinājums", "description": "Pēc sūtījuma pievienošanas Parcel nosūta push paziņojumu." },
+        "postcode": { "name": "Pasta indekss", "description": "Tikai pārvadātājiem, kuriem tas ir nepieciešams." },
+        "email": { "name": "E-pasts", "description": "Tikai pakalpojumiem, kuriem tas ir nepieciešams, piemēram, Apple Store." },
+        "config_entry_id": { "name": "Parcel konts", "description": "Nepieciešams tikai tad, ja ir konfigurēti vairāki Parcel konti." }
+      }
+    },
+    "refresh": {
+      "name": "Atsvaidzināt",
+      "description": "Tūlīt ielādē sūtījumus. Tiek ieskaitīts 20 pieprasījumu stundā limitā.",
+      "fields": {
+        "config_entry_id": { "name": "Parcel konts", "description": "Nepieciešams tikai tad, ja ir konfigurēti vairāki Parcel konti." }
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Generați o cheie API pe web.parcelapp.net (este necesar Parcel Premium).",
+        "data": { "api_key": "Cheie API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Cheia API Parcel a fost respinsă. Introduceți una nouă.",
+        "data": { "api_key": "Cheie API" }
+      }
+    },
+    "error": {
+      "already_configured": "Această cheie API este deja folosită de o altă intrare Parcel.",
+      "invalid_auth": "Cheie API nevalidă.",
+      "cannot_connect": "Nu se poate contacta Parcel sau a fost atinsă limita orară de cereri. Încercați din nou mai târziu."
+    },
+    "abort": {
+      "already_configured": "Această cheie API este deja configurată.",
+      "reauth_successful": "Cheia API a fost actualizată."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni Parcel",
+        "data": {
+          "filter_mode": "Colete afișate",
+          "scan_interval": "Interval de actualizare"
+        },
+        "data_description": {
+          "scan_interval": "Parcel permite 20 de cereri pe oră, deci minimul este de 5 minute."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Recente (active și livrate recent)",
+        "active": "Doar active"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Colete" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Adăugare colet",
+      "description": "Adaugă un colet în Parcel. Parcel permite 20 de adăugări pe zi.",
+      "fields": {
+        "tracking_number": { "name": "Număr de urmărire", "description": "Numărul de urmărire al curierului." },
+        "carrier_code": { "name": "Cod curier", "description": "Codul curierului în Parcel, de exemplu ups, dhl sau pholder pentru un colet fără urmărire." },
+        "description": { "name": "Descriere", "description": "Numele afișat în Parcel." },
+        "language": { "name": "Limbă", "description": "Codul de limbă din două litere pentru evenimentele de urmărire. Implicit, limba Home Assistant." },
+        "send_push_confirmation": { "name": "Confirmare push", "description": "Trimite o notificare push din Parcel după adăugarea coletului." },
+        "postcode": { "name": "Cod poștal", "description": "Doar pentru curierii care îl solicită." },
+        "email": { "name": "E-mail", "description": "Doar pentru serviciile care îl solicită, cum ar fi Apple Store." },
+        "config_entry_id": { "name": "Cont Parcel", "description": "Necesar doar când sunt configurate mai multe conturi Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Reîmprospătare",
+      "description": "Preia coletele acum. Se ia în calcul pentru limita de 20 de cereri pe oră.",
+      "fields": {
+        "config_entry_id": { "name": "Cont Parcel", "description": "Necesar doar când sunt configurate mai multe conturi Parcel." }
+      }
+    }
+  }
+}

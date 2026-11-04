@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Vygenerujte kľúč API na web.parcelapp.net (vyžaduje sa Parcel Premium).",
+        "data": { "api_key": "Kľúč API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Kľúč API pre Parcel bol odmietnutý. Zadajte nový.",
+        "data": { "api_key": "Kľúč API" }
+      }
+    },
+    "error": {
+      "already_configured": "Tento kľúč API už používa iný záznam Parcel.",
+      "invalid_auth": "Neplatný kľúč API.",
+      "cannot_connect": "Nedá sa spojiť s Parcel alebo bol dosiahnutý hodinový limit požiadaviek. Skúste to znova neskôr."
+    },
+    "abort": {
+      "already_configured": "Tento kľúč API je už nakonfigurovaný.",
+      "reauth_successful": "Kľúč API bol aktualizovaný."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti Parcel",
+        "data": {
+          "filter_mode": "Zobrazené zásielky",
+          "scan_interval": "Interval aktualizácie"
+        },
+        "data_description": {
+          "scan_interval": "Parcel umožňuje 20 požiadaviek za hodinu, takže minimum je 5 minút."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Nedávne (aktívne a nedávno doručené)",
+        "active": "Iba aktívne"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Zásielky" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Pridať zásielku",
+      "description": "Pridá zásielku do Parcel. Parcel umožňuje 20 pridaní denne.",
+      "fields": {
+        "tracking_number": { "name": "Číslo zásielky", "description": "Sledovacie číslo prepravcu." },
+        "carrier_code": { "name": "Kód prepravcu", "description": "Kód prepravcu v Parcel, napríklad ups, dhl alebo pholder pre zásielku bez sledovania." },
+        "description": { "name": "Popis", "description": "Názov zobrazený v Parcel." },
+        "language": { "name": "Jazyk", "description": "Dvojpísmenový kód jazyka pre udalosti sledovania. Predvolene jazyk Home Assistant." },
+        "send_push_confirmation": { "name": "Push potvrdenie", "description": "Parcel po pridaní zásielky odošle push notifikáciu." },
+        "postcode": { "name": "PSČ", "description": "Iba pre prepravcov, ktorí ho vyžadujú." },
+        "email": { "name": "E-mail", "description": "Iba pre služby, ktoré ho vyžadujú, napríklad Apple Store." },
+        "config_entry_id": { "name": "Účet Parcel", "description": "Potrebné iba vtedy, keď je nakonfigurovaných viac účtov Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Obnoviť",
+      "description": "Načíta zásielky hneď. Započítava sa do limitu 20 požiadaviek za hodinu.",
+      "fields": {
+        "config_entry_id": { "name": "Účet Parcel", "description": "Potrebné iba vtedy, keď je nakonfigurovaných viac účtov Parcel." }
+      }
+    }
+  }
+}

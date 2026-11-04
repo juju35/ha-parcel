@@ -20,7 +20,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `parcel.refresh` action to force an update
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: list of deliveries, events on click, add form with carrier search
 - API key entered in the UI, never in YAML
-- English, French, German, Spanish, Serbian (Cyrillic and Latin), Italian, Dutch, Portuguese and Polish
+- English, French, German, Spanish, Serbian (Cyrillic and Latin), Italian, Dutch, Portuguese, Polish, Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Irish, Slovak, Czech, Slovenian, Maltese, Latvian and Greek
 
 ## Prerequisites
 
@@ -84,7 +84,7 @@ type: custom:parcel-card
 | `show_add` | `true` | Show the add button |
 | `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |
 | `max_events` | `5` | Number of events shown when a delivery is expanded |
-| `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt` or `pl` (auto-detects from HA settings) |
+| `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `ga`, `sk`, `cs`, `sl`, `mt`, `lv` or `el` (auto-detects from HA settings) |
 
 Click a delivery to see its events, and the tracking number to copy it.
 
@@ -165,6 +165,20 @@ The integration and the card follow the language of Home Assistant (the card's `
 | Nederlands | `nl` |
 | Português (Portugal) | `pt` |
 | Polski | `pl` |
+| Română | `ro` |
+| Dansk | `da` |
+| Svenska | `sv` |
+| Български | `bg` |
+| Русский | `ru` |
+| Українська | `uk` |
+| Magyar | `hu` |
+| Gaeilge | `ga` |
+| Slovenčina | `sk` |
+| Čeština | `cs` |
+| Slovenščina | `sl` |
+| Malti | `mt` |
+| Latviešu | `lv` |
+| Ελληνικά | `el` |
 
 Brazilian Portuguese (`pt-BR`): pt-BR uses the European Portuguese texts, in the integration and the card.
 
