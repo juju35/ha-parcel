@@ -110,13 +110,13 @@ While parcels refresh, the card animates: the refresh button spins until the upd
 
 | Light | Dark |
 |---|---|
-| ![refresh animation](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/refreshing.gif) | ![refresh animation dark](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/refreshing-dark.gif) |
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/refreshing.gif" alt="refresh animation" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/refreshing-dark.gif" alt="refresh animation dark" width="400"> |
 
 The stills show the card with one delivery expanded to its events.
 
 | Light | Dark |
 |---|---|
-| ![card](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png) | ![card dark](https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-dark.png) |
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-dark.png" alt="card dark" width="400"> |
 
 ## How it works
 
