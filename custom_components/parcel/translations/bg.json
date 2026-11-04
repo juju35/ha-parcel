@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Генерирайте API ключ на web.parcelapp.net (изисква се Parcel Premium).",
+        "data": { "api_key": "API ключ" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "API ключът за Parcel беше отхвърлен. Въведете нов.",
+        "data": { "api_key": "API ключ" }
+      }
+    },
+    "error": {
+      "already_configured": "Този API ключ вече се използва от друг запис на Parcel.",
+      "invalid_auth": "Невалиден API ключ.",
+      "cannot_connect": "Няма връзка с Parcel или е достигнат часовият лимит на заявките. Опитайте отново по-късно."
+    },
+    "abort": {
+      "already_configured": "Този API ключ вече е конфигуриран.",
+      "reauth_successful": "API ключът е актуализиран."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Опции на Parcel",
+        "data": {
+          "filter_mode": "Показвани пратки",
+          "scan_interval": "Интервал на обновяване"
+        },
+        "data_description": {
+          "scan_interval": "Parcel позволява 20 заявки на час, затова минимумът е 5 минути."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Последни (активни и наскоро доставени)",
+        "active": "Само активни"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Пратки" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Добавяне на пратка",
+      "description": "Добавя пратка в Parcel. Parcel позволява 20 добавяния на ден.",
+      "fields": {
+        "tracking_number": { "name": "Номер за проследяване", "description": "Номерът за проследяване на куриера." },
+        "carrier_code": { "name": "Код на куриера", "description": "Код на куриера в Parcel, например ups, dhl или pholder за пратка без проследяване." },
+        "description": { "name": "Описание", "description": "Име, показвано в Parcel." },
+        "language": { "name": "Език", "description": "Двубуквен код на езика за събитията при проследяване. По подразбиране езикът на Home Assistant." },
+        "send_push_confirmation": { "name": "Push потвърждение", "description": "Parcel изпраща push известие след добавяне на пратката." },
+        "postcode": { "name": "Пощенски код", "description": "Само за куриери, които го изискват." },
+        "email": { "name": "Имейл", "description": "Само за услуги, които го изискват, например Apple Store." },
+        "config_entry_id": { "name": "Акаунт в Parcel", "description": "Нужно е само когато са конфигурирани няколко акаунта в Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Опресняване",
+      "description": "Извлича пратките сега. Брои се към лимита от 20 заявки на час.",
+      "fields": {
+        "config_entry_id": { "name": "Акаунт в Parcel", "description": "Нужно е само когато са конфигурирани няколко акаунта в Parcel." }
+      }
+    }
+  }
+}

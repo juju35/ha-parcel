@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 - 2026-11-04
+
+### Changes
+- Added Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Slovak, Czech, Slovenian, Latvian and Greek translations: `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` and `el` for the integration and the card, also offered in the card's `language` option.
+
 ## 1.0.2 - 2026-11-02
 
 ### Changes

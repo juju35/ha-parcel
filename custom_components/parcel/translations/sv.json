@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Skapa en API-nyckel på web.parcelapp.net (Parcel Premium krävs).",
+        "data": { "api_key": "API-nyckel" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Parcel-API-nyckeln avvisades. Ange en ny.",
+        "data": { "api_key": "API-nyckel" }
+      }
+    },
+    "error": {
+      "already_configured": "Den här API-nyckeln används redan av en annan Parcel-post.",
+      "invalid_auth": "Ogiltig API-nyckel.",
+      "cannot_connect": "Det går inte att nå Parcel, eller så har gränsen för förfrågningar per timme nåtts. Försök igen senare."
+    },
+    "abort": {
+      "already_configured": "Den här API-nyckeln är redan konfigurerad.",
+      "reauth_successful": "API-nyckeln har uppdaterats."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Parcel-alternativ",
+        "data": {
+          "filter_mode": "Paket som visas",
+          "scan_interval": "Uppdateringsintervall"
+        },
+        "data_description": {
+          "scan_interval": "Parcel tillåter 20 förfrågningar per timme, så minimum är 5 minuter."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Senaste (aktiva och nyligen levererade)",
+        "active": "Endast aktiva"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Paket" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Lägg till paket",
+      "description": "Lägger till ett paket i Parcel. Parcel tillåter 20 tillägg per dag.",
+      "fields": {
+        "tracking_number": { "name": "Spårningsnummer", "description": "Transportörens spårningsnummer." },
+        "carrier_code": { "name": "Transportörskod", "description": "Transportörskod i Parcel, till exempel ups, dhl eller pholder för ett paket utan spårning." },
+        "description": { "name": "Beskrivning", "description": "Namnet som visas i Parcel." },
+        "language": { "name": "Språk", "description": "Språkkod med två bokstäver för spårningshändelser. Standard är Home Assistants språk." },
+        "send_push_confirmation": { "name": "Push-bekräftelse", "description": "Skicka en push-notis från Parcel när paketet har lagts till." },
+        "postcode": { "name": "Postnummer", "description": "Endast för transportörer som kräver det." },
+        "email": { "name": "E-post", "description": "Endast för tjänster som kräver det, till exempel Apple Store." },
+        "config_entry_id": { "name": "Parcel-konto", "description": "Behövs bara när flera Parcel-konton är konfigurerade." }
+      }
+    },
+    "refresh": {
+      "name": "Uppdatera",
+      "description": "Hämtar paketen nu. Räknas mot gränsen på 20 förfrågningar per timme.",
+      "fields": {
+        "config_entry_id": { "name": "Parcel-konto", "description": "Behövs bara när flera Parcel-konton är konfigurerade." }
+      }
+    }
+  }
+}

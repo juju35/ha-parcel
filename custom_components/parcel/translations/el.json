@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Δημιουργήστε ένα κλειδί API στο web.parcelapp.net (απαιτείται Parcel Premium).",
+        "data": { "api_key": "Κλειδί API" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "Το κλειδί API του Parcel απορρίφθηκε. Εισαγάγετε ένα νέο.",
+        "data": { "api_key": "Κλειδί API" }
+      }
+    },
+    "error": {
+      "already_configured": "Αυτό το κλειδί API χρησιμοποιείται ήδη από άλλη καταχώριση Parcel.",
+      "invalid_auth": "Μη έγκυρο κλειδί API.",
+      "cannot_connect": "Δεν είναι δυνατή η σύνδεση με το Parcel ή συμπληρώθηκε το ωριαίο όριο αιτημάτων. Δοκιμάστε ξανά αργότερα."
+    },
+    "abort": {
+      "already_configured": "Αυτό το κλειδί API έχει ήδη διαμορφωθεί.",
+      "reauth_successful": "Το κλειδί API ενημερώθηκε."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Επιλογές Parcel",
+        "data": {
+          "filter_mode": "Δέματα προς εμφάνιση",
+          "scan_interval": "Διάστημα ενημέρωσης"
+        },
+        "data_description": {
+          "scan_interval": "Το Parcel επιτρέπει 20 αιτήματα την ώρα, οπότε το ελάχιστο είναι 5 λεπτά."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Πρόσφατα (ενεργά και πρόσφατα παραδομένα)",
+        "active": "Μόνο ενεργά"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Δέματα" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Προσθήκη δέματος",
+      "description": "Προσθέτει ένα δέμα στο Parcel. Το Parcel επιτρέπει 20 προσθήκες την ημέρα.",
+      "fields": {
+        "tracking_number": { "name": "Αριθμός αποστολής", "description": "Ο αριθμός παρακολούθησης του μεταφορέα." },
+        "carrier_code": { "name": "Κωδικός μεταφορέα", "description": "Κωδικός μεταφορέα στο Parcel, για παράδειγμα ups, dhl ή pholder για δέμα χωρίς παρακολούθηση." },
+        "description": { "name": "Περιγραφή", "description": "Όνομα που εμφανίζεται στο Parcel." },
+        "language": { "name": "Γλώσσα", "description": "Διψήφιος κωδικός γλώσσας για τα συμβάντα παρακολούθησης. Από προεπιλογή η γλώσσα του Home Assistant." },
+        "send_push_confirmation": { "name": "Επιβεβαίωση push", "description": "Αποστολή ειδοποίησης push από το Parcel μόλις προστεθεί το δέμα." },
+        "postcode": { "name": "Ταχυδρομικός κώδικας", "description": "Μόνο για μεταφορείς που τον απαιτούν." },
+        "email": { "name": "Email", "description": "Μόνο για υπηρεσίες που το απαιτούν, όπως το Apple Store." },
+        "config_entry_id": { "name": "Λογαριασμός Parcel", "description": "Απαιτείται μόνο όταν έχουν διαμορφωθεί πολλοί λογαριασμοί Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Ανανέωση",
+      "description": "Λαμβάνει τα δέματα τώρα. Μετράει στο όριο των 20 αιτημάτων την ώρα.",
+      "fields": {
+        "config_entry_id": { "name": "Λογαριασμός Parcel", "description": "Απαιτείται μόνο όταν έχουν διαμορφωθεί πολλοί λογαριασμοί Parcel." }
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Создайте API-ключ на web.parcelapp.net (требуется Parcel Premium).",
+        "data": { "api_key": "API-ключ" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "API-ключ Parcel был отклонён. Введите новый.",
+        "data": { "api_key": "API-ключ" }
+      }
+    },
+    "error": {
+      "already_configured": "Этот API-ключ уже используется другой записью Parcel.",
+      "invalid_auth": "Неверный API-ключ.",
+      "cannot_connect": "Не удаётся связаться с Parcel или достигнут почасовой лимит запросов. Повторите попытку позже."
+    },
+    "abort": {
+      "already_configured": "Этот API-ключ уже настроен.",
+      "reauth_successful": "API-ключ обновлён."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Настройки Parcel",
+        "data": {
+          "filter_mode": "Отображаемые посылки",
+          "scan_interval": "Интервал обновления"
+        },
+        "data_description": {
+          "scan_interval": "Parcel допускает 20 запросов в час, поэтому минимум — 5 минут."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Недавние (активные и недавно доставленные)",
+        "active": "Только активные"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Посылки" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Добавить посылку",
+      "description": "Добавляет посылку в Parcel. Parcel позволяет добавлять до 20 посылок в день.",
+      "fields": {
+        "tracking_number": { "name": "Трек-номер", "description": "Трек-номер службы доставки." },
+        "carrier_code": { "name": "Код службы доставки", "description": "Код службы доставки в Parcel, например ups, dhl или pholder для посылки без отслеживания." },
+        "description": { "name": "Описание", "description": "Название, отображаемое в Parcel." },
+        "language": { "name": "Язык", "description": "Двухбуквенный код языка для событий отслеживания. По умолчанию — язык Home Assistant." },
+        "send_push_confirmation": { "name": "Push-подтверждение", "description": "Отправить push-уведомление из Parcel после добавления посылки." },
+        "postcode": { "name": "Почтовый индекс", "description": "Только для служб доставки, которые его требуют." },
+        "email": { "name": "Электронная почта", "description": "Только для сервисов, которые её требуют, например Apple Store." },
+        "config_entry_id": { "name": "Аккаунт Parcel", "description": "Нужен, только если настроено несколько аккаунтов Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Обновить",
+      "description": "Загружает посылки сейчас. Учитывается в лимите 20 запросов в час.",
+      "fields": {
+        "config_entry_id": { "name": "Аккаунт Parcel", "description": "Нужен, только если настроено несколько аккаунтов Parcel." }
+      }
+    }
+  }
+}

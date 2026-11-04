@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Створіть API-ключ на web.parcelapp.net (потрібна підписка Parcel Premium).",
+        "data": { "api_key": "API-ключ" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "API-ключ Parcel відхилено. Введіть новий.",
+        "data": { "api_key": "API-ключ" }
+      }
+    },
+    "error": {
+      "already_configured": "Цей API-ключ уже використовується іншим записом Parcel.",
+      "invalid_auth": "Недійсний API-ключ.",
+      "cannot_connect": "Не вдається зв’язатися з Parcel або досягнуто погодинного ліміту запитів. Спробуйте пізніше."
+    },
+    "abort": {
+      "already_configured": "Цей API-ключ уже налаштовано.",
+      "reauth_successful": "API-ключ оновлено."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Параметри Parcel",
+        "data": {
+          "filter_mode": "Посилки для показу",
+          "scan_interval": "Інтервал оновлення"
+        },
+        "data_description": {
+          "scan_interval": "Parcel дозволяє 20 запитів на годину, тому мінімум — 5 хвилин."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Нещодавні (активні та нещодавно доставлені)",
+        "active": "Лише активні"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Посилки" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Додати посилку",
+      "description": "Додає посилку в Parcel. Parcel дозволяє додавати до 20 посилок на день.",
+      "fields": {
+        "tracking_number": { "name": "Номер відстеження", "description": "Номер відстеження служби доставки." },
+        "carrier_code": { "name": "Код служби доставки", "description": "Код служби доставки в Parcel, наприклад ups, dhl або pholder для посилки без відстеження." },
+        "description": { "name": "Опис", "description": "Назва, що показується в Parcel." },
+        "language": { "name": "Мова", "description": "Дволітерний код мови для подій відстеження. За замовчуванням — мова Home Assistant." },
+        "send_push_confirmation": { "name": "Push-підтвердження", "description": "Надіслати push-сповіщення з Parcel після додавання посилки." },
+        "postcode": { "name": "Поштовий індекс", "description": "Лише для служб доставки, які його вимагають." },
+        "email": { "name": "Електронна пошта", "description": "Лише для сервісів, які її вимагають, наприклад Apple Store." },
+        "config_entry_id": { "name": "Обліковий запис Parcel", "description": "Потрібен, лише якщо налаштовано кілька облікових записів Parcel." }
+      }
+    },
+    "refresh": {
+      "name": "Оновити",
+      "description": "Отримує посилки зараз. Враховується в ліміті 20 запитів на годину.",
+      "fields": {
+        "config_entry_id": { "name": "Обліковий запис Parcel", "description": "Потрібен, лише якщо налаштовано кілька облікових записів Parcel." }
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Parcel",
+        "description": "Hozzon létre egy API-kulcsot a web.parcelapp.net oldalon (Parcel Premium szükséges).",
+        "data": { "api_key": "API-kulcs" }
+      },
+      "reauth_confirm": {
+        "title": "Parcel",
+        "description": "A Parcel elutasította az API-kulcsot. Adjon meg egy újat.",
+        "data": { "api_key": "API-kulcs" }
+      }
+    },
+    "error": {
+      "already_configured": "Ezt az API-kulcsot már egy másik Parcel-bejegyzés használja.",
+      "invalid_auth": "Érvénytelen API-kulcs.",
+      "cannot_connect": "A Parcel nem érhető el, vagy elérte az óránkénti kéréskorlátot. Próbálja újra később."
+    },
+    "abort": {
+      "already_configured": "Ez az API-kulcs már konfigurálva van.",
+      "reauth_successful": "Az API-kulcs frissítve."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Parcel beállítások",
+        "data": {
+          "filter_mode": "Megjelenített csomagok",
+          "scan_interval": "Frissítési időköz"
+        },
+        "data_description": {
+          "scan_interval": "A Parcel óránként 20 kérést enged, ezért a minimum 5 perc."
+        }
+      }
+    }
+  },
+  "selector": {
+    "filter_mode": {
+      "options": {
+        "recent": "Legutóbbiak (aktív és nemrég kézbesített)",
+        "active": "Csak aktív"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "deliveries": { "name": "Csomagok" }
+    }
+  },
+  "services": {
+    "add_delivery": {
+      "name": "Csomag hozzáadása",
+      "description": "Csomagot ad hozzá a Parcelhez. A Parcel naponta 20 hozzáadást enged.",
+      "fields": {
+        "tracking_number": { "name": "Követési szám", "description": "A futárszolgálat követési száma." },
+        "carrier_code": { "name": "Futárszolgálat kódja", "description": "A futárszolgálat Parcel-kódja, például ups, dhl vagy pholder követés nélküli csomaghoz." },
+        "description": { "name": "Leírás", "description": "A Parcelben megjelenő név." },
+        "language": { "name": "Nyelv", "description": "Kétbetűs nyelvkód a követési eseményekhez. Alapértelmezés szerint a Home Assistant nyelve." },
+        "send_push_confirmation": { "name": "Push-visszaigazolás", "description": "Push-értesítés küldése a Parcelből a csomag hozzáadása után." },
+        "postcode": { "name": "Irányítószám", "description": "Csak az ezt igénylő futárszolgálatoknál." },
+        "email": { "name": "E-mail", "description": "Csak az ezt igénylő szolgáltatásoknál, például Apple Store." },
+        "config_entry_id": { "name": "Parcel-fiók", "description": "Csak akkor szükséges, ha több Parcel-fiók van konfigurálva." }
+      }
+    },
+    "refresh": {
+      "name": "Frissítés",
+      "description": "Most lekéri a csomagokat. Beleszámít az óránkénti 20 kéréses korlátba.",
+      "fields": {
+        "config_entry_id": { "name": "Parcel-fiók", "description": "Csak akkor szükséges, ha több Parcel-fiók van konfigurálva." }
+      }
+    }
+  }
+}
