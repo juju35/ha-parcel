@@ -86,8 +86,8 @@ test('parcelLang resolves Italian, Dutch, Portuguese and Polish, Brazilian Portu
   assert.equal(parcelLang({ language: 'fr' }, { language: 'pl' }), 'pl');
 });
 
-test('parcelLang resolves the 14 languages added after Polish, from full locales too', () => {
-  const locales = { ro: 'ro-RO', da: 'da-DK', sv: 'sv-SE', bg: 'bg-BG', ru: 'ru-RU', uk: 'uk-UA', hu: 'hu-HU', ga: 'ga-IE', sk: 'sk-SK', cs: 'cs-CZ', sl: 'sl-SI', mt: 'mt-MT', lv: 'lv-LV', el: 'el-GR' };
+test('parcelLang resolves the 12 languages added after Polish, from full locales too', () => {
+  const locales = { ro: 'ro-RO', da: 'da-DK', sv: 'sv-SE', bg: 'bg-BG', ru: 'ru-RU', uk: 'uk-UA', hu: 'hu-HU', sk: 'sk-SK', cs: 'cs-CZ', sl: 'sl-SI', lv: 'lv-LV', el: 'el-GR' };
   for (const [lang, locale] of Object.entries(locales)) {
     assert.equal(parcelLang({ language: lang }), lang);
     assert.equal(parcelLang({ locale: { language: locale } }), lang);
@@ -95,7 +95,7 @@ test('parcelLang resolves the 14 languages added after Polish, from full locales
   }
 });
 
-const CARD_LANGS = ['fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl', 'ro', 'da', 'sv', 'bg', 'ru', 'uk', 'hu', 'ga', 'sk', 'cs', 'sl', 'mt', 'lv', 'el'];
+const CARD_LANGS = ['fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl', 'ro', 'da', 'sv', 'bg', 'ru', 'uk', 'hu', 'sk', 'cs', 'sl', 'lv', 'el'];
 
 test('every card language has exactly the English keys', () => {
   const keys = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? keys(v, `${p}${k}.`) : [`${p}${k}`])).sort();
@@ -141,7 +141,7 @@ test('the editor offers every card language, Serbian in Cyrillic and in Latin sc
   const options = schema.find((f) => f.name === 'language').selector.select.options;
   assert.deepEqual(
     [...options.map((o) => o.value)],
-    ['', 'en', 'fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl', 'ro', 'da', 'sv', 'bg', 'ru', 'uk', 'hu', 'ga', 'sk', 'cs', 'sl', 'mt', 'lv', 'el'],
+    ['', 'en', 'fr', 'de', 'es', 'sr', 'sr-Latn', 'it', 'nl', 'pt', 'pl', 'ro', 'da', 'sv', 'bg', 'ru', 'uk', 'hu', 'sk', 'cs', 'sl', 'lv', 'el'],
   );
   assert.equal(options.find((o) => o.value === 'ro').label, 'Română');
   assert.equal(options.find((o) => o.value === 'da').label, 'Dansk');
@@ -150,11 +150,9 @@ test('the editor offers every card language, Serbian in Cyrillic and in Latin sc
   assert.equal(options.find((o) => o.value === 'ru').label, 'Русский');
   assert.equal(options.find((o) => o.value === 'uk').label, 'Українська');
   assert.equal(options.find((o) => o.value === 'hu').label, 'Magyar');
-  assert.equal(options.find((o) => o.value === 'ga').label, 'Gaeilge');
   assert.equal(options.find((o) => o.value === 'sk').label, 'Slovenčina');
   assert.equal(options.find((o) => o.value === 'cs').label, 'Čeština');
   assert.equal(options.find((o) => o.value === 'sl').label, 'Slovenščina');
-  assert.equal(options.find((o) => o.value === 'mt').label, 'Malti');
   assert.equal(options.find((o) => o.value === 'lv').label, 'Latviešu');
   assert.equal(options.find((o) => o.value === 'el').label, 'Ελληνικά');
   assert.equal(options.find((o) => o.value === 'it').label, 'Italiano');

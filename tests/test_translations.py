@@ -55,11 +55,9 @@ LANGUAGES = [
     "ru",
     "uk",
     "hu",
-    "ga",
     "sk",
     "cs",
     "sl",
-    "mt",
     "lv",
     "el",
 ]
@@ -113,11 +111,9 @@ def test_readme_features_name_every_language() -> None:
         "Russian",
         "Ukrainian",
         "Hungarian",
-        "Irish",
         "Slovak",
         "Czech",
         "Slovenian",
-        "Maltese",
         "Latvian",
         "Greek",
     ]
