@@ -10,12 +10,13 @@ Ships its own Lovelace card (`frontend/parcel-card.js`), served by the integrati
 custom_components/parcel/
 ├── __init__.py        # Setup, card registration, services, websocket parcel/carriers
 ├── api.py             # aiohttp client for api.parcel.app/external
-├── coordinator.py     # DataUpdateCoordinator (deliveries + daily carriers list)
+├── coordinator.py     # DataUpdateCoordinator (deliveries + daily carriers list), fires parcel_out_for_delivery / parcel_delivered on status transitions (never on the first update)
 ├── sensor.py          # One sensor: count of undelivered parcels, deliveries in attributes
 ├── config_flow.py     # API key, reauth, options (filter_mode, scan_interval)
+├── diagnostics.py     # Config entry diagnostics, key / tracking numbers / addresses / emails redacted
 ├── const.py           # Constants, status codes
 ├── icons.json / services.yaml / translations/{en,fr,de,es}.json
-└── frontend/parcel-card.js   # Vanilla JS card, no dependencies
+└── frontend/parcel-card.js   # Vanilla JS cards (parcel-card, parcel-mini-card), no dependencies
 ```
 
 ## Parcel API

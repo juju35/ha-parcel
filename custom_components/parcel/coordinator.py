@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from datetime import datetime, timedelta
 from typing import Any
@@ -20,8 +21,14 @@ from .const import (
     DEFAULT_FILTER_MODE,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    EVENT_DELIVERED,
+    EVENT_OUT_FOR_DELIVERY,
     MIN_SCAN_INTERVAL,
+    STATUS_COMPLETED,
+    STATUS_OUT_FOR_DELIVERY,
 )
+
+TRANSITION_EVENTS = {STATUS_OUT_FOR_DELIVERY: EVENT_OUT_FOR_DELIVERY, STATUS_COMPLETED: EVENT_DELIVERED}
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,6 +53,8 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         self.filter_mode: str = entry.options.get(CONF_FILTER_MODE, DEFAULT_FILTER_MODE)
         self.carriers: dict[str, str] = {}
         self._carriers_updated: datetime | None = None
+        # Last known status of each delivery; None until the first successful update, so nothing fires at startup.
+        self._statuses: dict[str, Any] | None = None
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
         try:
@@ -58,7 +67,33 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
             raise UpdateFailed(str(err)) from err
 
         await self.async_ensure_carriers()
+        self._fire_transitions(deliveries)
         return deliveries
+
+    def _fire_transitions(self, deliveries: list[dict[str, Any]]) -> None:
+        """Fire parcel_out_for_delivery / parcel_delivered for deliveries whose status just changed to it."""
+        statuses = {_delivery_key(d): d.get("status_code") for d in deliveries}
+        previous, self._statuses = self._statuses, statuses
+        if previous is None:
+            return
+        for delivery in deliveries:
+            key = _delivery_key(delivery)
+            status = statuses[key]
+            # A delivery seen for the first time is not a transition: it may have been delivered long ago.
+            if key not in previous or previous[key] == status or status not in TRANSITION_EVENTS:
+                continue
+            code = delivery.get("carrier_code") or ""
+            self.hass.bus.async_fire(
+                TRANSITION_EVENTS[status],
+                {
+                    "config_entry_id": self.config_entry.entry_id,
+                    "carrier_code": code,
+                    "carrier": self.carriers.get(code, code),
+                    "name": delivery.get("description"),
+                    # A stable id for automations, not the tracking number: events end up in the recorder and logbook.
+                    "tracking_id": hashlib.sha256(key.encode()).hexdigest()[:12],
+                },
+            )
 
     async def async_ensure_carriers(self) -> dict[str, str]:
         """Load the carriers list at most once a day; keep the old one on failure."""
@@ -71,3 +106,7 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         except ParcelError as err:
             _LOGGER.warning("Could not load Parcel carriers: %s", err)
         return self.carriers
+
+
+def _delivery_key(delivery: dict[str, Any]) -> str:
+    return f"{delivery.get('carrier_code') or ''}:{delivery.get('tracking_number') or ''}"

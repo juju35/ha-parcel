@@ -36,6 +36,11 @@ ATTR_POSTCODE: Final = "postcode"
 ATTR_EMAIL: Final = "email"
 
 STATUS_COMPLETED: Final = 0
+STATUS_OUT_FOR_DELIVERY: Final = 4
+
+# Fired on the bus when a delivery changes to one of these statuses (never for its first sighting).
+EVENT_OUT_FOR_DELIVERY: Final = f"{DOMAIN}_out_for_delivery"
+EVENT_DELIVERED: Final = f"{DOMAIN}_delivered"
 
 # Parcel status_code -> stable key, translated by the card.
 STATUS_KEYS: Final = {

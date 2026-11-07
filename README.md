@@ -20,6 +20,9 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `parcel.add_delivery` action to add a delivery from an automation, a script or the card
 - `parcel.refresh` action to force an update
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: list of deliveries, events on click, add form with carrier search
+- `custom:parcel-mini-card` compact card: active deliveries and deliveries arriving today, with a button to open the full card
+- `parcel_out_for_delivery` and `parcel_delivered` events when a delivery changes status, for automations
+- Diagnostics download with the API key, tracking numbers, addresses and emails redacted
 - API key entered in the UI, never in YAML
 - English, French, German, Spanish, Serbian (Cyrillic and Latin), Italian, Dutch, Portuguese, Polish, Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Slovak, Czech, Slovenian, Latvian and Greek
 
@@ -89,6 +92,18 @@ type: custom:parcel-card
 
 Click a delivery to see its events, and the tracking number to copy it.
 
+### Mini card
+
+A compact card for dashboards: the number of active deliveries and of deliveries arriving today (out for delivery, or expected today). The button at the top right opens the full card in place; a click outside the card folds it back.
+
+```yaml
+type: custom:parcel-mini-card
+```
+
+It takes the same options as `custom:parcel-card` (set in the same visual editor); `show_delivered`, `show_add`, `show_refresh` and `max_events` apply to the full view.
+
+<img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card.png" alt="parcel-mini-card" width="260">
+
 ### Adding a delivery from an automation
 
 ```yaml
@@ -104,6 +119,34 @@ Carrier codes are listed in [supported_carriers.json](https://api.parcel.app/ext
 
 > Parcel limits additions to **20 per day**, failures included. A new delivery shows up after Parcel's next update.
 
+### Events
+
+The integration fires an event on the Home Assistant event bus when a delivery changes status between two updates:
+
+| Event | When |
+|---|---|
+| `parcel_out_for_delivery` | A delivery is now out for delivery |
+| `parcel_delivered` | A delivery is now delivered |
+
+Event data: `config_entry_id`, `carrier_code`, `carrier` (carrier name), `name` (the delivery description) and `tracking_id`, a stable short hash of the carrier and tracking number (the same for both events of a delivery). The tracking number itself is left out, since events are stored in the recorder and the logbook.
+
+Nothing fires at startup, after a reload or for a delivery seen for the first time. `parcel_delivered` needs the **Recent** filter (the default): with **Active**, delivered parcels leave the list instead of changing status.
+
+```yaml
+triggers:
+  - trigger: event
+    event_type: parcel_delivered
+actions:
+  - action: notify.mobile_app_phone
+    data:
+      title: Parcel delivered
+      message: "{{ trigger.event.data.name }} ({{ trigger.event.data.carrier }}) has been delivered."
+```
+
+### Diagnostics
+
+**Settings → Devices & services → Parcel → ⋮ → Download diagnostics** gives the entry options and the last deliveries, for bug reports. The API key, tracking numbers, event locations, extra carrier information (often a pickup address), postcodes and emails are redacted.
+
 ## Screenshots
 
 While parcels refresh, the card animates: the refresh button spins until the update finishes. It settles to a still card once done.
@@ -117,6 +160,12 @@ The stills show the card with one delivery expanded to its events.
 | Light | Dark |
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-dark.png" alt="card dark" width="400"> |
+
+The mini card, compact:
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card.png" alt="mini card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-dark.png" alt="mini card dark" width="260"> |
 
 ## How it works
 
@@ -139,7 +188,7 @@ The integration polls the Parcel API at the update interval and exposes the deli
 ```bash
 pip install -r requirements_test.txt && pytest
 pip install playwright==1.64.1 && playwright install chromium
-python scripts/screenshots.py   # renders the card stills and the refreshing.gif / refreshing-dark.gif animations (needs ffmpeg) into screenshots/
+python scripts/screenshots.py   # renders the card and mini card stills and the refreshing.gif / refreshing-dark.gif animations (needs ffmpeg) into screenshots/
 ```
 
 Python tests live in `tests/` (pytest); the card's JavaScript tests live in `test/` (`node --test test/*.test.mjs`).
