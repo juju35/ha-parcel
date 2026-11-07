@@ -1,6 +1,6 @@
 # ha-parcel
 
-[![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![Marketplace](https://img.shields.io/badge/Marketplace-Custom-41BDF5.svg)](https://www.home-assistant.io/integrations/marketplace/)
 [![HACS Validation](https://github.com/juju35/ha-parcel/actions/workflows/hacs.yml/badge.svg)](https://github.com/juju35/ha-parcel/actions/workflows/hacs.yml)
 [![Validate](https://github.com/juju35/ha-parcel/actions/workflows/validate.yml/badge.svg)](https://github.com/juju35/ha-parcel/actions/workflows/validate.yml)
 [![Lint](https://github.com/juju35/ha-parcel/actions/workflows/lint.yml/badge.svg)](https://github.com/juju35/ha-parcel/actions/workflows/lint.yml)
@@ -10,7 +10,7 @@
 
 Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveries tracked in Parcel and add new ones, with a Lovelace card included.
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=juju35&repository=ha-parcel&category=integration)
+[![Open your Home Assistant instance and open a repository inside the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=juju35&repository=ha-parcel&category=integration)
 
 <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="parcel-card" width="380">
 
@@ -31,19 +31,19 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 
 ## Installation
 
-### Via HACS (recommended)
+### Via the Marketplace (recommended)
 
 Click the button below to add the repository directly:
 
-[![Add to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=juju35&repository=ha-parcel&category=integration)
+[![Add to the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=juju35&repository=ha-parcel&category=integration)
 
-Then click **Download** and restart Home Assistant.
+Then click **Install** and restart Home Assistant.
 
 Or manually:
 
-1. Open HACS → **⋮** (top right) → **Custom repositories**
+1. Open **Settings → Marketplace → Add from link** (top right; this needs a GitHub account connected)
 2. Add `https://github.com/juju35/ha-parcel` — Type: **Integration**
-3. Search for **Parcel** and click **Download**
+3. Open **Parcel** and click **Install**
 4. Restart Home Assistant
 
 The card is **part of the integration**: at startup it is added to the dashboard resources (`/parcel_static/parcel-card.js`, module). After an install or an update, restart Home Assistant and refresh the browser (clear the companion app cache if needed).
