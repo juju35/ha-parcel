@@ -8,7 +8,6 @@ from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events
-from pytest_homeassistant_custom_component.components.diagnostics import get_diagnostics_for_config_entry
 
 from custom_components.parcel.const import API_CARRIERS, API_DELIVERIES, DOMAIN
 
@@ -64,9 +63,20 @@ async def _update(hass, aioclient_mock, entry, deliveries):
     await hass.async_block_till_done()
 
 
+async def _diagnostics(hass, hass_client, entry):
+    # The pytest-homeassistant-custom-component diagnostics helper is missing from the version pinned to the
+    # minimum Home Assistant (2024.12): ask the diagnostics API directly, as that helper does.
+    assert await async_setup_component(hass, "diagnostics", {})
+    await hass.async_block_till_done()
+    client = await hass_client()
+    response = await client.get(f"/api/diagnostics/config_entry/{entry.entry_id}")
+    assert response.status == 200
+    return (await response.json())["data"]
+
+
 async def test_diagnostics_redacts_secrets_and_personal_data(hass, aioclient_mock, entry, hass_client):
     await _setup(hass, aioclient_mock, entry, _deliveries())
-    diag = await get_diagnostics_for_config_entry(hass, hass_client, entry)
+    diag = await _diagnostics(hass, hass_client, entry)
 
     text = json.dumps(diag)
     for secret in ("secret-key", "abc123", "6A12345678901", "1Z999AA1", "rue de la Paix", "me@example.org"):
