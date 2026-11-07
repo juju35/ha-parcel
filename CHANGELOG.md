@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 - 2026-11-07
+
+### What's new
+- Diagnostics: download them from the integration page; the API key, tracking numbers, addresses and emails are redacted.
+- Events `parcel_out_for_delivery` and `parcel_delivered` fire when a delivery changes to that status, with the carrier, the delivery name and a stable `tracking_id` instead of the tracking number.
+- New `custom:parcel-mini-card`: the number of active deliveries and of deliveries arriving today, with a button at the top right that opens the full card.
+
 ## 1.0.4 - 2026-11-04
 
 ### Documentation

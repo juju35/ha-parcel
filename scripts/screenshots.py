@@ -49,6 +49,8 @@ COMMON = {
 # Material Design Icons used by the card (@mdi/js).
 ICONS = {
     "alert-circle-outline": "M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z",
+    "arrow-collapse": "M19.5,3.09L15,7.59V4H13V11H20V9H16.41L20.91,4.5L19.5,3.09M4,13V15H7.59L3.09,19.5L4.5,20.91L9,16.41V20H11V13H4Z",
+    "arrow-expand": "M10,21V19H6.41L10.91,14.5L9.5,13.09L5,17.59V14H3V21H10M14.5,10.91L19,6.41V10H21V3H14V5H17.59L13.09,9.5L14.5,10.91Z",
     "alert-outline": "M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16",
     "chevron-down": "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z",
     "chevron-up": "M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z",
@@ -162,6 +164,16 @@ SHOTS = [
         "config": {"show_delivered": True},
         "expand": "colissimo:6A12345678901",
     },
+    # The mini card, compact: active deliveries and deliveries arriving today (the Colissimo one, expected on 18/10).
+    {"file": "mini-card", "theme": "light", "lang": "en", "element": "parcel-mini-card", "width": 260, "config": {}},
+    {
+        "file": "mini-card-dark",
+        "theme": "dark",
+        "lang": "en",
+        "element": "parcel-mini-card",
+        "width": 260,
+        "config": {},
+    },
 ]
 
 
@@ -201,12 +213,12 @@ PAUSE_ANIMATIONS = """(t) => {
 }"""
 
 
-def page_html(theme):
+def page_html(theme, width=WIDTH):
     variables = "".join(f"{k}:{v};" for k, v in {**THEMES[theme], **COMMON}.items())
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
   :root {{ {variables} }}
   body {{ margin: 0; padding: 16px; background: var(--primary-background-color); color: var(--primary-text-color);
-         font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; width: {WIDTH}px; }}
+         font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; width: {width}px; }}
 </style></head><body><div id="root"></div></body></html>"""
 
 
@@ -215,18 +227,23 @@ def mount(context, shot):
     page = context.new_page()
     page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
     page.clock.set_fixed_time(NOW)
-    page.set_content(page_html(shot["theme"]))
+    page.set_content(page_html(shot["theme"], shot.get("width", WIDTH)))
     page.add_script_tag(content=HA_ELEMENTS)
     page.add_script_tag(content=CARD_JS)
     page.evaluate(
-        """({config, states, lang}) => {
-          const el = document.createElement("parcel-card");
-          el.setConfig({type: "custom:parcel-card", ...config});
+        """({config, states, lang, element}) => {
+          const el = document.createElement(element);
+          el.setConfig({type: `custom:${element}`, ...config});
           el.hass = {states, language: lang, locale: {language: lang},
                      callService: () => Promise.resolve(), callWS: () => Promise.resolve({})};
           document.getElementById("root").appendChild(el);
         }""",
-        {"config": shot["config"], "states": STATES, "lang": shot["lang"]},
+        {
+            "config": shot["config"],
+            "states": STATES,
+            "lang": shot["lang"],
+            "element": shot.get("element", "parcel-card"),
+        },
     )
     if shot.get("expand"):
         page.locator(f'.delivery[data-id="{shot["expand"]}"] .row').click()
@@ -296,7 +313,12 @@ def main():
                 fresh = Path(tmp) / f"{shot['file']}.png"
                 page.screenshot(
                     path=str(fresh),
-                    clip={"x": 0, "y": 0, "width": WIDTH + 32, "height": int(box["height"] + 0.999) + 32},
+                    clip={
+                        "x": 0,
+                        "y": 0,
+                        "width": shot.get("width", WIDTH) + 32,
+                        "height": int(box["height"] + 0.999) + 32,
+                    },
                     animations="disabled",
                 )
                 changed = replace_if_changed(fresh, out_dir / f"{shot['file']}.png")

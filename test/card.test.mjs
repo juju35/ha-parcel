@@ -18,8 +18,8 @@ const context = {
   console,
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard };`, context);
-const { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard } = context.parcel;
+vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard, ParcelMiniCard };`, context);
+const { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard, ParcelMiniCard } = context.parcel;
 const card = ParcelCard.prototype;
 
 const sensor = (id, extra = {}) => ({
@@ -845,4 +845,94 @@ test('Polish counts active deliveries as "aktywne", like the other languages say
   assert.equal(pl.selector.filter_mode.options.active, 'Tylko aktywne');
   const self = headerCard({ 'sensor.a': sensor('sensor.a') }, { language: 'pl' });
   assert.equal(self.header.querySelector('.status-text').textContent, '1 aktywne');
+});
+
+// ── mini card ─────────────────────────────────────────────────────────────────
+const miniCard = (deliveries, config = {}) => {
+  const header = fakeHeader();
+  const list = { innerHTML: '', querySelector: () => null };
+  const form = { hidden: false };
+  const haCard = fakeEl();
+  const self = new ParcelMiniCard();
+  const attrs = {};
+  Object.assign(self, {
+    setAttribute: (k, v) => { attrs[k] = v; },
+    _root: { querySelector: (sel) => ({ '.header': header, '.form': form, 'ha-card': haCard, '.detail': header.querySelector('.detail') })[sel] || list },
+    _ensureShell() {},
+    _hass: { locale: { language: 'en' }, states: { 'sensor.a': sensor('sensor.a', { deliveries }) } },
+    header,
+    list,
+    form,
+    haCard,
+    attrs,
+  });
+  self.setConfig({ entity: 'sensor.a', ...config });
+  return self;
+};
+const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+test('the mini card counts active deliveries and the ones arriving today', () => {
+  const now = new Date();
+  const tomorrow = new Date(now.getTime() + 86400000);
+  const self = miniCard([
+    deliveryOf('A1', { status_code: 4, status: 'out_for_delivery' }),
+    deliveryOf('A2', { status_code: 2, date_expected: ymd(now) }),
+    deliveryOf('A3', { status_code: 2, timestamp_expected: Math.floor(now.getTime() / 1000) }),
+    deliveryOf('A4', { status_code: 2, date_expected: ymd(tomorrow) }),
+    deliveryOf('A5', { status_code: 8, date_expected: '--//--' }),
+    deliveryOf('A6', { status_code: 0, status: 'delivered', date_expected: ymd(now) }),
+  ]);
+  assert.deepEqual({ ...self._counts(self._lastState.attributes.deliveries) }, { active: 5, today: 3 });
+  const html = self.list.innerHTML;
+  assert.match(html, /class="summary"/);
+  assert.match(html, /<ha-icon icon="mdi:truck-fast-outline"><\/ha-icon>5<\/div><div class="l">active<\/div>/);
+  assert.match(html, /<ha-icon icon="mdi:truck-delivery-outline"><\/ha-icon>3<\/div><div class="l">arriving today<\/div>/);
+  // Delivered parcels are never listed in the compact view, whatever show_delivered says.
+  assert.doesNotMatch(html, /class="delivery/);
+});
+
+test('the mini card is compact with a detail button, and shows the full card once opened', () => {
+  const self = miniCard([deliveryOf('A1')]);
+  assert.equal(self.attrs.mini, '');
+  assert.ok(self.haCard.classList.contains('mini'));
+  let html = self.header.html;
+  assert.match(html, /class="logo"/, 'the 40 px header icon stays in the compact view');
+  assert.match(html, /class="detail" title="Show the full card"/);
+  assert.match(html, /mdi:arrow-expand/);
+  assert.doesNotMatch(html, /refresh-btn|add-btn|class="status"/);
+  assert.deepEqual({ ...self.getGridOptions() }, { columns: 6, min_columns: 4, rows: 'auto' });
+
+  self._toggleDetail({ stopPropagation() {}, detail: 1 });
+  html = self.header.html;
+  assert.ok(!self.haCard.classList.contains('mini'));
+  assert.match(html, /refresh-btn/);
+  assert.match(html, /add-btn/);
+  assert.match(html, /class="detail" title="Back to the compact view"/);
+  assert.match(html, /mdi:arrow-collapse/);
+  assert.match(self.list.innerHTML, /class="delivery/);
+  assert.equal(self.getGridOptions().rows, 'auto');
+  assert.equal(self.getGridOptions().min_columns, 8);
+});
+
+test('the mini card folds back on a click outside it, not inside it nor in a dialog', () => {
+  const self = miniCard([deliveryOf('A1')]);
+  self._setZoom(true);
+  self._expanded['ups:A1'] = true;
+  self._onOutsideMini({ composedPath: () => [self, {}] });
+  assert.equal(self._zoomed, true);
+  self._onOutsideMini({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
+  assert.equal(self._zoomed, true);
+  self._onOutsideMini({ composedPath: () => [{ localName: 'div' }] });
+  assert.equal(self._zoomed, false);
+  assert.deepEqual({ ...self._expanded }, {});
+  assert.equal(self.form.hidden, true);
+  assert.match(self.header.html, /Show the full card/);
+});
+
+test('the mini card is offered in the card picker and keeps a 240 px preferred width', () => {
+  assert.match(source, /type: 'parcel-mini-card'/);
+  assert.match(source, /customElements\.define\('parcel-mini-card', ParcelMiniCard\)/);
+  const css = ParcelCard._styles();
+  assert.match(css, /:host\(\[mini\]\)::before \{ grid-template-columns: minmax\(0, 240px\); \}/);
+  assert.match(css, /ha-card\.mini \.logo \{ display: grid; \}/);
 });

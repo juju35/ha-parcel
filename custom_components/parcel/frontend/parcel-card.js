@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.0.4';
+var PARCEL_CARD_VERSION = '1.1.0';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -30,6 +30,9 @@ var ParcelI18n = {
     limit: 'Parcel limite les ajouts à 20 par jour.',
     no_events: 'Aucun événement pour l\'instant',
     copy: 'Copier le numéro',
+    today: 'attendus aujourd’hui',
+    show_full: 'Afficher la carte complète',
+    show_compact: 'Revenir à la vue compacte',
     editor: {
       entity: 'Capteur Parcel',
       title: 'Titre',
@@ -77,6 +80,9 @@ var ParcelI18n = {
     limit: 'Parcel allows 20 additions per day.',
     no_events: 'No events yet',
     copy: 'Copy tracking number',
+    today: 'arriving today',
+    show_full: 'Show the full card',
+    show_compact: 'Back to the compact view',
     editor: {
       entity: 'Parcel sensor',
       title: 'Title',
@@ -124,6 +130,9 @@ var ParcelI18n = {
     limit: 'Parcel erlaubt maximal 20 neue Sendungen pro Tag.',
     no_events: 'Noch keine Ereignisse',
     copy: 'Sendungsnummer kopieren',
+    today: 'heute erwartet',
+    show_full: 'Vollständige Karte anzeigen',
+    show_compact: 'Zurück zur kompakten Ansicht',
     editor: {
       entity: 'Parcel-Sensor',
       title: 'Titel',
@@ -171,6 +180,9 @@ var ParcelI18n = {
     limit: 'Parcel permite 20 envíos añadidos al día.',
     no_events: 'Aún no hay eventos',
     copy: 'Copiar el número de seguimiento',
+    today: 'llegan hoy',
+    show_full: 'Mostrar la tarjeta completa',
+    show_compact: 'Volver a la vista compacta',
     editor: {
       entity: 'Sensor de Parcel',
       title: 'Título',
@@ -218,6 +230,9 @@ var ParcelI18n = {
     limit: 'Parcel дозвољава 20 додавања дневно.',
     no_events: 'Још нема догађаја',
     copy: 'Копирај број за праћење',
+    today: 'стижу данас',
+    show_full: 'Прикажи целу картицу',
+    show_compact: 'Назад на компактни приказ',
     editor: {
       entity: 'Parcel сензор',
       title: 'Наслов',
@@ -265,6 +280,9 @@ var ParcelI18n = {
     limit: 'Parcel dozvoljava 20 dodavanja dnevno.',
     no_events: 'Još nema događaja',
     copy: 'Kopiraj broj za praćenje',
+    today: 'stižu danas',
+    show_full: 'Prikaži celu karticu',
+    show_compact: 'Nazad na kompaktni prikaz',
     editor: {
       entity: 'Parcel senzor',
       title: 'Naslov',
@@ -312,6 +330,9 @@ var ParcelI18n = {
     limit: 'Parcel consente 20 aggiunte al giorno.',
     no_events: 'Ancora nessun evento',
     copy: 'Copia il numero di tracciamento',
+    today: 'in arrivo oggi',
+    show_full: 'Mostra la scheda completa',
+    show_compact: 'Torna alla vista compatta',
     editor: {
       entity: 'Sensore Parcel',
       title: 'Titolo',
@@ -359,6 +380,9 @@ var ParcelI18n = {
     limit: 'Parcel staat 20 toevoegingen per dag toe.',
     no_events: 'Nog geen gebeurtenissen',
     copy: 'Trackingnummer kopiëren',
+    today: 'vandaag verwacht',
+    show_full: 'Volledige kaart tonen',
+    show_compact: 'Terug naar de compacte weergave',
     editor: {
       entity: 'Parcel-sensor',
       title: 'Titel',
@@ -406,6 +430,9 @@ var ParcelI18n = {
     limit: 'O Parcel permite 20 adições por dia.',
     no_events: 'Ainda não há eventos',
     copy: 'Copiar o número de seguimento',
+    today: 'chegam hoje',
+    show_full: 'Mostrar o cartão completo',
+    show_compact: 'Voltar à vista compacta',
     editor: {
       entity: 'Sensor do Parcel',
       title: 'Título',
@@ -453,6 +480,9 @@ var ParcelI18n = {
     limit: 'Parcel pozwala na 20 dodań dziennie.',
     no_events: 'Brak zdarzeń',
     copy: 'Kopiuj numer przesyłki',
+    today: 'dostawa dziś',
+    show_full: 'Pokaż pełną kartę',
+    show_compact: 'Wróć do widoku kompaktowego',
     editor: {
       entity: 'Sensor Parcel',
       title: 'Tytuł',
@@ -500,6 +530,9 @@ var ParcelI18n = {
     limit: 'Parcel permite 20 de adăugări pe zi.',
     no_events: 'Încă niciun eveniment',
     copy: 'Copiați numărul de urmărire',
+    today: 'sosesc azi',
+    show_full: 'Afișează cardul complet',
+    show_compact: 'Înapoi la vizualizarea compactă',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Titlu',
@@ -547,6 +580,9 @@ var ParcelI18n = {
     limit: 'Parcel tillader 20 tilføjelser om dagen.',
     no_events: 'Ingen hændelser endnu',
     copy: 'Kopiér trackingnummer',
+    today: 'ankommer i dag',
+    show_full: 'Vis hele kortet',
+    show_compact: 'Tilbage til kompakt visning',
     editor: {
       entity: 'Parcel-sensor',
       title: 'Titel',
@@ -594,6 +630,9 @@ var ParcelI18n = {
     limit: 'Parcel tillåter 20 tillägg per dag.',
     no_events: 'Inga händelser än',
     copy: 'Kopiera spårningsnummer',
+    today: 'kommer i dag',
+    show_full: 'Visa hela kortet',
+    show_compact: 'Tillbaka till kompakt vy',
     editor: {
       entity: 'Parcel-sensor',
       title: 'Titel',
@@ -641,6 +680,9 @@ var ParcelI18n = {
     limit: 'Parcel позволява 20 добавяния на ден.',
     no_events: 'Все още няма събития',
     copy: 'Копиране на номера за проследяване',
+    today: 'пристигат днес',
+    show_full: 'Покажи цялата карта',
+    show_compact: 'Обратно към компактния изглед',
     editor: {
       entity: 'Сензор на Parcel',
       title: 'Заглавие',
@@ -688,6 +730,9 @@ var ParcelI18n = {
     limit: 'Parcel позволяет добавлять до 20 посылок в день.',
     no_events: 'Событий пока нет',
     copy: 'Скопировать трек-номер',
+    today: 'прибудут сегодня',
+    show_full: 'Показать полную карточку',
+    show_compact: 'Вернуться к компактному виду',
     editor: {
       entity: 'Сенсор Parcel',
       title: 'Заголовок',
@@ -735,6 +780,9 @@ var ParcelI18n = {
     limit: 'Parcel дозволяє додавати до 20 посилок на день.',
     no_events: 'Подій поки немає',
     copy: 'Копіювати номер відстеження',
+    today: 'прибудуть сьогодні',
+    show_full: 'Показати повну картку',
+    show_compact: 'Повернутися до компактного вигляду',
     editor: {
       entity: 'Сенсор Parcel',
       title: 'Заголовок',
@@ -782,6 +830,9 @@ var ParcelI18n = {
     limit: 'A Parcel naponta 20 hozzáadást enged.',
     no_events: 'Még nincsenek események',
     copy: 'Követési szám másolása',
+    today: 'ma érkezik',
+    show_full: 'Teljes kártya megjelenítése',
+    show_compact: 'Vissza a kompakt nézethez',
     editor: {
       entity: 'Parcel érzékelő',
       title: 'Cím',
@@ -829,6 +880,9 @@ var ParcelI18n = {
     limit: 'Parcel umožňuje 20 pridaní denne.',
     no_events: 'Zatiaľ žiadne udalosti',
     copy: 'Kopírovať číslo zásielky',
+    today: 'dorazia dnes',
+    show_full: 'Zobraziť celú kartu',
+    show_compact: 'Späť na kompaktné zobrazenie',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Názov',
@@ -876,6 +930,9 @@ var ParcelI18n = {
     limit: 'Parcel umožňuje 20 přidání denně.',
     no_events: 'Zatím žádné události',
     copy: 'Kopírovat číslo zásilky',
+    today: 'dorazí dnes',
+    show_full: 'Zobrazit celou kartu',
+    show_compact: 'Zpět na kompaktní zobrazení',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Název',
@@ -923,6 +980,9 @@ var ParcelI18n = {
     limit: 'Parcel dovoljuje 20 dodajanj na dan.',
     no_events: 'Še ni dogodkov',
     copy: 'Kopiraj številko za sledenje',
+    today: 'prispejo danes',
+    show_full: 'Prikaži celotno kartico',
+    show_compact: 'Nazaj na kompaktni pogled',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Naslov',
@@ -970,6 +1030,9 @@ var ParcelI18n = {
     limit: 'Parcel atļauj 20 pievienošanas dienā.',
     no_events: 'Vēl nav notikumu',
     copy: 'Kopēt izsekošanas numuru',
+    today: 'pienāks šodien',
+    show_full: 'Rādīt pilno karti',
+    show_compact: 'Atpakaļ uz kompakto skatu',
     editor: {
       entity: 'Parcel sensors',
       title: 'Virsraksts',
@@ -1017,6 +1080,9 @@ var ParcelI18n = {
     limit: 'Το Parcel επιτρέπει 20 προσθήκες την ημέρα.',
     no_events: 'Δεν υπάρχουν συμβάντα ακόμη',
     copy: 'Αντιγραφή αριθμού αποστολής',
+    today: 'φτάνουν σήμερα',
+    show_full: 'Εμφάνιση πλήρους κάρτας',
+    show_compact: 'Επιστροφή στη συμπαγή προβολή',
     editor: {
       entity: 'Αισθητήρας Parcel',
       title: 'Τίτλος',
@@ -1252,6 +1318,10 @@ class ParcelCard extends HTMLElement {
       list.innerHTML = `<div class="empty">${parcelEsc(t.unavailable)}</div>`;
       return;
     }
+    if (this._compact()) {
+      list.innerHTML = this._renderSummary(st.attributes?.deliveries || [], t);
+      return;
+    }
     if (!deliveries.length) {
       list.innerHTML = `<div class="empty">${parcelEsc(t.empty)}</div>`;
       return;
@@ -1268,14 +1338,15 @@ class ParcelCard extends HTMLElement {
   // refresh dropped the keyboard focus of its buttons. It is rebuilt only when its buttons or language change.
   _renderHeader(header, t, st, title) {
     var c = this._config;
-    var key = [!!st, c.show_refresh, c.show_add, parcelLang(this._hass, c)].join('|');
+    var compact = this._compact();
+    var key = [!!st, c.show_refresh, c.show_add, parcelLang(this._hass, c), compact].join('|');
     if (this._headerKey !== key || !header.querySelector('.title')) {
       this._headerKey = key;
       header.innerHTML =
         '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name"></div>' +
         // The refresh error survives re-renders (hass updates) until the next refresh attempt.
         '<div class="sub error" hidden></div></div></div>' +
-        (st
+        (st && !compact
           // Status pill on the right of the header (card convention), not a subtitle under the title.
           ? '<span class="status" hidden><span class="status-text"></span></span>' +
             '<div class="buttons">' +
@@ -1286,11 +1357,14 @@ class ParcelCard extends HTMLElement {
               ? `<ha-icon-button class="add-btn" label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>`
               : '') +
             '</div>'
-          : '');
+          : '') +
+        this._detailButton(t);
       var addBtn = header.querySelector('.add-btn');
       if (addBtn) addBtn.addEventListener('click', this._toggleForm.bind(this));
       var refreshBtn = header.querySelector('.refresh-btn');
       if (refreshBtn) refreshBtn.addEventListener('click', this._refresh.bind(this));
+      var detailBtn = header.querySelector('.detail');
+      if (detailBtn) detailBtn.addEventListener('click', this._toggleDetail.bind(this));
     }
     var name = header.querySelector('.name');
     if (name) name.textContent = title;
@@ -1312,6 +1386,15 @@ class ParcelCard extends HTMLElement {
     }
     var refresh = header.querySelector('.refresh-btn');
     if (refresh) refresh.classList.toggle('spinning', !!this._refreshing);
+  }
+
+  // Overridden by the mini card: compact view, and its detail button at the top right.
+  _compact() {
+    return false;
+  }
+
+  _detailButton() {
+    return '';
   }
 
   // Selector of the delivery description or tracking number that has the focus, to find it again after a re-render.
@@ -1626,8 +1709,128 @@ class ParcelCard extends HTMLElement {
       '.actions .submit { background: color-mix(in srgb, var(--primary-color) 16%, transparent); color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); }',
       '.actions .submit:hover:not(:disabled) { background: color-mix(in srgb, var(--primary-color) 24%, transparent); }',
       '.actions button:disabled { opacity: 0.6; cursor: default; }',
+      // Mini card: a 240 px preferred width, two count tiles, and the detail button at the top right.
+      ':host([mini])::before { grid-template-columns: minmax(0, 240px); }',
+      'ha-card.mini { padding-bottom: 12px; }',
+      '.detail { all: unset; flex: none; cursor: pointer; width: 24px; height: 24px; margin-right: 4px; border-radius: 50%; align-self: flex-start;' +
+        ' display: grid; place-items: center; color: var(--secondary-text-color); --mdc-icon-size: 16px; }',
+      '.detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
+      '.detail:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 1px; }',
+      '.summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 12px; }',
+      '.tile { min-width: 0; padding: 8px 10px; border-radius: 12px; background: color-mix(in srgb, var(--c) 12%, transparent); }',
+      '.tile .v { display: flex; align-items: center; gap: 6px; font-size: 22px; font-weight: 600; line-height: 1.1; color: var(--primary-text-color); --mdc-icon-size: 20px; }',
+      '.tile .v ha-icon { color: var(--c); }',
+      '.tile .l { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+      // The mini card keeps its 40 px header icon, also where the full card hides it: it is the card's identity.
+      '@container (max-width: 320px) { ha-card.mini .logo { display: grid; } }',
+      '@container (max-width: 180px) { .summary { grid-template-columns: minmax(0, 1fr); } }',
       '@media (prefers-reduced-motion: reduce) { .refresh-btn.spinning ha-icon { animation: none; opacity: .5; } .chevron { transition: none; } }',
     ].join('\n');
+  }
+}
+
+// A click inside Home Assistant's dialogs (more-info, confirmations) is not "outside" the card.
+function parcelInDialog(ev) {
+  return ev.composedPath().some((n) => ['ha-more-info-dialog', 'ha-dialog', 'dialog'].includes(n.localName));
+}
+
+// Same calendar day, in the browser's time zone.
+function parcelIsToday(ms, now) {
+  var d = new Date(ms);
+  var n = new Date(now);
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+}
+
+// ── parcel-mini-card ──────────────────────────────────────────────────────────
+// Two counts (active deliveries, deliveries arriving today) under the header. Its detail button (top right)
+// switches to the full card and back; a click outside the card folds it back to the compact view.
+class ParcelMiniCard extends ParcelCard {
+  constructor() {
+    super();
+    this._zoomed = false;
+    this._onOutsideMini = (ev) => {
+      if (this._zoomed && !ev.composedPath().includes(this) && !parcelInDialog(ev)) this._setZoom(false);
+    };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener('click', this._onOutsideMini, true);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener('click', this._onOutsideMini, true);
+  }
+
+  setConfig(config) {
+    // The host attribute behind the mini card's styles; never set in the constructor.
+    this.setAttribute?.('mini', '');
+    super.setConfig(config);
+  }
+
+  getCardSize() {
+    return this._zoomed ? super.getCardSize() : 2;
+  }
+
+  getGridOptions() {
+    return this._zoomed ? super.getGridOptions() : { columns: 6, min_columns: 4, rows: 'auto' };
+  }
+
+  _compact() {
+    return !this._zoomed;
+  }
+
+  _detailButton(t) {
+    var label = this._zoomed ? t.show_compact : t.show_full;
+    return `<button class="detail" title="${parcelEsc(label)}" aria-label="${parcelEsc(label)}">` +
+      `<ha-icon icon="mdi:${this._zoomed ? 'arrow-collapse' : 'arrow-expand'}"></ha-icon></button>`;
+  }
+
+  _toggleDetail(ev) {
+    ev.stopPropagation();
+    this._setZoom(!this._zoomed);
+    // Keyboard use (Enter / Space: no click count) keeps the focus on the button, without scrolling the page.
+    if (!ev.detail) this._root.querySelector('.detail')?.focus?.({ preventScroll: true });
+  }
+
+  _setZoom(zoomed) {
+    this._zoomed = zoomed;
+    if (!zoomed) {
+      this._expanded = {};
+      var form = this._root?.querySelector('.form');
+      if (form) form.hidden = true;
+    }
+    this._render();
+  }
+
+  _render() {
+    super._render();
+    var card = this._root?.querySelector('ha-card');
+    if (card) card.classList.toggle('mini', this._compact());
+  }
+
+  // Active: not delivered yet. Arriving today: out for delivery, or expected today.
+  _counts(deliveries) {
+    var now = Date.now();
+    var active = deliveries.filter((d) => d.status_code !== 0);
+    var today = active.filter((d) => {
+      if (d.status_code === 4) return true;
+      var ms = d.timestamp_expected ? d.timestamp_expected * 1000 : parcelParseDate(d.date_expected);
+      return !Number.isNaN(ms) && parcelIsToday(ms, now);
+    });
+    return { active: active.length, today: today.length };
+  }
+
+  _renderSummary(deliveries, t) {
+    var c = this._counts(deliveries);
+    var tile = (value, label, style) =>
+      `<div class="tile" style="--c:${style.color}"><div class="v"><ha-icon icon="${style.icon}"></ha-icon>${value}</div>` +
+      `<div class="l">${parcelEsc(label)}</div></div>`;
+    return '<div class="summary">' +
+      tile(c.active, t.in_progress, PARCEL_STATUS_STYLE.in_transit) +
+      tile(c.today, t.today, PARCEL_STATUS_STYLE.out_for_delivery) +
+      '</div>';
   }
 }
 
@@ -1732,8 +1935,10 @@ if (!customElements.get('parcel-card-editor')) {
   customElements.define('parcel-card-editor', ParcelCardEditor);
 }
 
+var parcelDefined = false;
 if (!customElements.get('parcel-card')) {
   customElements.define('parcel-card', ParcelCard);
+  parcelDefined = true;
   window.customCards = window.customCards || [];
   window.customCards.push({
     type: 'parcel-card',
@@ -1742,5 +1947,19 @@ if (!customElements.get('parcel-card')) {
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
+}
+if (!customElements.get('parcel-mini-card')) {
+  customElements.define('parcel-mini-card', ParcelMiniCard);
+  parcelDefined = true;
+  window.customCards = window.customCards || [];
+  window.customCards.push({
+    type: 'parcel-mini-card',
+    name: 'Parcel mini',
+    description: 'Active deliveries and deliveries arriving today, with a button to show the full Parcel card.',
+    preview: true,
+    documentationURL: 'https://github.com/juju35/ha-parcel',
+  });
+}
+if (parcelDefined) {
   console.info(`%c PARCEL-CARD %c v${PARCEL_CARD_VERSION} `, 'color:#fff;background:#f59e0b;font-weight:700', 'color:#f59e0b;background:#fff');
 }
