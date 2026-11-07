@@ -55,6 +55,8 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         self._carriers_updated: datetime | None = None
         # Last known status of each delivery; None until the first successful update, so nothing fires at startup.
         self._statuses: dict[str, Any] | None = None
+        # Set while Parcel refuses requests (HTTP 429) and the last deliveries are kept; the refresh service reports it.
+        self.rate_limited: ParcelRateLimitError | None = None
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
         try:
@@ -62,9 +64,16 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         except ParcelAuthError as err:
             raise ConfigEntryAuthFailed(str(err)) from err
         except ParcelRateLimitError as err:
-            raise UpdateFailed(f"Parcel rate limit reached, will retry later: {err}") from err
+            if self.data is None:
+                raise UpdateFailed(f"Parcel rate limit reached, will retry later: {err}") from err
+            # The limit only delays the next update: keep showing the last deliveries instead of going unavailable.
+            _LOGGER.warning("Parcel rate limit reached, keeping the last deliveries until the next update: %s", err)
+            self.rate_limited = err
+            return self.data
         except ParcelError as err:
             raise UpdateFailed(str(err)) from err
+
+        self.rate_limited = None
 
         await self.async_ensure_carriers()
         self._fire_transitions(deliveries)
@@ -91,7 +100,7 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
                     "carrier": self.carriers.get(code, code),
                     "name": delivery.get("description"),
                     # A stable id for automations, not the tracking number: events end up in the recorder and logbook.
-                    "tracking_id": hashlib.sha256(key.encode()).hexdigest()[:12],
+                    "tracking_id": tracking_id(delivery),
                 },
             )
 
@@ -110,3 +119,8 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
 
 def _delivery_key(delivery: dict[str, Any]) -> str:
     return f"{delivery.get('carrier_code') or ''}:{delivery.get('tracking_number') or ''}"
+
+
+def tracking_id(delivery: dict[str, Any]) -> str:
+    """Stable short id of a delivery (carrier and tracking number hashed), safe to store in the recorder."""
+    return hashlib.sha256(_delivery_key(delivery).encode()).hexdigest()[:12]

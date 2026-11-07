@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Colete" }
+    },
     "sensor": {
       "deliveries": { "name": "Colete" }
     }

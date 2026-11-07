@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Pošiljke" }
+    },
     "sensor": {
       "deliveries": { "name": "Pošiljke" }
     }

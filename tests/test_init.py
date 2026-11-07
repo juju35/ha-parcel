@@ -257,18 +257,37 @@ async def test_add_delivery_rejects_invalid_email(hass, aioclient_mock, entry):
     assert call[2]["email"] == "me@example.org"
 
 
-async def test_rate_limit_fails_update(hass, aioclient_mock, entry):
-    """HTTP 429 makes the update fail (entities unavailable) without asking for a new key."""
+async def test_rate_limit_keeps_last_deliveries(hass, aioclient_mock, entry, caplog):
+    """HTTP 429 keeps the last deliveries (sensor stays available) without asking for a new key."""
     await _setup(hass, aioclient_mock, entry)
     coordinator = entry.runtime_data
     aioclient_mock.clear_requests()
     aioclient_mock.get(API_DELIVERIES, status=429, json={"success": False})
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    assert not coordinator.last_update_success
-    assert "rate limit" in str(coordinator.last_exception)
-    assert hass.states.get("sensor.parcel_deliveries").state == "unavailable"
+    assert coordinator.last_update_success
+    assert coordinator.rate_limited is not None
+    assert "rate limit" in caplog.text
+    state = hass.states.get("sensor.parcel_deliveries")
+    assert state.state == "1"
+    assert len(state.attributes["deliveries"]) == 2
     assert not any(f["context"]["source"] == "reauth" for f in hass.config_entries.flow.async_progress())
+
+    # The next successful update clears the flag.
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
+    aioclient_mock.get(API_CARRIERS, json=CARRIERS)
+    await coordinator.async_refresh()
+    assert coordinator.rate_limited is None
+
+
+async def test_rate_limit_at_startup_retries_setup(hass, aioclient_mock, entry):
+    """With no deliveries to keep yet, HTTP 429 fails the first update: the entry retries later."""
+    aioclient_mock.get(API_DELIVERIES, status=429, json={"success": False})
+    assert await async_setup_component(hass, "http", {})
+    await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.state is ConfigEntryState.SETUP_RETRY
 
 
 async def test_refresh_service(hass, aioclient_mock, entry):

@@ -39,7 +39,7 @@ from .coordinator import ParcelConfigEntry, ParcelCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.CALENDAR, Platform.SENSOR]
 CARD_PATH = Path(__file__).parent / "frontend" / CARD_FILENAME
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -91,6 +91,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         # async_refresh never raises: report a failed update (rate limit, timeout, refused key) to the caller.
         if not coordinator.last_update_success:
             raise HomeAssistantError(f"Parcel: {coordinator.last_exception}")
+        # A rate-limited update keeps the last deliveries (it succeeds), but nothing was fetched.
+        if coordinator.rate_limited:
+            raise HomeAssistantError(f"Parcel rate limit reached, will retry later: {coordinator.rate_limited}")
 
     hass.services.async_register(DOMAIN, SERVICE_ADD_DELIVERY, add_delivery, ADD_DELIVERY_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_REFRESH, refresh, REFRESH_SCHEMA)

@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Zendingen" }
+    },
     "sensor": {
       "deliveries": { "name": "Zendingen" }
     }

@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Csomagok" }
+    },
     "sensor": {
       "deliveries": { "name": "Csomagok" }
     }

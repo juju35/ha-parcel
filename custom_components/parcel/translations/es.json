@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Envíos" }
+    },
     "sensor": {
       "deliveries": { "name": "Envíos" }
     }
