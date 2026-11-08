@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 - 2026-11-07
+
+### What's new
+- New calendar `calendar.parcel_deliveries`: one event per delivery not yet delivered with an expected date, all-day when Parcel gives no time.
+
+### Fixes
+- When Parcel's hourly request limit is reached, the sensor keeps the last deliveries instead of becoming unavailable (the card no longer empties); the Refresh button still reports the limit.
+
 ## 1.1.0 - 2026-11-07
 
 ### What's new

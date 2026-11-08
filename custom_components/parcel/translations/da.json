@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Pakker" }
+    },
     "sensor": {
       "deliveries": { "name": "Pakker" }
     }

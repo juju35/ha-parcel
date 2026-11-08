@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Sūtījumi" }
+    },
     "sensor": {
       "deliveries": { "name": "Sūtījumi" }
     }

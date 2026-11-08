@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Посилки" }
+    },
     "sensor": {
       "deliveries": { "name": "Посилки" }
     }

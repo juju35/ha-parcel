@@ -45,6 +45,9 @@
     }
   },
   "entity": {
+    "calendar": {
+      "deliveries": { "name": "Пратки" }
+    },
     "sensor": {
       "deliveries": { "name": "Пратки" }
     }

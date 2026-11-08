@@ -6,12 +6,11 @@ from typing import Any
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, STATUS_COMPLETED, STATUS_KEYS
+from .const import STATUS_COMPLETED, STATUS_KEYS
 from .coordinator import ParcelConfigEntry, ParcelCoordinator
+from .entity import ParcelEntity
 
 
 async def async_setup_entry(
@@ -40,26 +39,15 @@ def _format_delivery(delivery: dict[str, Any], carriers: dict[str, str]) -> dict
     }
 
 
-class ParcelDeliveriesSensor(CoordinatorEntity[ParcelCoordinator], SensorEntity):
+class ParcelDeliveriesSensor(ParcelEntity, SensorEntity):
     """Number of deliveries not yet delivered, with every delivery in the attributes."""
 
-    _attr_has_entity_name = True
-    _attr_translation_key = "deliveries"
     _attr_state_class = SensorStateClass.MEASUREMENT
     # The list changes on every poll and can be large: keep it out of the recorder.
     _unrecorded_attributes = frozenset({"deliveries"})
 
     def __init__(self, coordinator: ParcelCoordinator) -> None:
-        super().__init__(coordinator)
-        entry = coordinator.config_entry
-        self._attr_unique_id = f"{entry.entry_id}_deliveries"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry.entry_id)},
-            name="Parcel",
-            manufacturer="Parcel",
-            entry_type=DeviceEntryType.SERVICE,
-            configuration_url="https://web.parcelapp.net",
-        )
+        super().__init__(coordinator, "deliveries")
 
     @property
     def native_value(self) -> int:

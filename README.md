@@ -17,6 +17,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 ## Features
 
 - **Deliveries** sensor: number of active deliveries, with every delivery (status, carrier, events, expected date) as attributes
+- **Deliveries** calendar: one event per active delivery on its expected date
 - `parcel.add_delivery` action to add a delivery from an automation, a script or the card
 - `parcel.refresh` action to force an update
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: list of deliveries, events on click, add form with carrier search
@@ -143,6 +144,21 @@ actions:
       message: "{{ trigger.event.data.name }} ({{ trigger.event.data.carrier }}) has been delivered."
 ```
 
+### Calendar
+
+Each account also gets a calendar, `calendar.parcel_deliveries`, with one event per delivery not yet delivered that has an expected date: an all-day event when Parcel gives only a day (over several days for a delivery window), a timed event otherwise (one hour long when Parcel gives no end). The event title is the delivery description, its description the carrier name; the tracking number is left out. Show it in the calendar dashboard or a calendar card, or trigger automations on it:
+
+```yaml
+triggers:
+  - trigger: calendar
+    event: start
+    entity_id: calendar.parcel_deliveries
+actions:
+  - action: notify.mobile_app_phone
+    data:
+      message: "{{ trigger.calendar_event.summary }} is expected today."
+```
+
 ### Diagnostics
 
 **Settings → Devices & services → Parcel → ⋮ → Download diagnostics** gives the entry options and the last deliveries, for bug reports. The API key, tracking numbers, event locations, extra carrier information (often a pickup address), postcodes and emails are redacted.
@@ -169,7 +185,7 @@ The mini card, compact:
 
 ## How it works
 
-The integration polls the Parcel API at the update interval and exposes the deliveries on one sensor per account. The card reads that sensor, sorts active deliveries first by expected date, and colors each status from the Home Assistant theme:
+The integration polls the Parcel API at the update interval and exposes the deliveries on one sensor and one calendar per account. When Parcel's hourly request limit is reached, the sensor keeps the last deliveries until the next update. The card reads that sensor, sorts active deliveries first by expected date, and colors each status from the Home Assistant theme:
 
 | Code | Status | Color |
 |---|---|---|

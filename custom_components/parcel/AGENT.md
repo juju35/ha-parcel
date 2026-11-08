@@ -11,7 +11,9 @@ custom_components/parcel/
 ├── __init__.py        # Setup, card registration, services, websocket parcel/carriers
 ├── api.py             # aiohttp client for api.parcel.app/external
 ├── coordinator.py     # DataUpdateCoordinator (deliveries + daily carriers list), fires parcel_out_for_delivery / parcel_delivered on status transitions (never on the first update)
+├── entity.py          # Base entity (service device per account)
 ├── sensor.py          # One sensor: count of undelivered parcels, deliveries in attributes
+├── calendar.py        # One calendar: an event per undelivered parcel with an expected date (all-day without time)
 ├── config_flow.py     # API key, reauth, options (filter_mode, scan_interval)
 ├── diagnostics.py     # Config entry diagnostics, key / tracking numbers / addresses / emails redacted
 ├── const.py           # Constants, status codes
@@ -20,6 +22,7 @@ custom_components/parcel/
 ```
 
 ## Parcel API
+- HTTP 429 (rate limit): the coordinator keeps the last deliveries (`rate_limited` set, warning logged); only the first update fails. `parcel.refresh` still raises on it.
 - Header `api-key`, key generated at web.parcelapp.net (Premium only).
 - `GET /external/deliveries/?filter_mode=active|recent`: 20 requests/hour, cached server side. Scan interval is never below 5 min.
 - `POST /external/add-delivery/` JSON `{tracking_number, carrier_code, description, language, send_push_confirmation, postcode?, email?}`: 20 requests/day, failures included.
