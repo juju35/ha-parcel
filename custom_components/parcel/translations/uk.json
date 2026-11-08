@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Обліковий запис Parcel", "description": "Потрібен, лише якщо налаштовано кілька облікових записів Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Жоден обліковий запис Parcel не завантажено." },
+    "several_accounts": { "message": "Налаштовано кілька облікових записів Parcel: вкажіть config_entry_id." },
+    "add_failed": { "message": "Parcel не вдалося додати відправлення: {error}" },
+    "refresh_failed": { "message": "Не вдалося оновити Parcel: {error}" },
+    "rate_limited": { "message": "Досягнуто ліміту запитів Parcel, повтор пізніше: {error}" }
   }
 }

@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Cuenta de Parcel", "description": "Solo es necesario cuando hay varias cuentas de Parcel configuradas." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "No hay ninguna cuenta de Parcel cargada." },
+    "several_accounts": { "message": "Hay varias cuentas de Parcel configuradas: indica config_entry_id." },
+    "add_failed": { "message": "Parcel no pudo añadir el envío: {error}" },
+    "refresh_failed": { "message": "Error al actualizar Parcel: {error}" },
+    "rate_limited": { "message": "Límite de solicitudes de Parcel alcanzado, se reintentará más tarde: {error}" }
   }
 }

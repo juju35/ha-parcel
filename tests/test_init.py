@@ -7,9 +7,9 @@ import pytest
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_API_KEY
-from homeassistant.core import HomeAssistant
+from homeassistant.core import Context, HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError, Unauthorized
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -266,7 +266,7 @@ async def test_rate_limit_keeps_last_deliveries(hass, aioclient_mock, entry, cap
     await coordinator.async_refresh()
     await hass.async_block_till_done()
     assert coordinator.last_update_success
-    assert coordinator.rate_limited is not None
+    assert coordinator.last_error is not None
     assert "rate limit" in caplog.text
     state = hass.states.get("sensor.parcel_deliveries")
     assert state.state == "1"
@@ -278,7 +278,7 @@ async def test_rate_limit_keeps_last_deliveries(hass, aioclient_mock, entry, cap
     aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
     aioclient_mock.get(API_CARRIERS, json=CARRIERS)
     await coordinator.async_refresh()
-    assert coordinator.rate_limited is None
+    assert coordinator.last_error is None
 
 
 async def test_rate_limit_at_startup_retries_setup(hass, aioclient_mock, entry):
@@ -304,8 +304,9 @@ async def test_refresh_service_reports_failure(hass, aioclient_mock, entry):
     await _setup(hass, aioclient_mock, entry)
     aioclient_mock.clear_requests()
     aioclient_mock.get(API_DELIVERIES, status=429, json={"success": False})
-    with pytest.raises(HomeAssistantError, match="rate limit"):
+    with pytest.raises(HomeAssistantError, match="rate limit") as err:
         await hass.services.async_call(DOMAIN, "refresh", {"config_entry_id": entry.entry_id}, blocking=True)
+    assert err.value.translation_key == "rate_limited"
 
 
 async def test_reauth_confirm(hass, aioclient_mock, entry):
@@ -421,3 +422,83 @@ async def test_card_resource_yaml_mode_uses_extra_js(hass, aioclient_mock, entry
     await _setup(hass, aioclient_mock, entry)
     await hass.async_block_till_done()
     stub_frontend.assert_called_once()
+
+
+async def test_add_delivery_is_admin_only(hass, aioclient_mock, entry, hass_read_only_user):
+    """A non-admin user can't spend the account's daily additions; refresh stays open to every user."""
+    await _setup(hass, aioclient_mock, entry)
+    aioclient_mock.post(API_ADD_DELIVERY, json={"success": True})
+    with pytest.raises(Unauthorized):
+        await hass.services.async_call(
+            DOMAIN,
+            "add_delivery",
+            {"tracking_number": "x", "carrier_code": "ups", "description": "Test"},
+            blocking=True,
+            context=Context(user_id=hass_read_only_user.id),
+        )
+    assert not [c for c in aioclient_mock.mock_calls if str(c[1]) == API_ADD_DELIVERY]
+    await hass.services.async_call(
+        DOMAIN, "refresh", {}, blocking=True, context=Context(user_id=hass_read_only_user.id)
+    )
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [
+        {"exc": TimeoutError()},
+        {"status": 502, "text": "Bad gateway"},
+        {"json": {"success": False, "error_message": "Server error"}},
+    ],
+)
+async def test_transient_error_keeps_last_deliveries(hass, aioclient_mock, entry, caplog, failure):
+    """A timeout or server error keeps the last deliveries, flagged stale on the sensor, until the next success."""
+    await _setup(hass, aioclient_mock, entry)
+    coordinator = entry.runtime_data
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, **failure)
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    assert coordinator.last_update_success
+    assert "keeping the last deliveries" in caplog.text
+    state = hass.states.get("sensor.parcel_deliveries")
+    assert state.state == "1"
+    assert len(state.attributes["deliveries"]) == 2
+    assert state.attributes["stale"] is True
+    assert state.attributes["last_error"]
+    with pytest.raises(HomeAssistantError) as err:
+        await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    assert err.value.translation_key == "refresh_failed"
+
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
+    aioclient_mock.get(API_CARRIERS, json=CARRIERS)
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    state = hass.states.get("sensor.parcel_deliveries")
+    assert state.attributes["stale"] is False
+    assert state.attributes["last_error"] is None
+
+
+async def test_service_errors_are_translated(hass, aioclient_mock, entry):
+    """Service errors carry a translation key, and their text comes from the translations."""
+    await _setup(hass, aioclient_mock, entry)
+    aioclient_mock.post(API_ADD_DELIVERY, json={"success": False, "error_message": "Invalid tracking number"})
+    with pytest.raises(HomeAssistantError) as err:
+        await hass.services.async_call(
+            DOMAIN, "add_delivery", {"tracking_number": "x", "carrier_code": "ups", "description": "T"}, blocking=True
+        )
+    assert (err.value.translation_domain, err.value.translation_key) == (DOMAIN, "add_failed")
+    assert str(err.value) == "Parcel could not add the delivery: Invalid tracking number"
+
+    with pytest.raises(ServiceValidationError) as err:
+        await hass.services.async_call(DOMAIN, "refresh", {"config_entry_id": "missing"}, blocking=True)
+    assert err.value.translation_key == "no_account"
+    assert str(err.value).rstrip(".") == "No Parcel account is loaded"
+
+    second = MockConfigEntry(domain=DOMAIN, data={CONF_API_KEY: "other"}, unique_id="y")
+    second.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(second.entry_id)
+    await hass.async_block_till_done()
+    with pytest.raises(ServiceValidationError) as err:
+        await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    assert err.value.translation_key == "several_accounts"

@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Parcel-konto", "description": "Behövs bara när flera Parcel-konton är konfigurerade." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Inget Parcel-konto är inläst." },
+    "several_accounts": { "message": "Flera Parcel-konton är konfigurerade: ange config_entry_id." },
+    "add_failed": { "message": "Parcel kunde inte lägga till försändelsen: {error}" },
+    "refresh_failed": { "message": "Uppdateringen av Parcel misslyckades: {error}" },
+    "rate_limited": { "message": "Parcels gräns för förfrågningar är nådd, försöker igen senare: {error}" }
   }
 }

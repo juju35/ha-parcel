@@ -10,7 +10,7 @@ Ships its own Lovelace card (`frontend/parcel-card.js`), served by the integrati
 custom_components/parcel/
 ├── __init__.py        # Setup, card registration, services, websocket parcel/carriers
 ├── api.py             # aiohttp client for api.parcel.app/external
-├── coordinator.py     # DataUpdateCoordinator (deliveries + daily carriers list), fires parcel_out_for_delivery / parcel_delivered on status transitions (never on the first update)
+├── coordinator.py     # DataUpdateCoordinator (deliveries + daily carriers list), fires parcel_out_for_delivery / parcel_delivered on status transitions (never on the first update; with filter_mode active, parcel_delivered also when an undelivered delivery leaves the list)
 ├── entity.py          # Base entity (service device per account)
 ├── sensor.py          # One sensor: count of undelivered parcels, deliveries in attributes
 ├── calendar.py        # One calendar: an event per undelivered parcel with an expected date (all-day without time)
@@ -22,7 +22,7 @@ custom_components/parcel/
 ```
 
 ## Parcel API
-- HTTP 429 (rate limit): the coordinator keeps the last deliveries (`rate_limited` set, warning logged); only the first update fails. `parcel.refresh` still raises on it.
+- Any Parcel error but a refused key (HTTP 429, timeout, 5xx): the coordinator keeps the last deliveries (`last_error` set, sensor attributes `stale` / `last_error`, warning logged); only the first update fails. `parcel.refresh` still raises on it (translated `rate_limited` or `refresh_failed`).
 - Header `api-key`, key generated at web.parcelapp.net (Premium only).
 - `GET /external/deliveries/?filter_mode=active|recent`: 20 requests/hour, cached server side. Scan interval is never below 5 min.
 - `POST /external/add-delivery/` JSON `{tracking_number, carrier_code, description, language, send_push_confirmation, postcode?, email?}`: 20 requests/day, failures included.
@@ -31,7 +31,8 @@ custom_components/parcel/
 
 ## Card
 - Served from the `/parcel_static` static path and added to the Lovelace resources collection at startup (like ha-zoraxy), URL versioned with the file's md5. Falls back to `add_extra_js_url` when resources are in YAML mode. `_lovelace_resources()` reads `hass.data["lovelace"]` as a dict (before 2025.2) or a dataclass (`mode`, then `resource_mode` from 2026.2).
-- Reads `sensor.*` with `deliveries` and `config_entry_id` attributes; adds via `parcel.add_delivery`, carriers via websocket `parcel/carriers`.
+- Reads `sensor.*` with `deliveries` and `config_entry_id` attributes; adds via `parcel.add_delivery` (admin-only service: the add button is hidden from non-admins), carriers via websocket `parcel/carriers`.
+- Service errors are `HomeAssistantError` / `ServiceValidationError` with `translation_key` (`exceptions` in translations); the card localizes them with `hass.loadBackendTranslation('exceptions', 'parcel')`, else shows the backend message.
 - An unavailable sensor (failed update) has no attributes: the card then shows a dedicated message, and finds the sensor through `hass.entities` (`platform: parcel`). `parcel.refresh` raises when the update fails (`async_refresh` itself never raises), which the card shows under the title.
 - Language: the card's `language` option, else Home Assistant's.
 

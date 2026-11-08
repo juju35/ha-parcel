@@ -11,7 +11,9 @@ PLACEHOLDER = re.compile(r"\{\w+\}")
 CYRILLIC = re.compile(r"[Ѐ-ӿ]")
 LATIN = re.compile(r"[A-Za-z]")
 # Proper names, brands, codes and units that stay in Latin letters in the Cyrillic text.
-LATIN_IN_CYRILLIC = re.compile(r"Home Assistant|Parcel|Premium|Apple Store|web\.parcelapp\.net|API|ups|dhl|pholder")
+LATIN_IN_CYRILLIC = re.compile(
+    r"Home Assistant|Parcel|Premium|Apple Store|web\.parcelapp\.net|API|ups|dhl|pholder|config_entry_id|\{error\}"
+)
 
 
 def _load(lang: str) -> dict:

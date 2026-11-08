@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Parcel nalog", "description": "Potrebno samo kada je podešeno više Parcel naloga." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Nijedan Parcel nalog nije učitan." },
+    "several_accounts": { "message": "Podešeno je više Parcel naloga: navedite config_entry_id." },
+    "add_failed": { "message": "Parcel nije mogao da doda pošiljku: {error}" },
+    "refresh_failed": { "message": "Ažuriranje Parcel-a nije uspelo: {error}" },
+    "rate_limited": { "message": "Dostignuto je ograničenje zahteva za Parcel, novi pokušaj kasnije: {error}" }
   }
 }

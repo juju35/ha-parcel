@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Parcel налог", "description": "Потребно само када је подешено више Parcel налога." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Ниједан Parcel налог није учитан." },
+    "several_accounts": { "message": "Подешено је више Parcel налога: наведите config_entry_id." },
+    "add_failed": { "message": "Parcel није могао да дода пошиљку: {error}" },
+    "refresh_failed": { "message": "Ажурирање Parcel-а није успело: {error}" },
+    "rate_limited": { "message": "Достигнуто је ограничење захтева за Parcel, нови покушај касније: {error}" }
   }
 }

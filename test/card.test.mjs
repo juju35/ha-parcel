@@ -18,8 +18,8 @@ const context = {
   console,
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard, ParcelMiniCard };`, context);
-const { parcelEsc, parcelDate, parcelLang, parcelLocale, ParcelCard, ParcelMiniCard } = context.parcel;
+vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard };`, context);
+const { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard } = context.parcel;
 const card = ParcelCard.prototype;
 
 const sensor = (id, extra = {}) => ({
@@ -935,4 +935,42 @@ test('the mini card is offered in the card picker and keeps a 240 px preferred w
   const css = ParcelCard._styles();
   assert.match(css, /:host\(\[mini\]\)::before \{ grid-template-columns: minmax\(0, 240px\); \}/);
   assert.match(css, /ha-card\.mini \.logo \{ display: grid; \}/);
+});
+
+test('the add button is hidden from non-admin users: adding a delivery is an admin-only service', () => {
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') });
+  assert.ok(self.header.querySelector('.add-btn'));
+  self._hass = { ...self._hass, user: { is_admin: false } };
+  self._render();
+  assert.equal(self.header.querySelector('.add-btn'), null);
+  assert.ok(self.header.querySelector('.refresh-btn'));
+  self._hass = { ...self._hass, user: { is_admin: true } };
+  self._render();
+  assert.ok(self.header.querySelector('.add-btn'));
+});
+
+test('service errors show their translation from the integration, else the backend message', async () => {
+  const asked = [];
+  const hass = {
+    loadBackendTranslation: (category, domain) => {
+      asked.push([category, domain]);
+      return Promise.resolve((key, args) => (key === 'component.parcel.exceptions.add_failed.message' ? `Ajout impossible : ${args.error}` : ''));
+    },
+  };
+  const err = { message: 'Parcel could not add the delivery: x', translation_domain: 'parcel', translation_key: 'add_failed', translation_placeholders: { error: 'x' } };
+  assert.equal(await parcelErrorText(hass, err), 'Ajout impossible : x');
+  assert.deepEqual(asked.map((a) => [...a]), [['exceptions', 'parcel']]);
+  // Unknown key, no loader or an untranslated error: the message the backend sent, without its prefix.
+  assert.equal(await parcelErrorText(hass, { ...err, translation_key: 'other' }), 'Parcel could not add the delivery: x');
+  assert.equal(await parcelErrorText({}, { message: 'Validation error: No Parcel account is loaded', translation_domain: 'parcel', translation_key: 'no_account' }), 'No Parcel account is loaded');
+  assert.equal(await parcelErrorText(hass, new Error('boom')), 'boom');
+});
+
+test('a translated refresh error is shown alone, without the generic prefix', async () => {
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') });
+  self._hass.loadBackendTranslation = () => Promise.resolve(() => 'Parcel update failed: timeout');
+  self._hass.callService = () => Promise.reject({ message: 'x', translation_domain: 'parcel', translation_key: 'refresh_failed', translation_placeholders: { error: 'timeout' } });
+  self._refresh();
+  for (let i = 0; i < 4; i++) await flush();
+  assert.equal(self.header.querySelector('.sub').textContent, 'Parcel update failed: timeout');
 });

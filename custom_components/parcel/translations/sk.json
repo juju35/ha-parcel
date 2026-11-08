@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Účet Parcel", "description": "Potrebné iba vtedy, keď je nakonfigurovaných viac účtov Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Nie je načítaný žiadny účet Parcel." },
+    "several_accounts": { "message": "Je nastavených viac účtov Parcel: zadajte config_entry_id." },
+    "add_failed": { "message": "Parcel nemohol pridať zásielku: {error}" },
+    "refresh_failed": { "message": "Aktualizácia Parcel zlyhala: {error}" },
+    "rate_limited": { "message": "Dosiahnutý limit požiadaviek Parcel, nový pokus neskôr: {error}" }
   }
 }

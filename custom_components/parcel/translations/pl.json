@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Konto Parcel", "description": "Potrzebne tylko, gdy skonfigurowano kilka kont Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Żadne konto Parcel nie jest załadowane." },
+    "several_accounts": { "message": "Skonfigurowano kilka kont Parcel: podaj config_entry_id." },
+    "add_failed": { "message": "Parcel nie mógł dodać przesyłki: {error}" },
+    "refresh_failed": { "message": "Aktualizacja Parcel nie powiodła się: {error}" },
+    "rate_limited": { "message": "Osiągnięto limit zapytań Parcel, ponowna próba później: {error}" }
   }
 }

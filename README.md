@@ -120,6 +120,8 @@ Carrier codes are listed in [supported_carriers.json](https://api.parcel.app/ext
 
 > Parcel limits additions to **20 per day**, failures included. A new delivery shows up after Parcel's next update.
 
+`parcel.add_delivery` is reserved to administrators (the card hides its add button from other users); `parcel.refresh` is open to every user. Service errors are translated in the Home Assistant language.
+
 ### Events
 
 The integration fires an event on the Home Assistant event bus when a delivery changes status between two updates:
@@ -131,7 +133,7 @@ The integration fires an event on the Home Assistant event bus when a delivery c
 
 Event data: `config_entry_id`, `carrier_code`, `carrier` (carrier name), `name` (the delivery description) and `tracking_id`, a stable short hash of the carrier and tracking number (the same for both events of a delivery). The tracking number itself is left out, since events are stored in the recorder and the logbook.
 
-Nothing fires at startup, after a reload or for a delivery seen for the first time. `parcel_delivered` needs the **Recent** filter (the default): with **Active**, delivered parcels leave the list instead of changing status.
+Nothing fires at startup, after a reload or for a delivery seen for the first time. With the **Active** filter, Parcel drops delivered parcels from the list instead of changing their status: there, `parcel_delivered` fires when a delivery that was not yet delivered leaves the list (a delivery deleted in the Parcel app fires it too).
 
 ```yaml
 triggers:
@@ -185,7 +187,7 @@ The mini card, compact:
 
 ## How it works
 
-The integration polls the Parcel API at the update interval and exposes the deliveries on one sensor and one calendar per account. When Parcel's hourly request limit is reached, the sensor keeps the last deliveries until the next update. The card reads that sensor, sorts active deliveries first by expected date, and colors each status from the Home Assistant theme:
+The integration polls the Parcel API at the update interval and exposes the deliveries on one sensor and one calendar per account. When an update fails (hourly request limit reached, timeout, Parcel server error), the sensor keeps the last deliveries until the next update and flags them with its `stale` (`true`) and `last_error` attributes; only a refused API key makes it unavailable. The card reads that sensor, sorts active deliveries first by expected date, and colors each status from the Home Assistant theme:
 
 | Code | Status | Color |
 |---|---|---|
