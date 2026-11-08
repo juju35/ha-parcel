@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Parcel konts", "description": "Nepieciešams tikai tad, ja ir konfigurēti vairāki Parcel konti." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Nav ielādēts neviens Parcel konts." },
+    "several_accounts": { "message": "Ir konfigurēti vairāki Parcel konti: norādiet config_entry_id." },
+    "add_failed": { "message": "Parcel nevarēja pievienot sūtījumu: {error}" },
+    "refresh_failed": { "message": "Parcel atjaunināšana neizdevās: {error}" },
+    "rate_limited": { "message": "Sasniegts Parcel pieprasījumu limits, vēlāk mēģinās vēlreiz: {error}" }
   }
 }

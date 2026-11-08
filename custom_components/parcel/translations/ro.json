@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Cont Parcel", "description": "Necesar doar când sunt configurate mai multe conturi Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Niciun cont Parcel nu este încărcat." },
+    "several_accounts": { "message": "Sunt configurate mai multe conturi Parcel: setați config_entry_id." },
+    "add_failed": { "message": "Parcel nu a putut adăuga livrarea: {error}" },
+    "refresh_failed": { "message": "Actualizarea Parcel a eșuat: {error}" },
+    "rate_limited": { "message": "Limita de cereri Parcel a fost atinsă, se reîncearcă mai târziu: {error}" }
   }
 }

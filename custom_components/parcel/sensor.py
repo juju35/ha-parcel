@@ -59,5 +59,8 @@ class ParcelDeliveriesSensor(ParcelEntity, SensorEntity):
         return {
             "config_entry_id": self.coordinator.config_entry.entry_id,
             "filter_mode": self.coordinator.filter_mode,
+            # True while the last update failed and the deliveries are the ones of the update before.
+            "stale": self.coordinator.last_error is not None,
+            "last_error": str(self.coordinator.last_error) if self.coordinator.last_error else None,
             "deliveries": [_format_delivery(d, carriers) for d in self.coordinator.data or []],
         }

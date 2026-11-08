@@ -17,9 +17,10 @@ from homeassistant.core import Event, HomeAssistant, ServiceCall
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
 
-from .api import ParcelApi, ParcelError
+from .api import ParcelApi, ParcelError, ParcelRateLimitError
 from .const import (
     ATTR_CARRIER_CODE,
     ATTR_CONFIG_ENTRY_ID,
@@ -80,7 +81,9 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         try:
             await coordinator.api.add_delivery(payload)
         except ParcelError as err:
-            raise HomeAssistantError(f"Parcel: {err}") from err
+            raise HomeAssistantError(
+                translation_domain=DOMAIN, translation_key="add_failed", translation_placeholders={"error": str(err)}
+            ) from err
         await coordinator.async_request_refresh()
 
     async def refresh(call: ServiceCall) -> None:
@@ -89,13 +92,17 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         coordinator = _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID))
         await coordinator.async_refresh()
         # async_refresh never raises: report a failed update (rate limit, timeout, refused key) to the caller.
-        if not coordinator.last_update_success:
-            raise HomeAssistantError(f"Parcel: {coordinator.last_exception}")
-        # A rate-limited update keeps the last deliveries (it succeeds), but nothing was fetched.
-        if coordinator.rate_limited:
-            raise HomeAssistantError(f"Parcel rate limit reached, will retry later: {coordinator.rate_limited}")
+        error = coordinator.last_error if coordinator.last_update_success else coordinator.last_exception
+        # A failed update raises; one that kept the last deliveries (rate limit, timeout) succeeds but fetched nothing.
+        if not coordinator.last_update_success or error:
+            reason = _reason(error)
+            key = "rate_limited" if isinstance(reason, ParcelRateLimitError) else "refresh_failed"
+            raise HomeAssistantError(
+                translation_domain=DOMAIN, translation_key=key, translation_placeholders={"error": str(reason)}
+            )
 
-    hass.services.async_register(DOMAIN, SERVICE_ADD_DELIVERY, add_delivery, ADD_DELIVERY_SCHEMA)
+    # Adding a delivery spends one of the account's 20 daily additions: admins only.
+    async_register_admin_service(hass, DOMAIN, SERVICE_ADD_DELIVERY, add_delivery, ADD_DELIVERY_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_REFRESH, refresh, REFRESH_SCHEMA)
     return True
 
@@ -184,10 +191,17 @@ def _get_coordinator(hass: HomeAssistant, entry_id: str | None) -> ParcelCoordin
     if entry_id:
         entries = [e for e in entries if e.entry_id == entry_id]
     if not entries:
-        raise ServiceValidationError("No Parcel account is loaded")
+        raise ServiceValidationError(translation_domain=DOMAIN, translation_key="no_account")
     if len(entries) > 1:
-        raise ServiceValidationError("Several Parcel accounts are configured: set config_entry_id")
+        raise ServiceValidationError(translation_domain=DOMAIN, translation_key="several_accounts")
     return entries[0].runtime_data
+
+
+def _reason(error: BaseException | None) -> BaseException | str:
+    """The Parcel error behind an update failure, without the UpdateFailed wrapper of a failed first update."""
+    if error is not None and isinstance(error.__cause__, ParcelError):
+        return error.__cause__
+    return error or "unknown error"
 
 
 @websocket_api.websocket_command({vol.Required("type"): "parcel/carriers", vol.Optional("config_entry_id"): str})

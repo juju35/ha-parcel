@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.2.0';
+var PARCEL_CARD_VERSION = '1.3.0';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -1128,6 +1128,24 @@ function parcelEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
+// Service errors carry a translation key (the `exceptions` of the integration's translations): show them in the
+// Home Assistant language of the user, else the message the backend already translated in the server language.
+function parcelErrorText(hass, err) {
+  var fallback = String(err?.message || err || '').replace(/^Validation error: /, '');
+  var key = err?.translation_key;
+  if (!key || err.translation_domain !== 'parcel' || typeof hass?.loadBackendTranslation !== 'function') {
+    return Promise.resolve(fallback);
+  }
+  return Promise.resolve(hass.loadBackendTranslation('exceptions', 'parcel'))
+    .then((localize) => (localize || hass.localize)(`component.parcel.exceptions.${key}.message`, err.translation_placeholders || {}) || fallback)
+    .catch(() => fallback);
+}
+
+// Adding a delivery is an admin-only service: hide the button from other users (true while hass.user is unknown).
+function parcelIsAdmin(hass) {
+  return hass?.user?.is_admin !== false;
+}
+
 // Parcel sends placeholders such as "--//--" when the carrier gave no date.
 function parcelDate(s) {
   return /\d/.test(String(s || '')) ? String(s) : '';
@@ -1339,7 +1357,8 @@ class ParcelCard extends HTMLElement {
   _renderHeader(header, t, st, title) {
     var c = this._config;
     var compact = this._compact();
-    var key = [!!st, c.show_refresh, c.show_add, parcelLang(this._hass, c), compact].join('|');
+    var canAdd = c.show_add && parcelIsAdmin(this._hass);
+    var key = [!!st, c.show_refresh, canAdd, parcelLang(this._hass, c), compact].join('|');
     if (this._headerKey !== key || !header.querySelector('.title')) {
       this._headerKey = key;
       header.innerHTML =
@@ -1353,7 +1372,7 @@ class ParcelCard extends HTMLElement {
             (c.show_refresh
               ? `<ha-icon-button class="refresh-btn" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
               : '') +
-            (c.show_add
+            (canAdd
               ? `<ha-icon-button class="add-btn" label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>`
               : '') +
             '</div>'
@@ -1511,11 +1530,11 @@ class ParcelCard extends HTMLElement {
     this._refreshError = null;
     this._render();
     var t = this._t();
-    this._hass.callService('parcel', 'refresh', data).catch((err) => {
+    this._hass.callService('parcel', 'refresh', data).catch((err) => parcelErrorText(this._hass, err).then((text) => {
       // Kept in state and rendered under the title: a tooltip on the button
-      // would be wiped by the next re-render.
-      this._refreshError = `${t.refresh_failed} ${(err?.message) || err}`;
-    }).finally(() => {
+      // would be wiped by the next re-render. A translated error already says the update failed.
+      this._refreshError = err?.translation_key ? text : `${t.refresh_failed} ${text}`;
+    })).finally(() => {
       this._refreshing = false;
       this._render();
     });
@@ -1622,10 +1641,10 @@ class ParcelCard extends HTMLElement {
       form.querySelector('[name=tracking]').value = '';
       form.querySelector('[name=carrier]').value = '';
       form.querySelector('[name=description]').value = '';
-    }).catch((err) => {
+    }).catch((err) => parcelErrorText(this._hass, err).then((text) => {
       msgEl.className = 'msg error';
-      msgEl.textContent = (err?.message) || String(err);
-    }).finally(() => {
+      msgEl.textContent = text;
+    })).finally(() => {
       btn.disabled = false;
       btn.textContent = t.submit;
     });

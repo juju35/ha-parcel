@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Λογαριασμός Parcel", "description": "Απαιτείται μόνο όταν έχουν διαμορφωθεί πολλοί λογαριασμοί Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Δεν έχει φορτωθεί κανένας λογαριασμός Parcel." },
+    "several_accounts": { "message": "Έχουν ρυθμιστεί πολλοί λογαριασμοί Parcel: ορίστε το config_entry_id." },
+    "add_failed": { "message": "Το Parcel δεν μπόρεσε να προσθέσει την αποστολή: {error}" },
+    "refresh_failed": { "message": "Η ενημέρωση του Parcel απέτυχε: {error}" },
+    "rate_limited": { "message": "Συμπληρώθηκε το όριο αιτημάτων του Parcel, νέα προσπάθεια αργότερα: {error}" }
   }
 }

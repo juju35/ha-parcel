@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Account Parcel", "description": "Necessario solo se sono configurati più account Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Nessun account Parcel è caricato." },
+    "several_accounts": { "message": "Sono configurati più account Parcel: imposta config_entry_id." },
+    "add_failed": { "message": "Parcel non è riuscito ad aggiungere la spedizione: {error}" },
+    "refresh_failed": { "message": "Aggiornamento di Parcel non riuscito: {error}" },
+    "rate_limited": { "message": "Limite di richieste Parcel raggiunto, nuovo tentativo più tardi: {error}" }
   }
 }

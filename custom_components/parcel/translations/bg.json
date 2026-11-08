@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Акаунт в Parcel", "description": "Нужно е само когато са конфигурирани няколко акаунта в Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Няма зареден акаунт в Parcel." },
+    "several_accounts": { "message": "Конфигурирани са няколко акаунта в Parcel: задайте config_entry_id." },
+    "add_failed": { "message": "Parcel не успя да добави пратката: {error}" },
+    "refresh_failed": { "message": "Неуспешно обновяване на Parcel: {error}" },
+    "rate_limited": { "message": "Достигнат е лимитът на заявки към Parcel, нов опит по-късно: {error}" }
   }
 }

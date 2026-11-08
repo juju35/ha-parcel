@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Račun Parcel", "description": "Potrebno samo, ko je nastavljenih več računov Parcel." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Noben račun Parcel ni naložen." },
+    "several_accounts": { "message": "Nastavljenih je več računov Parcel: določite config_entry_id." },
+    "add_failed": { "message": "Parcel ni mogel dodati pošiljke: {error}" },
+    "refresh_failed": { "message": "Posodobitev Parcel ni uspela: {error}" },
+    "rate_limited": { "message": "Dosežena je omejitev zahtev Parcel, ponoven poskus pozneje: {error}" }
   }
 }

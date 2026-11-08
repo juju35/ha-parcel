@@ -74,5 +74,12 @@
         "config_entry_id": { "name": "Parcel-account", "description": "Alleen nodig als er meerdere Parcel-accounts zijn geconfigureerd." }
       }
     }
+  },
+  "exceptions": {
+    "no_account": { "message": "Er is geen Parcel-account geladen." },
+    "several_accounts": { "message": "Er zijn meerdere Parcel-accounts ingesteld: geef config_entry_id op." },
+    "add_failed": { "message": "Parcel kon de zending niet toevoegen: {error}" },
+    "refresh_failed": { "message": "Bijwerken van Parcel mislukt: {error}" },
+    "rate_limited": { "message": "Parcel-verzoeklimiet bereikt, later opnieuw: {error}" }
   }
 }
