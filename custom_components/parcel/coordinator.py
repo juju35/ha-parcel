@@ -56,6 +56,10 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         self._carriers_updated: datetime | None = None
         # Last known deliveries by key; None until the first successful update, so nothing fires at startup.
         self._known: dict[str, dict[str, Any]] | None = None
+        # Active filter: undelivered deliveries missing from the last successful update, delivered if still missing
+        # at the next one; and whether the last reply was an empty list.
+        self._missing: dict[str, dict[str, Any]] = {}
+        self._empty_reply = False
         # Set while Parcel fails (rate limit, timeout, server error) and the last deliveries are kept: the sensor shows
         # it in its `stale` / `last_error` attributes and the refresh service reports it.
         self.last_error: ParcelError | None = None
@@ -86,10 +90,17 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         """Fire parcel_out_for_delivery / parcel_delivered for deliveries whose status just changed to it.
 
         With the `active` filter, Parcel drops a delivery from the list once delivered: a delivery that was
-        active and is gone fires parcel_delivered.
+        active and is gone from two successful updates in a row fires parcel_delivered.
         """
         current = {_delivery_key(d): d for d in deliveries}
-        previous, self._known = self._known, current
+        previous = self._known
+        if previous and not current and self.filter_mode == FILTER_ACTIVE and not self._empty_reply:
+            # An empty list right after a non-empty one is more likely a glitch of the API than every parcel
+            # delivered at once: ignore it (statuses and pending disappearances kept). A second empty reply counts.
+            self._empty_reply = True
+            return
+        self._empty_reply = not current
+        self._known = current
         if previous is None:
             return
         for key, delivery in current.items():
@@ -100,9 +111,14 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
             self._fire(TRANSITION_EVENTS[status], delivery)
         if self.filter_mode != FILTER_ACTIVE:
             return
-        for key, delivery in previous.items():
-            if key not in current and delivery.get("status_code") != STATUS_COMPLETED:
-                self._fire(EVENT_DELIVERED, delivery)
+        # Missing once: pending. Still missing at the next successful update: delivered. Back in the list: forgotten.
+        for delivery in (d for key, d in self._missing.items() if key not in current):
+            self._fire(EVENT_DELIVERED, delivery)
+        self._missing = {
+            key: delivery
+            for key, delivery in previous.items()
+            if key not in current and delivery.get("status_code") != STATUS_COMPLETED
+        }
 
     def _fire(self, event: str, delivery: dict[str, Any]) -> None:
         code = delivery.get("carrier_code") or ""

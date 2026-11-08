@@ -155,7 +155,8 @@ async def test_no_event_for_a_new_delivery_or_after_a_failed_update(hass, aiocli
 
 
 async def test_active_filter_fires_delivered_when_a_delivery_leaves_the_list(hass, aioclient_mock):
-    """With the active filter, Parcel drops delivered parcels: an active one that disappears fires parcel_delivered."""
+    """With the active filter, Parcel drops delivered parcels: an active one missing from two successful updates
+    in a row fires parcel_delivered."""
     entry = MockConfigEntry(
         domain=DOMAIN, data={CONF_API_KEY: "key"}, options={"filter_mode": "active"}, unique_id="active"
     )
@@ -166,17 +167,21 @@ async def test_active_filter_fires_delivered_when_a_delivery_leaves_the_list(has
 
     only_ups = copy.deepcopy(_deliveries(colissimo=4, ups=2))
     only_ups["deliveries"] = only_ups["deliveries"][1:]
+    # Missing once: not yet (a partial reply would otherwise fire a false "delivered").
+    await _update(hass, aioclient_mock, entry, only_ups)
+    assert not delivered
+    # A failed update in between changes nothing; missing again at the next successful one: delivered.
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, status=502, text="Bad gateway")
+    await entry.runtime_data.async_refresh()
+    await hass.async_block_till_done()
+    assert not delivered
     await _update(hass, aioclient_mock, entry, only_ups)
     assert [e.data["name"] for e in delivered] == ["Casque"]
     assert delivered[0].data["carrier"] == "Colissimo"
     assert delivered[0].data["config_entry_id"] == entry.entry_id
     assert "6A12345678901" not in json.dumps(delivered[0].data)
-
-    # Gone once only; a failed update in between changes nothing.
-    aioclient_mock.clear_requests()
-    aioclient_mock.get(API_DELIVERIES, status=502, text="Bad gateway")
-    await entry.runtime_data.async_refresh()
-    await hass.async_block_till_done()
+    # Once only.
     await _update(hass, aioclient_mock, entry, only_ups)
     assert len(delivered) == 1
 
@@ -186,6 +191,37 @@ async def test_active_filter_fires_delivered_when_a_delivery_leaves_the_list(has
     await _update(hass, aioclient_mock, entry, ups_delivered)
     assert [e.data["name"] for e in delivered] == ["Casque", "Livres"]
     await _update(hass, aioclient_mock, entry, {"success": True, "deliveries": []})
+    await _update(hass, aioclient_mock, entry, {"success": True, "deliveries": []})
+    await _update(hass, aioclient_mock, entry, {"success": True, "deliveries": []})
+    assert len(delivered) == 2
+
+
+async def test_active_filter_partial_or_empty_reply_fires_nothing(hass, aioclient_mock):
+    """A delivery missing from a single reply, or a lone empty reply, is no delivery."""
+    entry = MockConfigEntry(
+        domain=DOMAIN, data={CONF_API_KEY: "key"}, options={"filter_mode": "active"}, unique_id="active"
+    )
+    entry.add_to_hass(hass)
+    delivered = async_capture_events(hass, "parcel_delivered")
+    both = _deliveries(colissimo=2, ups=2)
+    await _setup(hass, aioclient_mock, entry, both)
+
+    partial = copy.deepcopy(both)
+    partial["deliveries"] = partial["deliveries"][:1]
+    await _update(hass, aioclient_mock, entry, partial)
+    await _update(hass, aioclient_mock, entry, both)
+    empty = {"success": True, "deliveries": []}
+    await _update(hass, aioclient_mock, entry, empty)
+    await _update(hass, aioclient_mock, entry, both)
+    await _update(hass, aioclient_mock, entry, empty)
+    await _update(hass, aioclient_mock, entry, both)
+    assert not delivered
+
+    # Every parcel really delivered: the list stays empty, and the deliveries fire once that is confirmed.
+    for _ in range(3):
+        await _update(hass, aioclient_mock, entry, empty)
+    assert sorted(e.data["name"] for e in delivered) == ["Casque", "Livres"]
+    await _update(hass, aioclient_mock, entry, empty)
     assert len(delivered) == 2
 
 

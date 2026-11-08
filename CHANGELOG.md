@@ -4,6 +4,7 @@
 
 ### What's new
 - With the Active filter, `parcel_delivered` now fires when a delivery not yet delivered leaves the list, since Parcel drops delivered parcels there.
+- A delivery must be missing from two successful updates in a row, and an empty list right after a non-empty one is ignored, so a partial or empty API reply fires no false `parcel_delivered`.
 - Service errors are translated in the 23 languages, and the card shows them in the Home Assistant language.
 
 ### Fixes

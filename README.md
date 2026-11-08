@@ -133,7 +133,7 @@ The integration fires an event on the Home Assistant event bus when a delivery c
 
 Event data: `config_entry_id`, `carrier_code`, `carrier` (carrier name), `name` (the delivery description) and `tracking_id`, a stable short hash of the carrier and tracking number (the same for both events of a delivery). The tracking number itself is left out, since events are stored in the recorder and the logbook.
 
-Nothing fires at startup, after a reload or for a delivery seen for the first time. With the **Active** filter, Parcel drops delivered parcels from the list instead of changing their status: there, `parcel_delivered` fires when a delivery that was not yet delivered leaves the list (a delivery deleted in the Parcel app fires it too).
+Nothing fires at startup, after a reload or for a delivery seen for the first time. With the **Active** filter, Parcel drops delivered parcels from the list instead of changing their status: there, `parcel_delivered` fires when a delivery that was not yet delivered is missing from two successful updates in a row (a delivery deleted in the Parcel app fires it too). An empty list right after a non-empty one is ignored as a likely API glitch, so when every parcel leaves the list at once the event comes one update later.
 
 ```yaml
 triggers:
