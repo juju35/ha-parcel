@@ -1674,8 +1674,8 @@ class ParcelCard extends HTMLElement {
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
       '.buttons { display: flex; align-items: center; flex: none; }',
-      // HA's default ha-icon-button is 48 px with a 24 px glyph, far larger than the 16–22 px actions of the sibling cards.
-      '.buttons ha-icon-button { flex: none; --mdc-icon-button-size: 32px; --mdc-icon-size: 20px; color: var(--secondary-text-color); }',
+      // HA's default ha-icon-button is 48 px with a 24 px glyph; match the 28/16 px icon actions of the sibling cards (wero, orphan-entities).
+      '.buttons ha-icon-button { flex: none; --mdc-icon-button-size: 28px; --mdc-icon-size: 16px; color: var(--secondary-text-color); }',
       // State colors stay on the backgrounds; texts are mixed with the text color to stay readable (WCAG 4.5:1).
       '.status { flex: 0 1 auto; min-width: 0; max-width: 50%; display: flex; align-items: center; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px;' +
         ' color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
