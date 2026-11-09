@@ -1660,7 +1660,7 @@ class ParcelCard extends HTMLElement {
       // then refused to shrink and overflowed such a grid.
       ':host::before { content: ""; display: grid; grid-template-columns: minmax(0, 320px); height: 0; }',
       'ha-card { padding: 0 0 8px; overflow: hidden; container-type: inline-size; }',
-      '.header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 8px 8px 12px; min-height: 36px; }',
+      '.header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 10px 8px 12px; min-height: 36px; }',
       // Narrow header: the title takes what is left (flex-basis 0, so it does not take the pill's room) and keeps a
       // few letters; the pill shrinks only when it really lacks room; the buttons never do.
       '.title { flex: 1 1 0; min-width: calc(5ch + 50px); font-size: 16px; display: flex; align-items: center; gap: 10px; }',
@@ -1673,8 +1673,9 @@ class ParcelCard extends HTMLElement {
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
-      '.buttons { display: flex; align-items: center; flex: none; margin-left: -6px; }',
-      '.buttons ha-icon-button { flex: none; }',
+      '.buttons { display: flex; align-items: center; flex: none; }',
+      // HA's default ha-icon-button is 48 px with a 24 px glyph; match the 28/16 px icon actions of the sibling cards (wero, orphan-entities).
+      '.buttons ha-icon-button { flex: none; --mdc-icon-button-size: 28px; --mdc-icon-size: 16px; color: var(--secondary-text-color); }',
       // State colors stay on the backgrounds; texts are mixed with the text color to stay readable (WCAG 4.5:1).
       '.status { flex: 0 1 auto; min-width: 0; max-width: 50%; display: flex; align-items: center; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px;' +
         ' color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
