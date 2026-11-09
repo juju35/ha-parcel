@@ -37,7 +37,7 @@ custom_components/parcel/
 - Language: the card's `language` option, else Home Assistant's.
 
 ## Release
-HACS downloads the repository itself (no `zip_release`). Before tagging `vX.Y.Z`, bump the version in manifest.json and `PARCEL_CARD_VERSION` in the card (the card URL is versioned with the file's md5, not with the version). Pushing to main publishes release `vX.Y.Z` (tag, generated notes, `parcel.zip`) when that tag doesn't exist yet; the workflow fails if the two versions differ. Tags can't be pushed from Claude sessions, hence this flow. Release notes come from the version's CHANGELOG.md section; rerun them on an existing release with the "Update release notes" workflow (input `tag`).
+The Marketplace installs `parcel.zip` (`zip_release`), built from the split frontend. Before tagging `vX.Y.Z`, bump the version in manifest.json and `PARCEL_CARD_VERSION` in the card (the card URL is versioned with the file's md5, not with the version). Pushing to main publishes release `vX.Y.Z` (tag, generated notes, `parcel.zip`) when that tag doesn't exist yet; the workflow fails if the two versions differ. Tags can't be pushed from Claude sessions, hence this flow. Release notes come from the version's CHANGELOG.md section; rerun them on an existing release with the "Update release notes" workflow (input `tag`).
 
 ## Config entry
 - Reauth updates the key and lets the update listener reload the entry; it schedules the reload itself only when that listener won't run (entry not loaded, or nothing changed), so one reauth costs one API call. A key already used by another entry (same `unique_id`) is refused before any API call.
@@ -45,3 +45,6 @@ HACS downloads the repository itself (no `zip_release`). Before tagging `vX.Y.Z`
 
 ## Tests
 `pip install -r requirements_test.txt && pytest`; card: `node --test test/*.test.mjs` (the card file is evaluated in a `vm` context with stubs). Job `tests` runs on Python 3.14, i.e. the latest Home Assistant (2026.3+ needs Python 3.14; 3.13 would silently resolve to 2026.2) and prints its version as an annotation; job `pytest-min-ha` runs the suite on HA 2024.12.0. An autouse fixture (`tests/conftest.py`, `no_deprecated_calls`) fails any test during which Home Assistant reports a deprecated call naming `parcel`, and CI turns those reports into annotations. The http fixture patch only applies where `start_http_server_and_save_config` still exists (gone in 2026.10).
+
+## Translations
+The frontend files keep every language in the sources. The release runs `scripts/split-frontend.mjs` before building the zip: English stays in each file, every other language goes to `<file>.i18n.<lang>.js` next to it, fetched when a card or the panel first needs it (`scripts/i18n-split.mjs`; it rebuilds every table to check the split, and the Validate job runs it on a copy with `--check`). The frontend folder is served as a whole, so those files are served next to the card.
