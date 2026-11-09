@@ -28,10 +28,12 @@
         "title": "Επιλογές Parcel",
         "data": {
           "filter_mode": "Δέματα προς εμφάνιση",
-          "scan_interval": "Διάστημα ενημέρωσης"
+          "scan_interval": "Διάστημα ενημέρωσης",
+          "notify_services": "Ενέργειες ειδοποίησης"
         },
         "data_description": {
-          "scan_interval": "Το Parcel επιτρέπει 20 αιτήματα την ώρα, οπότε το ελάχιστο είναι 5 λεπτά."
+          "scan_interval": "Το Parcel επιτρέπει 20 αιτήματα την ώρα, οπότε το ελάχιστο είναι 5 λεπτά.",
+          "notify_services": "Ειδοποίηση αυτών των ενεργειών (notify.mobile_app_…) όταν μια αποστολή είναι προς παράδοση ή παραδόθηκε. Αφήστε κενό για καμία."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Έχουν ρυθμιστεί πολλοί λογαριασμοί Parcel: ορίστε το config_entry_id." },
     "add_failed": { "message": "Το Parcel δεν μπόρεσε να προσθέσει την αποστολή: {error}" },
     "refresh_failed": { "message": "Η ενημέρωση του Parcel απέτυχε: {error}" },
-    "rate_limited": { "message": "Συμπληρώθηκε το όριο αιτημάτων του Parcel, νέα προσπάθεια αργότερα: {error}" }
+    "rate_limited": { "message": "Συμπληρώθηκε το όριο αιτημάτων του Parcel, νέα προσπάθεια αργότερα: {error}" },
+    "notify_out_for_delivery": { "message": "Προς παράδοση" },
+    "notify_delivered": { "message": "Παραδόθηκε" },
+    "notify_unnamed": { "message": "Δέμα" }
   }
 }

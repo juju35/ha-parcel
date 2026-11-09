@@ -28,10 +28,12 @@
         "title": "Parcel options",
         "data": {
           "filter_mode": "Deliveries to show",
-          "scan_interval": "Update interval"
+          "scan_interval": "Update interval",
+          "notify_services": "Notify actions"
         },
         "data_description": {
-          "scan_interval": "Parcel allows 20 requests per hour, so 5 minutes is the minimum."
+          "scan_interval": "Parcel allows 20 requests per hour, so 5 minutes is the minimum.",
+          "notify_services": "Tell these actions (notify.mobile_app_…) when a delivery is out for delivery or delivered. Leave empty for none."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Several Parcel accounts are configured: set config_entry_id." },
     "add_failed": { "message": "Parcel could not add the delivery: {error}" },
     "refresh_failed": { "message": "Parcel update failed: {error}" },
-    "rate_limited": { "message": "Parcel rate limit reached, will retry later: {error}" }
+    "rate_limited": { "message": "Parcel rate limit reached, will retry later: {error}" },
+    "notify_out_for_delivery": { "message": "Out for delivery" },
+    "notify_delivered": { "message": "Delivered" },
+    "notify_unnamed": { "message": "Parcel" }
   }
 }

@@ -1,4 +1,4 @@
-"""Diagnostics redaction and the status transition events."""
+"""Diagnostics redaction, the status transition events and their notifications."""
 
 import copy
 import json
@@ -7,7 +7,7 @@ import pytest
 from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
-from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events
+from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events, async_mock_service
 
 from custom_components.parcel.const import API_CARRIERS, API_DELIVERIES, DOMAIN
 
@@ -127,6 +127,26 @@ async def test_out_for_delivery_event_and_stable_tracking_id(hass, aioclient_moc
     assert [e.data["name"] for e in out] == ["Casque"]
     assert [e.data["name"] for e in delivered] == ["Casque"]
     assert out[0].data["tracking_id"] == delivered[0].data["tracking_id"]
+
+
+async def test_transitions_notify_the_actions_chosen(hass, aioclient_mock):
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={CONF_API_KEY: "secret-key"},
+        options={"filter_mode": "recent", "notify_services": ["notify.mobile_app_phone", "notify.gone"]},
+        unique_id="abc123",
+    )
+    entry.add_to_hass(hass)
+    calls = async_mock_service(hass, "notify", "mobile_app_phone")
+    await _setup(hass, aioclient_mock, entry, _deliveries(colissimo=2))
+    await _update(hass, aioclient_mock, entry, _deliveries(colissimo=4))
+    await _update(hass, aioclient_mock, entry, _deliveries(colissimo=0))
+    assert [(c.data["title"], c.data["message"]) for c in calls] == [
+        ("Out for delivery", "Casque · Colissimo"),
+        ("Delivered", "Casque · Colissimo"),
+    ]
+    # Tagged with the delivery: the delivered notification replaces the out for delivery one on the phone.
+    assert calls[0].data["data"]["tag"] == calls[1].data["data"]["tag"]
 
 
 async def test_no_event_for_a_new_delivery_or_after_a_failed_update(hass, aioclient_mock, entry):

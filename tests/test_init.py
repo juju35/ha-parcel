@@ -168,6 +168,15 @@ async def test_options_flow(hass, aioclient_mock, entry):
     assert entry.runtime_data.filter_mode == "active"
     assert entry.runtime_data.update_interval.total_seconds() == 900
 
+    # Notify actions, written either way, kept as notify.<name>.
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    await hass.config_entries.options.async_configure(
+        result["flow_id"], {"filter_mode": "active", "scan_interval": 15, "notify_services": ["mobile_app_phone"]}
+    )
+    await hass.async_block_till_done()
+    assert entry.options["notify_services"] == ["notify.mobile_app_phone"]
+    assert entry.runtime_data.notify_services == ["notify.mobile_app_phone"]
+
 
 async def test_card_added_to_resources(hass, aioclient_mock, entry, stub_frontend):
     assert await async_setup_component(hass, "lovelace", {})

@@ -28,10 +28,12 @@
         "title": "Možnosti Parcel",
         "data": {
           "filter_mode": "Zobrazené zásielky",
-          "scan_interval": "Interval aktualizácie"
+          "scan_interval": "Interval aktualizácie",
+          "notify_services": "Akcie upozornení"
         },
         "data_description": {
-          "scan_interval": "Parcel umožňuje 20 požiadaviek za hodinu, takže minimum je 5 minút."
+          "scan_interval": "Parcel umožňuje 20 požiadaviek za hodinu, takže minimum je 5 minút.",
+          "notify_services": "Upozorniť tieto akcie (notify.mobile_app_…), keď je zásielka na doručení alebo doručená. Nechajte prázdne pre žiadnu."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Je nastavených viac účtov Parcel: zadajte config_entry_id." },
     "add_failed": { "message": "Parcel nemohol pridať zásielku: {error}" },
     "refresh_failed": { "message": "Aktualizácia Parcel zlyhala: {error}" },
-    "rate_limited": { "message": "Dosiahnutý limit požiadaviek Parcel, nový pokus neskôr: {error}" }
+    "rate_limited": { "message": "Dosiahnutý limit požiadaviek Parcel, nový pokus neskôr: {error}" },
+    "notify_out_for_delivery": { "message": "Na doručení" },
+    "notify_delivered": { "message": "Doručené" },
+    "notify_unnamed": { "message": "Zásielka" }
   }
 }

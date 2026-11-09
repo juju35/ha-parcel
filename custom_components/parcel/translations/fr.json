@@ -28,10 +28,12 @@
         "title": "Options Parcel",
         "data": {
           "filter_mode": "Colis à afficher",
-          "scan_interval": "Intervalle de mise à jour"
+          "scan_interval": "Intervalle de mise à jour",
+          "notify_services": "Actions de notification"
         },
         "data_description": {
-          "scan_interval": "Parcel autorise 20 requêtes par heure, donc 5 minutes au minimum."
+          "scan_interval": "Parcel autorise 20 requêtes par heure, donc 5 minutes au minimum.",
+          "notify_services": "Prévenir ces actions (notify.mobile_app_…) quand une livraison est en cours de livraison ou livrée. Laisser vide pour aucune."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Plusieurs comptes Parcel sont configurés : renseignez config_entry_id." },
     "add_failed": { "message": "Parcel n'a pas pu ajouter le colis : {error}" },
     "refresh_failed": { "message": "Échec de la mise à jour Parcel : {error}" },
-    "rate_limited": { "message": "Limite de requêtes Parcel atteinte, nouvel essai plus tard : {error}" }
+    "rate_limited": { "message": "Limite de requêtes Parcel atteinte, nouvel essai plus tard : {error}" },
+    "notify_out_for_delivery": { "message": "En cours de livraison" },
+    "notify_delivered": { "message": "Livré" },
+    "notify_unnamed": { "message": "Colis" }
   }
 }

@@ -28,10 +28,12 @@
         "title": "Opzioni di Parcel",
         "data": {
           "filter_mode": "Spedizioni da mostrare",
-          "scan_interval": "Intervallo di aggiornamento"
+          "scan_interval": "Intervallo di aggiornamento",
+          "notify_services": "Azioni di notifica"
         },
         "data_description": {
-          "scan_interval": "Parcel consente 20 richieste all'ora, quindi il minimo è 5 minuti."
+          "scan_interval": "Parcel consente 20 richieste all'ora, quindi il minimo è 5 minuti.",
+          "notify_services": "Avvisa queste azioni (notify.mobile_app_…) quando una spedizione è in consegna o consegnata. Lascia vuoto per nessuna."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Sono configurati più account Parcel: imposta config_entry_id." },
     "add_failed": { "message": "Parcel non è riuscito ad aggiungere la spedizione: {error}" },
     "refresh_failed": { "message": "Aggiornamento di Parcel non riuscito: {error}" },
-    "rate_limited": { "message": "Limite di richieste Parcel raggiunto, nuovo tentativo più tardi: {error}" }
+    "rate_limited": { "message": "Limite di richieste Parcel raggiunto, nuovo tentativo più tardi: {error}" },
+    "notify_out_for_delivery": { "message": "In consegna" },
+    "notify_delivered": { "message": "Consegnato" },
+    "notify_unnamed": { "message": "Pacco" }
   }
 }

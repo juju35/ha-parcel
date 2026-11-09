@@ -28,10 +28,12 @@
         "title": "Parcel-Optionen",
         "data": {
           "filter_mode": "Anzuzeigende Sendungen",
-          "scan_interval": "Aktualisierungsintervall"
+          "scan_interval": "Aktualisierungsintervall",
+          "notify_services": "Benachrichtigungsaktionen"
         },
         "data_description": {
-          "scan_interval": "Parcel erlaubt 20 Anfragen pro Stunde, daher sind 5 Minuten das Minimum."
+          "scan_interval": "Parcel erlaubt 20 Anfragen pro Stunde, daher sind 5 Minuten das Minimum.",
+          "notify_services": "Diese Aktionen (notify.mobile_app_…) benachrichtigen, wenn eine Sendung in Zustellung oder zugestellt ist. Leer lassen für keine."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Mehrere Parcel-Konten sind eingerichtet: config_entry_id angeben." },
     "add_failed": { "message": "Parcel konnte die Sendung nicht hinzufügen: {error}" },
     "refresh_failed": { "message": "Parcel-Aktualisierung fehlgeschlagen: {error}" },
-    "rate_limited": { "message": "Parcel-Anfragelimit erreicht, neuer Versuch später: {error}" }
+    "rate_limited": { "message": "Parcel-Anfragelimit erreicht, neuer Versuch später: {error}" },
+    "notify_out_for_delivery": { "message": "In Zustellung" },
+    "notify_delivered": { "message": "Zugestellt" },
+    "notify_unnamed": { "message": "Paket" }
   }
 }

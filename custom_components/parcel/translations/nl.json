@@ -28,10 +28,12 @@
         "title": "Parcel-opties",
         "data": {
           "filter_mode": "Te tonen zendingen",
-          "scan_interval": "Update-interval"
+          "scan_interval": "Update-interval",
+          "notify_services": "Meldingsacties"
         },
         "data_description": {
-          "scan_interval": "Parcel staat 20 verzoeken per uur toe, dus 5 minuten is het minimum."
+          "scan_interval": "Parcel staat 20 verzoeken per uur toe, dus 5 minuten is het minimum.",
+          "notify_services": "Deze acties (notify.mobile_app_…) melden wanneer een zending onderweg voor bezorging of bezorgd is. Leeg laten voor geen."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Er zijn meerdere Parcel-accounts ingesteld: geef config_entry_id op." },
     "add_failed": { "message": "Parcel kon de zending niet toevoegen: {error}" },
     "refresh_failed": { "message": "Bijwerken van Parcel mislukt: {error}" },
-    "rate_limited": { "message": "Parcel-verzoeklimiet bereikt, later opnieuw: {error}" }
+    "rate_limited": { "message": "Parcel-verzoeklimiet bereikt, later opnieuw: {error}" },
+    "notify_out_for_delivery": { "message": "Onderweg voor bezorging" },
+    "notify_delivered": { "message": "Bezorgd" },
+    "notify_unnamed": { "message": "Pakket" }
   }
 }

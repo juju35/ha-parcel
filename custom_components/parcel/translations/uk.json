@@ -28,10 +28,12 @@
         "title": "Параметри Parcel",
         "data": {
           "filter_mode": "Посилки для показу",
-          "scan_interval": "Інтервал оновлення"
+          "scan_interval": "Інтервал оновлення",
+          "notify_services": "Дії сповіщень"
         },
         "data_description": {
-          "scan_interval": "Parcel дозволяє 20 запитів на годину, тому мінімум — 5 хвилин."
+          "scan_interval": "Parcel дозволяє 20 запитів на годину, тому мінімум — 5 хвилин.",
+          "notify_services": "Сповіщати ці дії (notify.mobile_app_…), коли посилка в доставці або доставлена. Залиште порожнім, щоб не сповіщати."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Налаштовано кілька облікових записів Parcel: вкажіть config_entry_id." },
     "add_failed": { "message": "Parcel не вдалося додати відправлення: {error}" },
     "refresh_failed": { "message": "Не вдалося оновити Parcel: {error}" },
-    "rate_limited": { "message": "Досягнуто ліміту запитів Parcel, повтор пізніше: {error}" }
+    "rate_limited": { "message": "Досягнуто ліміту запитів Parcel, повтор пізніше: {error}" },
+    "notify_out_for_delivery": { "message": "У доставці" },
+    "notify_delivered": { "message": "Доставлено" },
+    "notify_unnamed": { "message": "Посилка" }
   }
 }

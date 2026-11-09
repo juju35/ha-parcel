@@ -28,10 +28,12 @@
         "title": "Opções do Parcel",
         "data": {
           "filter_mode": "Encomendas a mostrar",
-          "scan_interval": "Intervalo de atualização"
+          "scan_interval": "Intervalo de atualização",
+          "notify_services": "Ações de notificação"
         },
         "data_description": {
-          "scan_interval": "O Parcel permite 20 pedidos por hora, pelo que o mínimo é de 5 minutos."
+          "scan_interval": "O Parcel permite 20 pedidos por hora, pelo que o mínimo é de 5 minutos.",
+          "notify_services": "Avisar estas ações (notify.mobile_app_…) quando uma encomenda estiver em distribuição ou entregue. Deixe vazio para nenhuma."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Há várias contas Parcel configuradas: informe config_entry_id." },
     "add_failed": { "message": "O Parcel não conseguiu adicionar a encomenda: {error}" },
     "refresh_failed": { "message": "Falha ao atualizar o Parcel: {error}" },
-    "rate_limited": { "message": "Limite de solicitações do Parcel atingido, nova tentativa mais tarde: {error}" }
+    "rate_limited": { "message": "Limite de solicitações do Parcel atingido, nova tentativa mais tarde: {error}" },
+    "notify_out_for_delivery": { "message": "Em distribuição" },
+    "notify_delivered": { "message": "Entregue" },
+    "notify_unnamed": { "message": "Encomenda" }
   }
 }

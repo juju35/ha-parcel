@@ -28,10 +28,12 @@
         "title": "Настройки Parcel",
         "data": {
           "filter_mode": "Отображаемые посылки",
-          "scan_interval": "Интервал обновления"
+          "scan_interval": "Интервал обновления",
+          "notify_services": "Действия уведомлений"
         },
         "data_description": {
-          "scan_interval": "Parcel допускает 20 запросов в час, поэтому минимум — 5 минут."
+          "scan_interval": "Parcel допускает 20 запросов в час, поэтому минимум — 5 минут.",
+          "notify_services": "Уведомлять эти действия (notify.mobile_app_…), когда посылка передана курьеру или доставлена. Оставьте пустым, чтобы не уведомлять."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Настроено несколько учётных записей Parcel: укажите config_entry_id." },
     "add_failed": { "message": "Parcel не удалось добавить отправление: {error}" },
     "refresh_failed": { "message": "Не удалось обновить Parcel: {error}" },
-    "rate_limited": { "message": "Достигнут лимит запросов Parcel, повтор позже: {error}" }
+    "rate_limited": { "message": "Достигнут лимит запросов Parcel, повтор позже: {error}" },
+    "notify_out_for_delivery": { "message": "Передано курьеру" },
+    "notify_delivered": { "message": "Доставлено" },
+    "notify_unnamed": { "message": "Посылка" }
   }
 }

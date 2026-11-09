@@ -26,6 +26,7 @@ from homeassistant.helpers.selector import (
 from .api import ParcelApi, ParcelAuthError, ParcelError
 from .const import (
     CONF_FILTER_MODE,
+    CONF_NOTIFY,
     CONF_SCAN_INTERVAL,
     DEFAULT_FILTER_MODE,
     DEFAULT_SCAN_INTERVAL,
@@ -112,9 +113,18 @@ class ParcelOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             user_input[CONF_SCAN_INTERVAL] = int(user_input[CONF_SCAN_INTERVAL])
+            user_input[CONF_NOTIFY] = sorted(
+                {f"notify.{n.strip().removeprefix('notify.')}" for n in user_input.get(CONF_NOTIFY, []) if n.strip()}
+            )
             return self.async_create_entry(data=user_input)
 
         options = self.config_entry.options
+        notify: list[str] = list(options.get(CONF_NOTIFY, []))
+        notify_options = sorted(
+            {f"notify.{name}" for name in self.hass.services.async_services_for_domain("notify")}
+            - {"notify.send_message", "notify.persistent_notification"}
+            | set(notify)
+        )
         schema = vol.Schema(
             {
                 vol.Required(
@@ -136,6 +146,11 @@ class ParcelOptionsFlow(OptionsFlow):
                         step=1,
                         unit_of_measurement="min",
                         mode=NumberSelectorMode.BOX,
+                    )
+                ),
+                vol.Optional(CONF_NOTIFY, default=notify): SelectSelector(
+                    SelectSelectorConfig(
+                        options=notify_options, multiple=True, custom_value=True, mode=SelectSelectorMode.DROPDOWN
                     )
                 ),
             }
