@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1 - 2026-11-09
+
+### Fixes
+- The card's refresh and add buttons now have the same size as the icon actions of the other cards (28 px button, 16 px icon) instead of Home Assistant's larger default.
+
 ## 1.3.0 - 2026-11-08
 
 ### What's new
