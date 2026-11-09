@@ -28,10 +28,12 @@
         "title": "Parcel opcijas",
         "data": {
           "filter_mode": "Rādāmie sūtījumi",
-          "scan_interval": "Atjaunināšanas intervāls"
+          "scan_interval": "Atjaunināšanas intervāls",
+          "notify_services": "Paziņojumu darbības"
         },
         "data_description": {
-          "scan_interval": "Parcel atļauj 20 pieprasījumus stundā, tāpēc minimums ir 5 minūtes."
+          "scan_interval": "Parcel atļauj 20 pieprasījumus stundā, tāpēc minimums ir 5 minūtes.",
+          "notify_services": "Paziņot šīm darbībām (notify.mobile_app_…), kad sūtījums ir piegādē vai piegādāts. Atstājiet tukšu, lai nepaziņotu."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Ir konfigurēti vairāki Parcel konti: norādiet config_entry_id." },
     "add_failed": { "message": "Parcel nevarēja pievienot sūtījumu: {error}" },
     "refresh_failed": { "message": "Parcel atjaunināšana neizdevās: {error}" },
-    "rate_limited": { "message": "Sasniegts Parcel pieprasījumu limits, vēlāk mēģinās vēlreiz: {error}" }
+    "rate_limited": { "message": "Sasniegts Parcel pieprasījumu limits, vēlāk mēģinās vēlreiz: {error}" },
+    "notify_out_for_delivery": { "message": "Piegādē" },
+    "notify_delivered": { "message": "Piegādāts" },
+    "notify_unnamed": { "message": "Sūtījums" }
   }
 }

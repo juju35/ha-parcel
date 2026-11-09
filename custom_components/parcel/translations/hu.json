@@ -28,10 +28,12 @@
         "title": "Parcel beállítások",
         "data": {
           "filter_mode": "Megjelenített csomagok",
-          "scan_interval": "Frissítési időköz"
+          "scan_interval": "Frissítési időköz",
+          "notify_services": "Értesítési műveletek"
         },
         "data_description": {
-          "scan_interval": "A Parcel óránként 20 kérést enged, ezért a minimum 5 perc."
+          "scan_interval": "A Parcel óránként 20 kérést enged, ezért a minimum 5 perc.",
+          "notify_services": "Ezeket a műveleteket (notify.mobile_app_…) értesíti, amikor egy küldemény kézbesítés alatt áll vagy kézbesítették. Hagyd üresen, ha egyiket sem."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Több Parcel-fiók van beállítva: adja meg a config_entry_id értéket." },
     "add_failed": { "message": "A Parcel nem tudta hozzáadni a küldeményt: {error}" },
     "refresh_failed": { "message": "A Parcel frissítése sikertelen: {error}" },
-    "rate_limited": { "message": "Elérte a Parcel kéréskorlátját, később újrapróbálja: {error}" }
+    "rate_limited": { "message": "Elérte a Parcel kéréskorlátját, később újrapróbálja: {error}" },
+    "notify_out_for_delivery": { "message": "Kézbesítés alatt" },
+    "notify_delivered": { "message": "Kézbesítve" },
+    "notify_unnamed": { "message": "Csomag" }
   }
 }

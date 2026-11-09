@@ -10,6 +10,7 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.translation import async_get_translations
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
@@ -17,6 +18,7 @@ from .api import ParcelApi, ParcelAuthError, ParcelError, ParcelRateLimitError
 from .const import (
     CARRIERS_REFRESH,
     CONF_FILTER_MODE,
+    CONF_NOTIFY,
     CONF_SCAN_INTERVAL,
     DEFAULT_FILTER_MODE,
     DEFAULT_SCAN_INTERVAL,
@@ -52,6 +54,7 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         )
         self.api = api
         self.filter_mode: str = entry.options.get(CONF_FILTER_MODE, DEFAULT_FILTER_MODE)
+        self.notify_services: list[str] = list(entry.options.get(CONF_NOTIFY, []))
         self.carriers: dict[str, str] = {}
         self._carriers_updated: datetime | None = None
         # Last known deliveries by key; None until the first successful update, so nothing fires at startup.
@@ -122,17 +125,40 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
 
     def _fire(self, event: str, delivery: dict[str, Any]) -> None:
         code = delivery.get("carrier_code") or ""
-        self.hass.bus.async_fire(
-            event,
-            {
-                "config_entry_id": self.config_entry.entry_id,
-                "carrier_code": code,
-                "carrier": self.carriers.get(code, code),
-                "name": delivery.get("description"),
-                # A stable id for automations, not the tracking number: events end up in the recorder and logbook.
-                "tracking_id": tracking_id(delivery),
-            },
-        )
+        data = {
+            "config_entry_id": self.config_entry.entry_id,
+            "carrier_code": code,
+            "carrier": self.carriers.get(code, code),
+            "name": delivery.get("description"),
+            # A stable id for automations, not the tracking number: events end up in the recorder and logbook.
+            "tracking_id": tracking_id(delivery),
+        }
+        self.hass.bus.async_fire(event, data)
+        if self.notify_services:
+            self.hass.async_create_task(self._async_notify(event, data), f"{DOMAIN}_notify")
+
+    async def _async_notify(self, event: str, data: dict[str, Any]) -> None:
+        """Tell the notify actions chosen in the options, in Home Assistant's language."""
+        strings = await async_get_translations(self.hass, self.hass.config.language, "exceptions", [DOMAIN])
+        kind = "delivered" if event == EVENT_DELIVERED else "out_for_delivery"
+
+        def text(key: str) -> str:
+            return strings.get(f"component.{DOMAIN}.exceptions.{key}.message", key)
+
+        title = text(f"notify_{kind}")
+        name = data["name"] or text("notify_unnamed")
+        message = f"{name} · {data['carrier']}" if data["carrier"] else name
+        for service in self.notify_services:
+            target = service.removeprefix("notify.")
+            if not self.hass.services.has_service("notify", target):
+                _LOGGER.warning("Notify action notify.%s not found", target)
+                continue
+            try:
+                await self.hass.services.async_call(
+                    "notify", target, {"title": title, "message": message, "data": {"tag": data["tracking_id"]}}
+                )
+            except Exception:  # noqa: BLE001 - a broken notifier must not stop the others
+                _LOGGER.exception("Could not notify with notify.%s", target)
 
     async def async_ensure_carriers(self) -> dict[str, str]:
         """Load the carriers list at most once a day; keep the old one on failure."""

@@ -28,10 +28,12 @@
         "title": "Parcel опције",
         "data": {
           "filter_mode": "Пошиљке за приказ",
-          "scan_interval": "Интервал ажурирања"
+          "scan_interval": "Интервал ажурирања",
+          "notify_services": "Акције обавештења"
         },
         "data_description": {
-          "scan_interval": "Parcel дозвољава 20 захтева по сату, па је 5 минута минимум."
+          "scan_interval": "Parcel дозвољава 20 захтева по сату, па је 5 минута минимум.",
+          "notify_services": "Обавести ове акције (notify.mobile_app_…) када је пошиљка на испоруци или испоручена. Оставите празно за ниједну."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Подешено је више Parcel налога: наведите config_entry_id." },
     "add_failed": { "message": "Parcel није могао да дода пошиљку: {error}" },
     "refresh_failed": { "message": "Ажурирање Parcel-а није успело: {error}" },
-    "rate_limited": { "message": "Достигнуто је ограничење захтева за Parcel, нови покушај касније: {error}" }
+    "rate_limited": { "message": "Достигнуто је ограничење захтева за Parcel, нови покушај касније: {error}" },
+    "notify_out_for_delivery": { "message": "На испоруци" },
+    "notify_delivered": { "message": "Испоручено" },
+    "notify_unnamed": { "message": "Пакет" }
   }
 }

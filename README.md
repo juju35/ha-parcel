@@ -23,6 +23,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: list of deliveries, events on click, add form with carrier search
 - `custom:parcel-mini-card` compact card: active deliveries and deliveries arriving today, with a button to open the full card
 - `parcel_out_for_delivery` and `parcel_delivered` events when a delivery changes status, for automations
+- **Notifications** to the notify actions of your choice when a delivery is out for delivery or delivered, with no automation to write
 - Diagnostics download with the API key, tracking numbers, addresses and emails redacted
 - API key entered in the UI, never in YAML
 - English, French, German, Spanish, Serbian (Cyrillic and Latin), Italian, Dutch, Portuguese, Polish, Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Slovak, Czech, Slovenian, Latvian and Greek
@@ -72,6 +73,7 @@ Options (**Configure** button):
 |---|---|---|
 | Deliveries to show | Recent | `recent`: active and recently delivered. `active`: active only |
 | Update interval | 10 min | Minimum 5 min: Parcel limits the API to 20 requests per hour |
+| Notify actions | none | The notify actions (`notify.mobile_app_phone`…) told when a delivery is *Out for delivery* or *Delivered*: its name and carrier, in Home Assistant's language, tagged with the delivery so the second replaces the first on a phone. The same transitions as the events |
 
 ### Card
 

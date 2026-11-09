@@ -19,6 +19,8 @@ DEFAULT_FILTER_MODE: Final = FILTER_RECENT
 
 # The deliveries endpoint allows 20 requests per hour: never poll faster than every 5 minutes.
 CONF_SCAN_INTERVAL: Final = "scan_interval"
+# Notify actions (notify.mobile_app_…) told when a delivery is out for delivery or delivered.
+CONF_NOTIFY: Final = "notify_services"
 DEFAULT_SCAN_INTERVAL: Final = 10
 MIN_SCAN_INTERVAL: Final = 5
 CARRIERS_REFRESH: Final = timedelta(hours=24)

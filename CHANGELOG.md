@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.0 - 2026-11-09
+
+### Features
+- **Notifications** (option *Notify actions*): the notify actions chosen are told when a delivery is out for delivery or delivered — its name and carrier, in Home Assistant's language, tagged with the delivery so the second replaces the first on a phone. The same transitions as the `parcel_out_for_delivery` and `parcel_delivered` events, no automation needed.
+
 ## 1.4.0 - 2026-11-09
 
 ### Performance

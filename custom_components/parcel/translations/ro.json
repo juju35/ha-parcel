@@ -28,10 +28,12 @@
         "title": "Opțiuni Parcel",
         "data": {
           "filter_mode": "Colete afișate",
-          "scan_interval": "Interval de actualizare"
+          "scan_interval": "Interval de actualizare",
+          "notify_services": "Acțiuni de notificare"
         },
         "data_description": {
-          "scan_interval": "Parcel permite 20 de cereri pe oră, deci minimul este de 5 minute."
+          "scan_interval": "Parcel permite 20 de cereri pe oră, deci minimul este de 5 minute.",
+          "notify_services": "Anunță aceste acțiuni (notify.mobile_app_…) când un colet este în livrare sau livrat. Lasă gol pentru niciuna."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Sunt configurate mai multe conturi Parcel: setați config_entry_id." },
     "add_failed": { "message": "Parcel nu a putut adăuga livrarea: {error}" },
     "refresh_failed": { "message": "Actualizarea Parcel a eșuat: {error}" },
-    "rate_limited": { "message": "Limita de cereri Parcel a fost atinsă, se reîncearcă mai târziu: {error}" }
+    "rate_limited": { "message": "Limita de cereri Parcel a fost atinsă, se reîncearcă mai târziu: {error}" },
+    "notify_out_for_delivery": { "message": "În livrare" },
+    "notify_delivered": { "message": "Livrat" },
+    "notify_unnamed": { "message": "Colet" }
   }
 }

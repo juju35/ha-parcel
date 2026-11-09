@@ -28,10 +28,12 @@
         "title": "Опции на Parcel",
         "data": {
           "filter_mode": "Показвани пратки",
-          "scan_interval": "Интервал на обновяване"
+          "scan_interval": "Интервал на обновяване",
+          "notify_services": "Действия за известяване"
         },
         "data_description": {
-          "scan_interval": "Parcel позволява 20 заявки на час, затова минимумът е 5 минути."
+          "scan_interval": "Parcel позволява 20 заявки на час, затова минимумът е 5 минути.",
+          "notify_services": "Известявай тези действия (notify.mobile_app_…), когато пратка е за доставка или доставена. Оставете празно за никое."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Конфигурирани са няколко акаунта в Parcel: задайте config_entry_id." },
     "add_failed": { "message": "Parcel не успя да добави пратката: {error}" },
     "refresh_failed": { "message": "Неуспешно обновяване на Parcel: {error}" },
-    "rate_limited": { "message": "Достигнат е лимитът на заявки към Parcel, нов опит по-късно: {error}" }
+    "rate_limited": { "message": "Достигнат е лимитът на заявки към Parcel, нов опит по-късно: {error}" },
+    "notify_out_for_delivery": { "message": "За доставка" },
+    "notify_delivered": { "message": "Доставено" },
+    "notify_unnamed": { "message": "Пратка" }
   }
 }

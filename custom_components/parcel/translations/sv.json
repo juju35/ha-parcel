@@ -28,10 +28,12 @@
         "title": "Parcel-alternativ",
         "data": {
           "filter_mode": "Paket som visas",
-          "scan_interval": "Uppdateringsintervall"
+          "scan_interval": "Uppdateringsintervall",
+          "notify_services": "Aviseringsåtgärder"
         },
         "data_description": {
-          "scan_interval": "Parcel tillåter 20 förfrågningar per timme, så minimum är 5 minuter."
+          "scan_interval": "Parcel tillåter 20 förfrågningar per timme, så minimum är 5 minuter.",
+          "notify_services": "Meddela dessa åtgärder (notify.mobile_app_…) när en försändelse är ute för leverans eller levererad. Lämna tomt för ingen."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Flera Parcel-konton är konfigurerade: ange config_entry_id." },
     "add_failed": { "message": "Parcel kunde inte lägga till försändelsen: {error}" },
     "refresh_failed": { "message": "Uppdateringen av Parcel misslyckades: {error}" },
-    "rate_limited": { "message": "Parcels gräns för förfrågningar är nådd, försöker igen senare: {error}" }
+    "rate_limited": { "message": "Parcels gräns för förfrågningar är nådd, försöker igen senare: {error}" },
+    "notify_out_for_delivery": { "message": "Ute för leverans" },
+    "notify_delivered": { "message": "Levererad" },
+    "notify_unnamed": { "message": "Paket" }
   }
 }

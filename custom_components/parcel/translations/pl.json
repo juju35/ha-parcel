@@ -28,10 +28,12 @@
         "title": "Opcje Parcel",
         "data": {
           "filter_mode": "Wyświetlane przesyłki",
-          "scan_interval": "Interwał aktualizacji"
+          "scan_interval": "Interwał aktualizacji",
+          "notify_services": "Akcje powiadomień"
         },
         "data_description": {
-          "scan_interval": "Parcel pozwala na 20 zapytań na godzinę, więc minimum to 5 minut."
+          "scan_interval": "Parcel pozwala na 20 zapytań na godzinę, więc minimum to 5 minut.",
+          "notify_services": "Powiadamiaj te akcje (notify.mobile_app_…), gdy przesyłka jest w doręczeniu lub doręczona. Zostaw puste, aby nie powiadamiać."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Skonfigurowano kilka kont Parcel: podaj config_entry_id." },
     "add_failed": { "message": "Parcel nie mógł dodać przesyłki: {error}" },
     "refresh_failed": { "message": "Aktualizacja Parcel nie powiodła się: {error}" },
-    "rate_limited": { "message": "Osiągnięto limit zapytań Parcel, ponowna próba później: {error}" }
+    "rate_limited": { "message": "Osiągnięto limit zapytań Parcel, ponowna próba później: {error}" },
+    "notify_out_for_delivery": { "message": "W doręczeniu" },
+    "notify_delivered": { "message": "Doręczono" },
+    "notify_unnamed": { "message": "Przesyłka" }
   }
 }

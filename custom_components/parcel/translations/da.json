@@ -28,10 +28,12 @@
         "title": "Parcel-indstillinger",
         "data": {
           "filter_mode": "Pakker, der vises",
-          "scan_interval": "Opdateringsinterval"
+          "scan_interval": "Opdateringsinterval",
+          "notify_services": "Notifikationshandlinger"
         },
         "data_description": {
-          "scan_interval": "Parcel tillader 20 forespørgsler i timen, så minimum er 5 minutter."
+          "scan_interval": "Parcel tillader 20 forespørgsler i timen, så minimum er 5 minutter.",
+          "notify_services": "Giv disse handlinger (notify.mobile_app_…) besked, når en forsendelse er ude til levering eller leveret. Lad stå tomt for ingen."
         }
       }
     }
@@ -80,6 +82,9 @@
     "several_accounts": { "message": "Flere Parcel-konti er konfigureret: angiv config_entry_id." },
     "add_failed": { "message": "Parcel kunne ikke tilføje forsendelsen: {error}" },
     "refresh_failed": { "message": "Opdatering af Parcel mislykkedes: {error}" },
-    "rate_limited": { "message": "Parcels grænse for forespørgsler er nået, prøver igen senere: {error}" }
+    "rate_limited": { "message": "Parcels grænse for forespørgsler er nået, prøver igen senere: {error}" },
+    "notify_out_for_delivery": { "message": "Ude til levering" },
+    "notify_delivered": { "message": "Leveret" },
+    "notify_unnamed": { "message": "Pakke" }
   }
 }
