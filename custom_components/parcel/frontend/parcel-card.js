@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.5.1';
+var PARCEL_CARD_VERSION = '1.6.0';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -37,6 +37,7 @@ var ParcelI18n = {
       entity: 'Capteur Parcel',
       title: 'Titre',
       show_delivered: 'Afficher les colis livrés',
+      show_title: 'Afficher le titre',
       show_add: 'Afficher le bouton d\'ajout',
       show_refresh: 'Afficher le bouton Actualiser',
       max_events: 'Événements affichés quand un colis est déplié',
@@ -87,6 +88,7 @@ var ParcelI18n = {
       entity: 'Parcel sensor',
       title: 'Title',
       show_delivered: 'Show delivered parcels',
+      show_title: 'Show title',
       show_add: 'Show add button',
       show_refresh: 'Show refresh button',
       max_events: 'Events shown when a parcel is expanded',
@@ -137,6 +139,7 @@ var ParcelI18n = {
       entity: 'Parcel-Sensor',
       title: 'Titel',
       show_delivered: 'Zugestellte Sendungen anzeigen',
+      show_title: 'Titel anzeigen',
       show_add: 'Schaltfläche „Hinzufügen“ anzeigen',
       show_refresh: 'Schaltfläche „Aktualisieren“ anzeigen',
       max_events: 'Angezeigte Ereignisse bei aufgeklappter Sendung',
@@ -187,6 +190,7 @@ var ParcelI18n = {
       entity: 'Sensor de Parcel',
       title: 'Título',
       show_delivered: 'Mostrar los envíos entregados',
+      show_title: 'Mostrar el título',
       show_add: 'Mostrar el botón Añadir',
       show_refresh: 'Mostrar el botón Actualizar',
       max_events: 'Eventos mostrados al desplegar un envío',
@@ -237,6 +241,7 @@ var ParcelI18n = {
       entity: 'Parcel сензор',
       title: 'Наслов',
       show_delivered: 'Прикажи испоручене пошиљке',
+      show_title: 'Прикажи наслов',
       show_add: 'Прикажи дугме за додавање',
       show_refresh: 'Прикажи дугме за освежавање',
       max_events: 'Догађаји приказани када се пошиљка прошири',
@@ -287,6 +292,7 @@ var ParcelI18n = {
       entity: 'Parcel senzor',
       title: 'Naslov',
       show_delivered: 'Prikaži isporučene pošiljke',
+      show_title: 'Prikaži naslov',
       show_add: 'Prikaži dugme za dodavanje',
       show_refresh: 'Prikaži dugme za osvežavanje',
       max_events: 'Događaji prikazani kada se pošiljka proširi',
@@ -337,6 +343,7 @@ var ParcelI18n = {
       entity: 'Sensore Parcel',
       title: 'Titolo',
       show_delivered: 'Mostra le spedizioni consegnate',
+      show_title: 'Mostra il titolo',
       show_add: 'Mostra il pulsante Aggiungi',
       show_refresh: 'Mostra il pulsante Aggiorna',
       max_events: 'Eventi mostrati quando una spedizione è espansa',
@@ -387,6 +394,7 @@ var ParcelI18n = {
       entity: 'Parcel-sensor',
       title: 'Titel',
       show_delivered: 'Bezorgde zendingen tonen',
+      show_title: 'Titel tonen',
       show_add: 'Knop Toevoegen tonen',
       show_refresh: 'Knop Vernieuwen tonen',
       max_events: 'Getoonde gebeurtenissen bij een uitgeklapte zending',
@@ -437,6 +445,7 @@ var ParcelI18n = {
       entity: 'Sensor do Parcel',
       title: 'Título',
       show_delivered: 'Mostrar as encomendas entregues',
+      show_title: 'Mostrar o título',
       show_add: 'Mostrar o botão Adicionar',
       show_refresh: 'Mostrar o botão Atualizar',
       max_events: 'Eventos mostrados ao expandir uma encomenda',
@@ -487,6 +496,7 @@ var ParcelI18n = {
       entity: 'Sensor Parcel',
       title: 'Tytuł',
       show_delivered: 'Pokaż doręczone przesyłki',
+      show_title: 'Pokaż tytuł',
       show_add: 'Pokaż przycisk dodawania',
       show_refresh: 'Pokaż przycisk odświeżania',
       max_events: 'Zdarzenia wyświetlane po rozwinięciu przesyłki',
@@ -537,6 +547,7 @@ var ParcelI18n = {
       entity: 'Senzor Parcel',
       title: 'Titlu',
       show_delivered: 'Afișează coletele livrate',
+      show_title: 'Afișează titlul',
       show_add: 'Afișează butonul de adăugare',
       show_refresh: 'Afișează butonul de reîmprospătare',
       max_events: 'Evenimente afișate la extinderea unui colet',
@@ -587,6 +598,7 @@ var ParcelI18n = {
       entity: 'Parcel-sensor',
       title: 'Titel',
       show_delivered: 'Vis leverede pakker',
+      show_title: 'Vis titel',
       show_add: 'Vis knappen Tilføj',
       show_refresh: 'Vis knappen Opdater',
       max_events: 'Hændelser, der vises, når en pakke er udvidet',
@@ -637,6 +649,7 @@ var ParcelI18n = {
       entity: 'Parcel-sensor',
       title: 'Titel',
       show_delivered: 'Visa levererade paket',
+      show_title: 'Visa rubrik',
       show_add: 'Visa knappen Lägg till',
       show_refresh: 'Visa knappen Uppdatera',
       max_events: 'Händelser som visas när ett paket är expanderat',
@@ -687,6 +700,7 @@ var ParcelI18n = {
       entity: 'Сензор на Parcel',
       title: 'Заглавие',
       show_delivered: 'Показване на доставените пратки',
+      show_title: 'Показване на заглавието',
       show_add: 'Показване на бутона за добавяне',
       show_refresh: 'Показване на бутона за опресняване',
       max_events: 'Събития, показвани при разгъната пратка',
@@ -737,6 +751,7 @@ var ParcelI18n = {
       entity: 'Сенсор Parcel',
       title: 'Заголовок',
       show_delivered: 'Показывать доставленные посылки',
+      show_title: 'Показывать заголовок',
       show_add: 'Показывать кнопку добавления',
       show_refresh: 'Показывать кнопку обновления',
       max_events: 'Число событий в раскрытой посылке',
@@ -787,6 +802,7 @@ var ParcelI18n = {
       entity: 'Сенсор Parcel',
       title: 'Заголовок',
       show_delivered: 'Показувати доставлені посилки',
+      show_title: 'Показувати заголовок',
       show_add: 'Показувати кнопку додавання',
       show_refresh: 'Показувати кнопку оновлення',
       max_events: 'Кількість подій у розгорнутій посилці',
@@ -837,6 +853,7 @@ var ParcelI18n = {
       entity: 'Parcel érzékelő',
       title: 'Cím',
       show_delivered: 'Kézbesített csomagok megjelenítése',
+      show_title: 'Cím megjelenítése',
       show_add: 'Hozzáadás gomb megjelenítése',
       show_refresh: 'Frissítés gomb megjelenítése',
       max_events: 'Megjelenített események kibontott csomagnál',
@@ -887,6 +904,7 @@ var ParcelI18n = {
       entity: 'Senzor Parcel',
       title: 'Názov',
       show_delivered: 'Zobraziť doručené zásielky',
+      show_title: 'Zobraziť názov',
       show_add: 'Zobraziť tlačidlo pridania',
       show_refresh: 'Zobraziť tlačidlo obnovenia',
       max_events: 'Udalosti zobrazené po rozbalení zásielky',
@@ -937,6 +955,7 @@ var ParcelI18n = {
       entity: 'Senzor Parcel',
       title: 'Název',
       show_delivered: 'Zobrazit doručené zásilky',
+      show_title: 'Zobrazit název',
       show_add: 'Zobrazit tlačítko přidání',
       show_refresh: 'Zobrazit tlačítko obnovení',
       max_events: 'Události zobrazené po rozbalení zásilky',
@@ -987,6 +1006,7 @@ var ParcelI18n = {
       entity: 'Senzor Parcel',
       title: 'Naslov',
       show_delivered: 'Prikaži dostavljene pošiljke',
+      show_title: 'Prikaži naslov',
       show_add: 'Prikaži gumb za dodajanje',
       show_refresh: 'Prikaži gumb za osvežitev',
       max_events: 'Dogodki, prikazani ob razširjeni pošiljki',
@@ -1037,6 +1057,7 @@ var ParcelI18n = {
       entity: 'Parcel sensors',
       title: 'Virsraksts',
       show_delivered: 'Rādīt piegādātos sūtījumus',
+      show_title: 'Rādīt virsrakstu',
       show_add: 'Rādīt pievienošanas pogu',
       show_refresh: 'Rādīt atsvaidzināšanas pogu',
       max_events: 'Notikumi, kas redzami izvērstam sūtījumam',
@@ -1087,6 +1108,7 @@ var ParcelI18n = {
       entity: 'Αισθητήρας Parcel',
       title: 'Τίτλος',
       show_delivered: 'Εμφάνιση παραδομένων δεμάτων',
+      show_title: 'Εμφάνιση τίτλου',
       show_add: 'Εμφάνιση κουμπιού προσθήκης',
       show_refresh: 'Εμφάνιση κουμπιού ανανέωσης',
       max_events: 'Συμβάντα που εμφανίζονται σε ανεπτυγμένο δέμα',
@@ -1109,7 +1131,7 @@ var ParcelI18n = {
 };
 
 // Single source of the config defaults, shared by the card (setConfig) and the editor.
-var PARCEL_DEFAULTS = { show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
+var PARCEL_DEFAULTS = { show_title: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
 
 var PARCEL_STATUS_STYLE = {
   delivered: { icon: 'mdi:package-variant-closed-check', color: 'var(--success-color, #43a047)' },
@@ -1213,6 +1235,8 @@ class ParcelCard extends HTMLElement {
 
   setConfig(config) {
     this._config = Object.assign({}, PARCEL_DEFAULTS, config || {});
+    // show_title: the header's title, hidden by the stylesheet
+    this.toggleAttribute?.('hide-title', config?.show_title === false);
     this._expanded = this._expanded || {};
     // Read the sensor now: with hass already set (visual editor, dashboard change), waiting for the
     // next hass update would show "sensor not found" meanwhile.
@@ -1670,6 +1694,7 @@ class ParcelCard extends HTMLElement {
       // 5ch of the 16 px title font is the width of four letters and the ellipsis ("Deli…"). The title block has the
       // same minimum plus the logo's 40 px and gap: a smaller one let the title slide under the pill.
       '.titles { flex: 1 1 0; min-width: 5ch; overflow: hidden; }',
+      ':host([hide-title]) .titles > .name { display: none; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
@@ -1863,6 +1888,7 @@ function parcelEditorSchema(t) {
       type: 'grid',
       name: '',
       schema: [
+        { name: 'show_title', selector: { boolean: {} } },
         { name: 'show_delivered', selector: { boolean: {} } },
         { name: 'show_refresh', selector: { boolean: {} } },
         { name: 'show_add', selector: { boolean: {} } },
