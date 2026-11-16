@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 - 2026-11-17
+
+### Features
+- `illustration_background` option (also in the visual editor): `false` removes the sky and the road behind the illustrated header. The houses and the van stand on a hairline, on the card's own background, still animated. The texts, the icon and the buttons then take the card's look, and the night mode keeps its lit windows and headlight.
+
 ## 1.7.0 - 2026-11-16
 
 ### Features

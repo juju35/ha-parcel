@@ -661,7 +661,7 @@ const fakeEl = () => {
   };
 };
 const fakeHeader = () => {
-  const header = { writes: 0, els: {}, html: '' };
+  const header = { writes: 0, els: {}, html: '', classList: fakeEl().classList, setAttribute() {} };
   Object.defineProperty(header, 'innerHTML', {
     get: () => header.html,
     set: (v) => { header.html = v; header.writes++; header.els = {}; },
@@ -941,7 +941,15 @@ test('the illustration turns to night with the sun, the dark theme or illustrati
   assert.doesNotMatch(self.header.html, /class="scene"/);
   assert.match(self.header.html, /class="logo"/);
   assert.equal(self.header.className, 'header');
+  // illustration_background: false keeps the scene without its sky and road.
+  const bare = headerCard({ 'sensor.a': sensor('sensor.a') }, { illustration_background: false });
+  assert.match(bare.header.html, /<svg class="scene"/);
+  assert.ok(bare.header.classList.contains('bare'));
+  const css = styles();
+  assert.match(css, /\.header\.hero\.bare, \.header\.hero\.bare\.night \{ background: none;/);
+  assert.match(css, /\.bare \.scene \.sun, \.bare \.scene \.moon, \.bare \.scene \.stars, \.bare \.scene \.clouds, \.bare \.scene \.hill, \.bare \.road \.marks \{ display: none; \}/);
   const hero = headerCard({ 'sensor.a': sensor('sensor.a') });
+  assert.ok(!hero.header.classList.contains('bare'));
   assert.match(hero.header.html, /<svg class="scene"/);
   assert.equal(hero.header.className, 'header hero');
 });
