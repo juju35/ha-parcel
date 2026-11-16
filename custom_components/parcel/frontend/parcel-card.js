@@ -1363,15 +1363,13 @@ var PARCEL_SCENE =
   '<circle cx="6.5" cy="76.5" r="3" class="wheel"/><circle cx="26.5" cy="76.5" r="3" class="wheel"/></g>' +
   '</svg>';
 
-// Night illustration: forced by illustration_theme, else the sun below the horizon, else the dark theme.
+// Night illustration: forced by illustration_theme, else with the dark theme (a light sky on a dark dashboard
+// glares), else when the sun is below the horizon.
 function parcelNight(hass, config) {
   var mode = config?.illustration_theme;
   if (mode === 'night') return true;
   if (mode === 'day') return false;
-  var sun = hass?.states?.['sun.sun']?.state;
-  if (sun === 'below_horizon') return true;
-  if (sun === 'above_horizon') return false;
-  return !!hass?.themes?.darkMode;
+  return !!hass?.themes?.darkMode || hass?.states?.['sun.sun']?.state === 'below_horizon';
 }
 
 // The featured parcel: the most pressing active one (PARCEL_FEATURE_RANK, then the list order: expected date),

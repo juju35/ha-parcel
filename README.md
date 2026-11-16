@@ -24,7 +24,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `parcel.refresh` action to force an update
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: an animated street as header, the deliveries as tiles in **Active / Delivered** tabs, events on click, add form with carrier search
 - The illustration follows the most pressing parcel: the van brings it to the door, drives by while it is in transit, leaves a notice on the door after a failed attempt; the parcel waits in the parcel shop to be picked up, or lies on the doorstep once delivered
-- **Night mode** of the illustration: stars, moon, lit windows and the van's headlight; it follows the sun (`sun.sun`), else the dark theme of Home Assistant, or is forced with `illustration_theme`
+- **Night mode** of the illustration: stars, moon, lit windows and the van's headlight; it comes with the dark theme of Home Assistant and after sunset (`sun.sun`), or is forced with `illustration_theme`
 - Tiles with a tinted round icon and its state badge, the state line in the state's color, the expected date and the carrier as pills; the parcel out for delivery has a van running along its way, a failed attempt shakes, a delivered parcel gets its check mark drawn
 - `custom:parcel-mini-card` compact card: the featured parcel on an illustrated banner (a problem first, then the parcel at the door, the one to pick up, the rest), with a button to open the full card
 - `parcel_out_for_delivery` and `parcel_delivered` events when a delivery changes status, for automations
@@ -98,7 +98,7 @@ type: custom:parcel-card
 | `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |
 | `max_events` | `5` | Number of events shown when a delivery is expanded |
 | `illustration` | `true` | The animated street as header; `false` for a classic header with the round icon |
-| `illustration_theme` | `auto` | `auto` (night when `sun.sun` is below the horizon, else with the dark theme of Home Assistant), `day` or `night` |
+| `illustration_theme` | `auto` | `auto` (night with the dark theme of Home Assistant, or when `sun.sun` is below the horizon), `day` or `night` |
 | `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |
 
 Click a delivery to see its events, and the tracking number to copy it.

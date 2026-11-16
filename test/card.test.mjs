@@ -931,6 +931,9 @@ test('the illustration turns to night with the sun, the dark theme or illustrati
   assert.equal(night(sun('below_horizon'), {}), true);
   assert.equal(night(sun('above_horizon'), { illustration_theme: 'auto' }), false);
   assert.equal(night({ states: {}, themes: { darkMode: true } }, {}), true);
+  // The dark theme gets the night sky, even by day.
+  assert.equal(night({ ...sun('above_horizon'), themes: { darkMode: true } }, {}), true);
+  assert.equal(night({ ...sun('above_horizon'), themes: { darkMode: true } }, { illustration_theme: 'day' }), false);
   assert.equal(night(sun('below_horizon'), { illustration_theme: 'day' }), false);
   assert.equal(night(sun('above_horizon'), { illustration_theme: 'night' }), true);
   // illustration: false gives the classic header, with the round icon and no scenery.
