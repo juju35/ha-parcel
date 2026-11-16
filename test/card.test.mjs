@@ -130,7 +130,7 @@ test('Serbian strings keep the English placeholders and stay in one script', () 
     assert.equal(entries.length, Object.keys(en).length, lang);
     for (const [key, value] of entries) {
       assert.deepEqual(holders(value), holders(en[key]), `${lang} ${key}`);
-      if (lang === 'sr') assert.doesNotMatch(value.replace(allowed, ''), /[A-Za-z]/, `${lang} ${key}`);
+      if (lang === 'sr') assert.doesNotMatch(value.replace(allowed, '').replace(/\{\w+\}/g, ''), /[A-Za-z]/, `${lang} ${key}`);
       else assert.doesNotMatch(value, /[Ѐ-ӿ]/, `${lang} ${key}`);
     }
   }
@@ -352,9 +352,13 @@ test('deliveries sort by expected date even when Date.parse is strict (Safari/We
     _ensureShell() {},
   });
   self._render();
-  const order = [...list.innerHTML.matchAll(/data-id="ups:(\w+)"/g)].map((m) => m[1]);
-  // Active sorted by date, unknown date last, delivered after the active ones.
-  assert.deepEqual(order, ['soon', 'late', 'ts', 'none', 'done']);
+  let order = [...list.innerHTML.matchAll(/data-id="ups:(\w+)"/g)].map((m) => m[1]);
+  // Active sorted by date, unknown date last; the delivered ones have their own tab.
+  assert.deepEqual(order, ['soon', 'late', 'ts', 'none']);
+  self._tab = 'delivered';
+  self._render();
+  order = [...list.innerHTML.matchAll(/data-id="ups:(\w+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ['done']);
 });
 
 test('deliveries sort a date without time as local midnight of that day', () => {
@@ -493,26 +497,31 @@ const renderDeliveries = (deliveries, extra = {}) => {
 
 test('a delivered row is not faded as a whole: its texts keep a readable contrast', () => {
   const css = styles();
-  assert.doesNotMatch(css, /\.delivery\.done\s*\{[^}]*opacity/);
-  assert.match(css, /\.delivery\.done \.desc \{[^}]*color: var\(--secondary-text-color\)/);
+  assert.doesNotMatch(css, /\.done\s*\{[^}]*opacity/);
+  assert.doesNotMatch(css, /\.delivery[^{]*\{[^}]*opacity/);
 });
 
-test('status texts are mixed with the text color, the state color stays on the chip background', () => {
+test('status texts are mixed with the text color, the state color stays on the icon and pill backgrounds', () => {
   const css = styles();
   const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
-  assert.match(rule('.chip'), /color: color-mix\(in srgb, var\(--c\) 50%, var\(--primary-text-color\)\)/);
-  assert.match(rule('.chip'), /background: color-mix\(in srgb, var\(--c\) 15%, transparent\)/);
-  assert.match(rule('.status'), /color: color-mix\(in srgb, var\(--primary-color\) 50%, var\(--primary-text-color\)\)/);
+  assert.match(rule('.state'), /color: color-mix\(in srgb, var\(--c\) 70%, var\(--primary-text-color\)\)/);
+  assert.match(rule('.chip.expected'), /color: color-mix\(in srgb, var\(--c\) 60%, var\(--primary-text-color\)\)/);
+  assert.match(rule('.chip.expected'), /background: color-mix\(in srgb, var\(--c\) 15%, transparent\)/);
+  assert.match(rule('.pill'), /background: color-mix\(in srgb, var\(--c\) 18%, transparent\)/);
   assert.match(rule('.actions .submit'), /color: color-mix\(in srgb, var\(--primary-color\) 50%, var\(--primary-text-color\)\)/);
-  for (const sel of ['.sub.error', '.msg.error', '.msg.ok']) assert.match(rule(sel), /color: color-mix\(in srgb, var\(--(error|success)-color, #[0-9a-f]+\) 50%, var\(--primary-text-color\)\)/, sel);
+  assert.match(rule('.sub.error'), /color: color-mix\(in srgb, var\(--error-color, #db4437\) 55%, var\(--sky-text, var\(--primary-text-color\)\)\)/);
+  for (const sel of ['.msg.error', '.msg.ok']) assert.match(rule(sel), /color: color-mix\(in srgb, var\(--(error|success)-color, #[0-9a-f]+\) 50%, var\(--primary-text-color\)\)/, sel);
 });
 
 test('animations and transitions stop with prefers-reduced-motion', () => {
   const css = styles();
   const media = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
   assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'), 'no reduced-motion media query');
-  assert.match(media, /\.refresh-btn\.spinning ha-icon \{[^}]*animation: none/);
-  assert.match(media, /\.chevron \{[^}]*transition: none/);
+  assert.match(media, /\.scene \*, \.pill, \.pill \*, \.state \.label, \.track \*, \.refresh-btn\.spinning ha-icon \{ animation: none !important; \}/);
+  assert.match(media, /\.chevron, \.delivery \{ transition: none; \}/);
+  // Every animation of the stylesheet is stopped there.
+  const animated = [...css.matchAll(/^(.*?)\{[^}]*\banimation: parcel-/gm)].length;
+  assert.ok(animated > 10, 'animations found');
 });
 
 test('a delivery description and its tracking number are keyboard buttons', () => {
@@ -640,6 +649,9 @@ const fakeEl = () => {
     listeners: 0,
     addEventListener() { this.listeners++; },
     focus() {},
+    style: { setProperty(k, v) { this[k] = v; } },
+    children: {},
+    querySelector(sel) { this.children[sel] = this.children[sel] || fakeEl(); return this.children[sel]; },
     classList: {
       contains: (c) => classes.has(c),
       add: (c) => classes.add(c),
@@ -687,8 +699,7 @@ test('a sensor update keeps the header buttons, so their keyboard focus is not l
   assert.equal(self.header.writes, 1, 'the header was rebuilt by a sensor update');
   assert.equal(self.header.querySelector('.refresh-btn'), refresh);
   assert.equal(self.header.querySelector('.add-btn'), add);
-  assert.equal(self.header.querySelector('.status-text').textContent, '3 active');
-  assert.equal(self.header.querySelector('.status').title, '3 active');
+  assert.equal(self.header.querySelector('.count').textContent, '3 active');
   // One listener each, not one more per render.
   assert.equal(refresh.listeners, 1);
 });
@@ -713,8 +724,9 @@ test('a failed refresh shows its error under the title, and the next attempt cle
   self._refresh();
   await flush();
   await flush();
-  const sub = self.header.querySelector('.sub');
+  const sub = self.header.querySelector('.sub.error');
   assert.ok(!sub.hidden);
+  assert.ok(self.header.querySelector('.count').hidden, 'the error takes the place of the count');
   assert.match(sub.textContent, /rate limited/);
   self._hass.callService = () => Promise.resolve();
   self._refresh();
@@ -730,24 +742,24 @@ test('the header is rebuilt only when its buttons or its language change', () =>
   assert.equal(self.header.querySelector('.add-btn'), null);
   self.setConfig({ entity: 'sensor.a', show_add: false, language: 'fr' });
   assert.equal(self.header.writes, 3);
-  assert.equal(self.header.querySelector('.status-text').textContent, '1 en cours');
+  assert.equal(self.header.querySelector('.count').textContent, '1 en cours');
   // A new title is only a text change.
   self.setConfig({ entity: 'sensor.a', show_add: false, language: 'fr', title: 'Colis' });
   assert.equal(self.header.writes, 3);
   assert.equal(self.header.querySelector('.name').textContent, 'Colis');
 });
 
-test('the sensor going unavailable hides the count pill, coming back shows it, buttons kept', () => {
+test('the sensor going unavailable hides the count, coming back shows it, buttons kept', () => {
   const self = headerCard({ 'sensor.a': sensor('sensor.a') });
   const refresh = self.header.querySelector('.refresh-btn');
   self._lastState = { entity_id: 'sensor.a', state: 'unavailable', attributes: {} };
   self._render();
-  assert.ok(self.header.querySelector('.status').hidden);
+  assert.ok(self.header.querySelector('.count').hidden);
   assert.match(self.list.innerHTML, /Parcel is unavailable/);
   self._lastState = { ...sensor('sensor.a'), state: '2' };
   self._render();
-  assert.ok(!self.header.querySelector('.status').hidden);
-  assert.equal(self.header.querySelector('.status-text').textContent, '2 active');
+  assert.ok(!self.header.querySelector('.count').hidden);
+  assert.equal(self.header.querySelector('.count').textContent, '2 active');
   assert.equal(self.header.querySelector('.refresh-btn'), refresh);
   assert.equal(self.header.writes, 1);
 });
@@ -758,36 +770,27 @@ test('the title and the delivery labels are text, never markup', () => {
   assert.equal(self.header.querySelector('.name').textContent, '<img src=x onerror=alert(1)>');
 });
 
-test('narrow header: the title truncates but keeps a few letters, the pill shrinks, the buttons never do', () => {
+test('narrow header: the title truncates, the buttons never shrink, the scenery gives way to the texts', () => {
   const css = styles();
   const rule = (sel) => css.split('\n').find((l) => l.startsWith(`${sel} {`)) || '';
   assert.match(rule('ha-card'), /container-type: inline-size/);
-  // flex-basis 0: the title takes what the pill leaves instead of sharing the room with it ("4 active" -> "4 a…").
-  assert.match(rule('.title'), /flex: 1 1 0;/);
+  assert.match(rule('.head'), /flex: 1 1 0;/);
+  assert.match(rule('.head'), /min-width: 0;/);
   assert.match(rule('.titles'), /flex: 1 1 0;/);
-  // Four letters and the ellipsis; the title block cannot shrink below it, or the title slid under the pill.
-  assert.match(rule('.titles'), /min-width: 5ch/);
-  assert.match(rule('.title'), /min-width: calc\(5ch \+ 50px\)/);
-  assert.match(rule('.title'), /font-size: 16px/);
+  assert.match(rule('.name'), /font-size: 16px/);
   assert.match(rule('.name'), /text-overflow: ellipsis/);
-  assert.match(rule('.status'), /flex: 0 1 auto/);
-  assert.match(rule('.status'), /min-width: 0/);
-  assert.match(rule('.status'), /max-width: 50%/);
-  assert.match(rule('.status-text'), /text-overflow: ellipsis/);
+  assert.match(rule('.sub'), /text-overflow: ellipsis/);
   assert.match(rule('.buttons'), /flex: none/);
   assert.match(rule('.buttons ha-icon-button'), /flex: none/);
-  // Up to 320 px the logo goes so the pill keeps its whole label; only under 240 px is the pill reduced to its
-  // colored dot, the count staying readable by screen readers.
+  // The texts sit left of the scene, which takes 2.5 times its height, at most a share of the card; under 300 px the
+  // scenery goes and the texts get the sky, up to the buttons.
+  assert.match(rule('.hero .head'), /right: var\(--scene-w\)/);
+  assert.match(rule('.header.hero'), /--scene-w: min\(calc\(\(var\(--hero-h\) - var\(--road-h\) \+ 5px\) \* 2\.5\), var\(--scene-max\)\)/);
   const query = (w) => css.split('\n').find((l) => l.startsWith(`@container (max-width: ${w}px)`)) || '';
-  assert.match(query(320), /\.logo \{ display: none; \}/);
-  assert.match(query(320), /\.title \{ min-width: 5ch; \}/);
-  assert.doesNotMatch(query(320), /clip-path/);
-  assert.match(query(240), /\.status-text \{[^}]*clip-path: inset\(50%\)/);
-  assert.match(query(240), /\.status::before \{[^}]*border-radius: 50%/);
-  assert.ok(!css.includes('@container (max-width: 300px)'), 'the pill must keep its label down to 240 px');
-  // The chip moves under the description instead of squeezing it.
-  assert.match(rule('.line1'), /flex-wrap: wrap/);
+  assert.match(query(300), /\.hero \.scene \{ display: none; \}/);
+  assert.match(query(300), /\.hero \.head \{ right: 0; padding-right: 84px; \}/);
   assert.match(rule('.desc'), /min-width: 0/);
+  assert.match(rule('.desc'), /text-overflow: ellipsis/);
 });
 
 test('the card keeps a width in auto-sized containers (inline-block, grid auto column, layout-card)', () => {
@@ -811,16 +814,22 @@ test('the card asks for 8 columns at least: 6 phone columns (~160 px) cannot hol
   assert.deepEqual({ ...card.getGridOptions() }, { columns: 12, min_columns: 8, rows: 'auto' });
 });
 
-test('the active count is a status pill between the title and the buttons, not a subtitle', () => {
+test('the active count is the subtitle under the title, the buttons stay apart', () => {
   const self = headerCard({ 'sensor.a': sensor('sensor.a') }, { show_refresh: true });
   const html = self.header.html;
-  assert.equal(self.header.querySelector('.status-text').textContent, '1 active');
-  assert.ok(!self.header.querySelector('.status').hidden);
-  assert.ok(self.header.querySelector('.sub').hidden, 'no subtitle without a refresh error');
-  assert.ok(html.indexOf('class="status"') < html.indexOf('refresh-btn'), html);
-  assert.ok(html.indexOf('class="title"') < html.indexOf('class="status"'), html);
-  assert.ok(html.indexOf('class="status"') < html.indexOf('class="buttons"'), html);
-  assert.ok(!/class="buttons"[\s\S]*class="status"/.test(html), 'the pill must not be inside the button group');
+  assert.equal(self.header.querySelector('.count').textContent, '1 active');
+  assert.ok(!self.header.querySelector('.count').hidden);
+  assert.ok(self.header.querySelector('.sub.error').hidden, 'no error without a failed refresh');
+  assert.ok(html.indexOf('class="name"') < html.indexOf('class="sub count"'), html);
+  assert.ok(html.indexOf('class="sub count"') < html.indexOf('class="buttons"'), html);
+  assert.ok(!/class="buttons"[\s\S]*class="sub count"/.test(html), 'the count must not be inside the button group');
+});
+
+test('the count adds the parcels arriving today', () => {
+  const now = Math.floor(Date.now() / 1000);
+  const deliveries = [deliveryOf('A1', { status_code: 4, status: 'out_for_delivery' }), deliveryOf('A2', { timestamp_expected: now })];
+  const self = headerCard({ 'sensor.a': { ...sensor('sensor.a', { deliveries }), state: '2' } });
+  assert.equal(self.header.querySelector('.count').textContent, '2 active · 2 arriving today');
 });
 
 test('no keyboard button sits inside another one: the description toggles, the tracking number copies', () => {
@@ -844,7 +853,7 @@ test('Polish counts active deliveries as "aktywne", like the other languages say
   assert.ok(!text.includes('w drodze'), text);
   assert.equal(pl.selector.filter_mode.options.active, 'Tylko aktywne');
   const self = headerCard({ 'sensor.a': sensor('sensor.a') }, { language: 'pl' });
-  assert.equal(self.header.querySelector('.status-text').textContent, '1 aktywne');
+  assert.equal(self.header.querySelector('.count').textContent, '1 aktywne');
 });
 
 // ── mini card ─────────────────────────────────────────────────────────────────
@@ -883,12 +892,65 @@ test('the mini card counts active deliveries and the ones arriving today', () =>
     deliveryOf('A6', { status_code: 0, status: 'delivered', date_expected: ymd(now) }),
   ]);
   assert.deepEqual({ ...self._counts(self._lastState.attributes.deliveries) }, { active: 5, today: 3 });
-  const html = self.list.innerHTML;
-  assert.match(html, /class="summary"/);
-  assert.match(html, /<ha-icon icon="mdi:truck-fast-outline"><\/ha-icon>5<\/div><div class="l">active<\/div>/);
-  assert.match(html, /<ha-icon icon="mdi:truck-delivery-outline"><\/ha-icon>3<\/div><div class="l">arriving today<\/div>/);
-  // Delivered parcels are never listed in the compact view, whatever show_delivered says.
-  assert.doesNotMatch(html, /class="delivery/);
+  // The compact view is the banner alone: the featured parcel, its state, and how many others are on the way.
+  assert.equal(self.list.innerHTML, '');
+  assert.equal(self.header.querySelector('.name').textContent, 'A1');
+  assert.equal(self.header.querySelector('.chip').querySelector('.txt').textContent, 'Out for delivery');
+  assert.ok(!self.header.querySelector('.chip').hidden);
+  assert.equal(self.header.querySelector('.l3').textContent, '+4 more');
+  assert.ok(!self.header.querySelector('.l3').hidden);
+});
+
+test('the mini card features a problem first, then the parcel at the door, else a quiet street', () => {
+  const featured = vm.runInContext('parcelFeatured', context);
+  const scene = vm.runInContext('parcelSceneOf', context);
+  const ofd = deliveryOf('O', { status_code: 4, status: 'out_for_delivery' });
+  const failed = deliveryOf('F', { status_code: 5, status: 'failed_attempt' });
+  const pickup = deliveryOf('P', { status_code: 3, status: 'awaiting_pickup' });
+  const transit = deliveryOf('T');
+  const done = deliveryOf('D', { status_code: 0, status: 'delivered' });
+  assert.equal(featured([transit, ofd, failed]), failed);
+  assert.equal(featured([transit, pickup, ofd]), ofd);
+  assert.equal(featured([transit, pickup]), pickup);
+  assert.equal(featured([done, transit]), transit);
+  assert.equal(featured([done]), done);
+  assert.equal(featured([]), null);
+  assert.deepEqual([failed, ofd, pickup, transit, done, null].map(scene), ['failed', 'drop', 'pickup', 'transit', 'delivered', 'idle']);
+  const self = miniCard([]);
+  assert.equal(self.header.querySelector('.name').textContent, 'Deliveries');
+  assert.equal(self.header.querySelector('.l2').textContent, 'Nothing on the way');
+  assert.ok(self.header.querySelector('.chip').hidden);
+  assert.ok(self.header.querySelector('.l3').hidden);
+});
+
+test('the illustration turns to night with the sun, the dark theme or illustration_theme', () => {
+  const night = vm.runInContext('parcelNight', context);
+  const sun = (state) => ({ states: { 'sun.sun': { state } } });
+  assert.equal(night(sun('below_horizon'), {}), true);
+  assert.equal(night(sun('above_horizon'), { illustration_theme: 'auto' }), false);
+  assert.equal(night({ states: {}, themes: { darkMode: true } }, {}), true);
+  assert.equal(night(sun('below_horizon'), { illustration_theme: 'day' }), false);
+  assert.equal(night(sun('above_horizon'), { illustration_theme: 'night' }), true);
+  // illustration: false gives the classic header, with the round icon and no scenery.
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') }, { illustration: false });
+  assert.doesNotMatch(self.header.html, /class="scene"/);
+  assert.match(self.header.html, /class="logo"/);
+  assert.equal(self.header.className, 'header');
+  const hero = headerCard({ 'sensor.a': sensor('sensor.a') });
+  assert.match(hero.header.html, /<svg class="scene"/);
+  assert.equal(hero.header.className, 'header hero');
+});
+
+test('delivered parcels get their own tab, the active ones stay first', () => {
+  const self = renderDeliveries([deliveryOf('A1'), deliveryOf('D1', { status_code: 0, status: 'delivered' })]);
+  assert.match(self.list.innerHTML, /data-id="ups:A1"/);
+  assert.doesNotMatch(self.list.innerHTML, /data-id="ups:D1"/);
+  self._onTabClick({ target: { closest: () => ({ getAttribute: () => 'delivered' }) }, stopPropagation() {} });
+  assert.match(self.list.innerHTML, /data-id="ups:D1"/);
+  assert.doesNotMatch(self.list.innerHTML, /data-id="ups:A1"/);
+  // Without delivered parcels, or with show_delivered off, there is no tab: one list.
+  const one = renderDeliveries([deliveryOf('A1')]);
+  assert.match(one.list.innerHTML, /data-id="ups:A1"/);
 });
 
 test('the mini card is compact with a detail button, and shows the full card once opened', () => {
@@ -899,7 +961,8 @@ test('the mini card is compact with a detail button, and shows the full card onc
   assert.match(html, /class="logo"/, 'the 40 px header icon stays in the compact view');
   assert.match(html, /class="detail" title="Show the full card"/);
   assert.match(html, /mdi:arrow-expand/);
-  assert.doesNotMatch(html, /refresh-btn|add-btn|class="status"/);
+  assert.doesNotMatch(html, /refresh-btn|add-btn|class="sub count"/);
+  assert.match(html, /class="next"/);
   assert.deepEqual({ ...self.getGridOptions() }, { columns: 6, min_columns: 4, rows: 'auto' });
 
   self._toggleDetail({ stopPropagation() {}, detail: 1 });
@@ -934,7 +997,7 @@ test('the mini card is offered in the card picker and keeps a 240 px preferred w
   assert.match(source, /customElements\.define\('parcel-mini-card', ParcelMiniCard\)/);
   const css = ParcelCard._styles();
   assert.match(css, /:host\(\[mini\]\)::before \{ grid-template-columns: minmax\(0, 240px\); \}/);
-  assert.match(css, /ha-card\.mini \.logo \{ display: grid; \}/);
+  assert.match(css, /ha-card\.mini \.header\.hero \{ --hero-h: 84px; --road-h: 10px; --scene-max: 36%; \}/);
 });
 
 test('the add button is hidden from non-admin users: adding a delivery is an admin-only service', () => {
@@ -972,5 +1035,5 @@ test('a translated refresh error is shown alone, without the generic prefix', as
   self._hass.callService = () => Promise.reject({ message: 'x', translation_domain: 'parcel', translation_key: 'refresh_failed', translation_placeholders: { error: 'timeout' } });
   self._refresh();
   for (let i = 0; i < 4; i++) await flush();
-  assert.equal(self.header.querySelector('.sub').textContent, 'Parcel update failed: timeout');
+  assert.equal(self.header.querySelector('.sub.error').textContent, 'Parcel update failed: timeout');
 });

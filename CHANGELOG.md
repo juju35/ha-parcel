@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.7.0 - 2026-11-16
+
+### Features
+- **New look for the cards**, on the common look of the ha-* cards. The header is an animated street, like the flight and train boards: sky, hills, houses, a road and the delivery van. The scene follows the most pressing parcel: the van brings it to the door, drives by while it is in transit, or leaves a notice on the door after a failed attempt; the parcel waits in the parcel shop to be picked up, or lies on the doorstep once delivered. Every scene loops in 8 s.
+- **Night mode** of the illustration (stars, moon, lit windows, the van's headlight): it follows `sun.sun`, else the dark theme, or is forced with the new `illustration_theme` option (`auto`, `day`, `night`). `illustration: false` gives the classic header with the round icon. Both options are in the visual editor.
+- Deliveries are **tiles**: a tinted round icon with its state badge, the state line in the state's color, the last event, the expected date and the carrier as pills. The parcel out for delivery pulses and a van runs along its way, a failed attempt shakes, a delivered parcel gets its check mark drawn. The refresh and add buttons are frosted glass on the sky.
+- **Active / Delivered tabs** when delivered parcels are shown, instead of the delivered ones at the bottom of the list. The active count is now the header's subtitle, with the parcels arriving today.
+- The **mini card** puts forward one parcel on an illustrated banner: a failed attempt or an exception first, then the parcel out for delivery, the one awaiting pickup, the ones in transit; its state pill, its carrier, when it arrives, and how many other parcels are on the way. The street plays its scene.
+- Every animation stops with the reduced-motion setting of the system.
+
 ## 1.6.0 - 2026-11-12
 
 ### Features
