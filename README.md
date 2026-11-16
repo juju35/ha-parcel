@@ -105,7 +105,7 @@ Click a delivery to see its events, and the tracking number to copy it.
 
 ### Mini card
 
-A compact card for dashboards: a lower illustrated banner with the featured parcel — a failed attempt or an exception first, then the parcel out for delivery, the one awaiting pickup, the ones in transit — its state pill, its carrier and when it arrives, and how many other parcels are on the way. The street plays the featured parcel's scene. The button at the top right opens the full card in place; a click outside the card folds it back.
+A compact card for dashboards: a lower illustrated banner with the featured parcel — a failed attempt or an exception first, then the parcel out for delivery, the one awaiting pickup, the ones in transit — its state pill, its carrier and when it arrives, and a badge on its icon counting the other parcels on the way. The street plays the featured parcel's scene. The button at the top right opens the full card in place; a click outside the card folds it back.
 
 ```yaml
 type: custom:parcel-mini-card

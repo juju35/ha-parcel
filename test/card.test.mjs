@@ -897,8 +897,10 @@ test('the mini card counts active deliveries and the ones arriving today', () =>
   assert.equal(self.header.querySelector('.name').textContent, 'A1');
   assert.equal(self.header.querySelector('.chip').querySelector('.txt').textContent, 'Out for delivery');
   assert.ok(!self.header.querySelector('.chip').hidden);
-  assert.equal(self.header.querySelector('.l3').textContent, '+4 more');
-  assert.ok(!self.header.querySelector('.l3').hidden);
+  // The other parcels on the way: a count badge on the icon, spelled out for screen readers.
+  assert.equal(self.header.querySelector('.more').textContent, '+4');
+  assert.equal(self.header.querySelector('.more').title, '+4 more');
+  assert.ok(!self.header.querySelector('.more').hidden);
 });
 
 test('the mini card features a problem first, then the parcel at the door, else a quiet street', () => {
@@ -920,7 +922,7 @@ test('the mini card features a problem first, then the parcel at the door, else 
   assert.equal(self.header.querySelector('.name').textContent, 'Deliveries');
   assert.equal(self.header.querySelector('.l2').textContent, 'Nothing on the way');
   assert.ok(self.header.querySelector('.chip').hidden);
-  assert.ok(self.header.querySelector('.l3').hidden);
+  assert.ok(self.header.querySelector('.more').hidden);
 });
 
 test('the illustration turns to night with the sun, the dark theme or illustration_theme', () => {

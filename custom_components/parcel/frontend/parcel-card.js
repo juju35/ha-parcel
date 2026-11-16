@@ -1675,11 +1675,13 @@ class ParcelCard extends HTMLElement {
       header.className = hero ? 'header hero' : 'header';
       header.innerHTML =
         (hero ? `${PARCEL_SCENE}<div class="road"><span class="marks"></span></div>` : '') +
-        '<div class="head">' + this._iconHtml() +
+        '<div class="head">' +
+        // The compact mini card counts the other parcels on the way in a badge on its icon.
+        (compact ? `<div class="mark">${this._iconHtml()}<span class="more" hidden></span></div>` : this._iconHtml()) +
         (compact
           // The compact mini card: the featured parcel laid on the sky, like the next flight of the flight board.
           ? '<div class="next"><div class="name"></div>' +
-            '<div class="l1"><span class="chip" hidden><span class="dot"></span><span class="txt"></span></span><span class="l3" hidden></span></div>' +
+            '<div class="l1"><span class="chip" hidden><span class="dot"></span><span class="txt"></span></span></div>' +
             '<div class="l2"></div></div>'
           : '<div class="titles"><div class="name"></div><div class="sub count" hidden></div>' +
             // The refresh error survives re-renders (hass updates) until the next refresh attempt.
@@ -1737,11 +1739,11 @@ class ParcelCard extends HTMLElement {
     var name = header.querySelector('.name');
     var chip = header.querySelector('.chip');
     var l2 = header.querySelector('.l2');
-    var l3 = header.querySelector('.l3');
-    if (!name || !chip || !l2 || !l3) return;
+    var more = header.querySelector('.more');
+    if (!name || !chip || !l2 || !more) return;
     var unavailable = !st || st.state === 'unavailable' || st.state === 'unknown';
     chip.hidden = !featured;
-    l3.hidden = true;
+    more.hidden = true;
     if (!featured) {
       name.textContent = title;
       l2.textContent = !st ? t.no_entity : unavailable ? t.unavailable : t.nothing;
@@ -1759,8 +1761,10 @@ class ParcelCard extends HTMLElement {
     var where = expected || last?.location || '';
     l2.textContent = (featured.carrier_name || featured.carrier_code || '') + (where ? ` · ${where}` : '');
     var others = deliveries.filter((d) => d.status_code !== 0 && d !== featured).length;
-    l3.hidden = !others;
-    l3.textContent = others ? t.more.replace('{n}', others) : '';
+    more.hidden = !others;
+    more.textContent = others ? `+${others}` : '';
+    more.title = others ? t.more.replace('{n}', others) : '';
+    if (more.setAttribute) more.setAttribute('aria-label', more.title);
   }
 
   // Active: not delivered yet. Arriving today: out for delivery, or expected today.
@@ -2046,7 +2050,7 @@ class ParcelCard extends HTMLElement {
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.header:not(.hero) .name { color: var(--primary-text-color); }',
       '.sub { font-size: 12px; line-height: 16px; color: var(--sky-muted, var(--secondary-text-color)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-      '.sub[hidden], .l3[hidden], .chip[hidden], .tabs[hidden] { display: none; }',
+      '.sub[hidden], .more[hidden], .chip[hidden], .tabs[hidden] { display: none; }',
       '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 55%, var(--sky-text, var(--primary-text-color))); }',
       '.buttons { display: flex; align-items: center; gap: 4px; flex: none; }',
       // HA's default ha-icon-button is 48 px with a 24 px glyph; match the 28/16 px icon actions of the sibling cards.
@@ -2214,10 +2218,13 @@ class ParcelCard extends HTMLElement {
       '.next .l1 { display: flex; align-items: center; gap: 6px; min-width: 0; margin: 1px 0; }',
       'ha-card.mini .hero .head { gap: 8px; padding-left: 12px; }',
       '.next .l1:not(:has(> :not([hidden]))) { display: none; }',
-      '.next .l2, .next .l3 { font-size: 12.5px; line-height: 16px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-      '.next .l2 { color: var(--sky-muted, var(--secondary-text-color)); }',
-      // The other parcels' count gives way first: the state pill keeps its words.
-      '.next .l3 { flex: 0 100 auto; color: var(--sky-muted, var(--secondary-text-color)); }',
+      '.next .l2 { font-size: 12.5px; line-height: 16px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--sky-muted, var(--secondary-text-color)); }',
+      // The other parcels on the way: a count badge on the icon's corner, the Parcel accent.
+      '.mark { position: relative; flex: none; display: flex; }',
+      '.more { position: absolute; right: -5px; bottom: -3px; min-width: 18px; height: 18px; box-sizing: border-box; padding: 0 5px; border-radius: 9px;' +
+        ' font-size: 11px; font-weight: 500; line-height: 18px; text-align: center; color: #ffffff; background: var(--pc-accent);' +
+        ' box-shadow: 0 0 0 2px var(--card-background-color, #fff); }',
+      '.hero .more { box-shadow: 0 0 0 2px rgba(255,255,255,.85); } .hero.night .more { box-shadow: 0 0 0 2px #15284a; }',
       // The state pill of the featured parcel, on the sky: frosted glass under the tint.
       '.next .chip { flex: 0 1 auto; min-width: 0; gap: 5px; padding: 0 8px; line-height: 20px; font-size: 12px;' +
         ' color: color-mix(in srgb, var(--c) 45%, var(--sky-text, var(--primary-text-color))); background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); }',
