@@ -52,6 +52,7 @@ ICONS = {
     "arrow-collapse": "M19.5,3.09L15,7.59V4H13V11H20V9H16.41L20.91,4.5L19.5,3.09M4,13V15H7.59L3.09,19.5L4.5,20.91L9,16.41V20H11V13H4Z",
     "arrow-expand": "M10,21V19H6.41L10.91,14.5L9.5,13.09L5,17.59V14H3V21H10M14.5,10.91L19,6.41V10H21V3H14V5H17.59L13.09,9.5L14.5,10.91Z",
     "alert-outline": "M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16",
+    "clock-outline": "M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z",
     "chevron-down": "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z",
     "chevron-up": "M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z",
     "help-circle-outline": "M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z",
@@ -63,6 +64,7 @@ ICONS = {
     "snowflake": "M20.79,13.95L18.46,14.57L16.46,13.44V10.56L18.46,9.43L20.79,10.05L21.31,8.12L19.54,7.65L20,5.88L18.07,5.36L17.45,7.69L15.45,8.82L13,7.38V5.12L14.71,3.41L13.29,2L12,3.29L10.71,2L9.29,3.41L11,5.12V7.38L8.5,8.82L6.5,7.69L5.92,5.36L4,5.88L4.47,7.65L2.7,8.12L3.22,10.05L5.55,9.43L7.55,10.56V13.45L5.55,14.58L3.22,13.96L2.7,15.89L4.47,16.36L4,18.12L5.93,18.64L6.55,16.31L8.55,15.18L11,16.62V18.88L9.29,20.59L10.71,22L12,20.71L13.29,22L14.7,20.59L13,18.88V16.62L15.5,15.17L17.5,16.3L18.12,18.63L20,18.12L19.53,16.35L21.3,15.88L20.79,13.95M9.5,10.56L12,9.11L14.5,10.56V13.44L12,14.89L9.5,13.44V10.56Z",
     "store-marker-outline": "M20 6H4V4H20V6M14.3 12C13.5 12.96 13 14.18 13 15.5C13 16.64 13.43 17.86 14 19V20H4V14H3V12L4 7H20L20.7 10.5C20.04 10.18 19.32 10 18.56 10L18.36 9H5.64L5.04 12H14.3M12 14H6V18H12V14M22 15.5C22 18.1 18.5 22 18.5 22S15 18.1 15 15.5C15 13.6 16.6 12 18.5 12S22 13.6 22 15.5M19.7 15.6C19.7 15 19.1 14.4 18.5 14.4S17.3 14.9 17.3 15.6C17.3 16.2 17.8 16.8 18.5 16.8S19.8 16.2 19.7 15.6Z",
     "truck-delivery-outline": "M18 18.5C18.83 18.5 19.5 17.83 19.5 17C19.5 16.17 18.83 15.5 18 15.5C17.17 15.5 16.5 16.17 16.5 17C16.5 17.83 17.17 18.5 18 18.5M19.5 9.5H17V12H21.46L19.5 9.5M6 18.5C6.83 18.5 7.5 17.83 7.5 17C7.5 16.17 6.83 15.5 6 15.5C5.17 15.5 4.5 16.17 4.5 17C4.5 17.83 5.17 18.5 6 18.5M20 8L23 12V17H21C21 18.66 19.66 20 18 20C16.34 20 15 18.66 15 17H9C9 18.66 7.66 20 6 20C4.34 20 3 18.66 3 17H1V6C1 4.89 1.89 4 3 4H17V8H20M3 6V15H3.76C4.31 14.39 5.11 14 6 14C6.89 14 7.69 14.39 8.24 15H15V6H3M10 7L13.5 10.5L10 14V11.5H5V9.5H10V7Z",
+    "truck-fast": "M3,13.5L2.25,12H7.5L6.9,10.5H2L1.25,9H9.05L8.45,7.5H1.11L0.25,6H4A2,2 0 0,1 6,4H18V8H21L24,12V17H22A3,3 0 0,1 19,20A3,3 0 0,1 16,17H12A3,3 0 0,1 9,20A3,3 0 0,1 6,17H4V13.5H3M19,18.5A1.5,1.5 0 0,0 20.5,17A1.5,1.5 0 0,0 19,15.5A1.5,1.5 0 0,0 17.5,17A1.5,1.5 0 0,0 19,18.5M20.5,9.5H18V12H22.46L20.5,9.5M9,18.5A1.5,1.5 0 0,0 10.5,17A1.5,1.5 0 0,0 9,15.5A1.5,1.5 0 0,0 7.5,17A1.5,1.5 0 0,0 9,18.5Z",
     "truck-fast-outline": "M.75 7.5H10.5L11.25 9H1.5L.75 7.5M1.75 10.5H11.5L12.25 12H2.5L1.75 10.5M18 18.5C18.83 18.5 19.5 17.83 19.5 17C19.5 16.17 18.83 15.5 18 15.5C17.17 15.5 16.5 16.17 16.5 17C16.5 17.83 17.17 18.5 18 18.5M19.5 9.5H17V12H21.46L19.5 9.5M8 18.5C8.83 18.5 9.5 17.83 9.5 17C9.5 16.17 8.83 15.5 8 15.5C7.17 15.5 6.5 16.17 6.5 17C6.5 17.83 7.17 18.5 8 18.5M20 8L23 12V17H21C21 18.66 19.66 20 18 20C16.34 20 15 18.66 15 17H11C11 18.66 9.65 20 8 20C6.34 20 5 18.66 5 17H3V13.5 13.5H5V15H5.76C6.31 14.39 7.11 14 8 14C8.89 14 9.69 14.39 10.24 15H15V6H3V6C3 4.89 3.89 4 5 4H17V8H20Z",
 }
 
@@ -86,7 +88,7 @@ customElements.define("ha-icon", class extends HTMLElement {
 });
 customElements.define("ha-icon-button", class extends HTMLElement {
   connectedCallback() {
-    this.style.cssText = "display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;color:var(--secondary-text-color)";
+    this.style.cssText = "display:inline-flex;align-items:center;justify-content:center;width:var(--mdc-icon-button-size,48px);height:var(--mdc-icon-button-size,48px);--mdc-icon-size:inherit";
   }
 });
 """ % json.dumps(ICONS)  # noqa: UP031 - percent-format keeps the embedded JS braces un-escaped
@@ -102,8 +104,8 @@ DELIVERIES = [
         "carrier_name": "Colissimo",
         "tracking_number": "6A12345678901",
         "description": "Headphones",
-        "status_code": 2,
-        "status": "in_transit",
+        "status_code": 4,
+        "status": "out_for_delivery",
         "date_expected": "2026-10-18",
         "events": [
             event("18/10/2026 08:12", "Your parcel is being delivered", "Rennes"),
@@ -141,38 +143,111 @@ DELIVERIES = [
     },
 ]
 
-STATES = {
-    "sensor.parcel_deliveries": {
-        "entity_id": "sensor.parcel_deliveries",
-        "state": "3",
-        "attributes": {"config_entry_id": "mock", "deliveries": DELIVERIES, "friendly_name": "Parcel"},
-    },
+
+def states_of(deliveries):
+    active = sum(1 for d in deliveries if d["status_code"] != 0)
+    return {
+        "sensor.parcel_deliveries": {
+            "entity_id": "sensor.parcel_deliveries",
+            "state": str(active),
+            "attributes": {"config_entry_id": "mock", "deliveries": deliveries, "friendly_name": "Parcel"},
+        },
+    }
+
+
+STATES = states_of(DELIVERIES)
+HEADPHONES, SCREEN, BULBS, BOOKS = DELIVERIES
+PHONE_CASE = {
+    "carrier_code": "ups",
+    "carrier_name": "UPS",
+    "tracking_number": "1Z999AA10123456785",
+    "description": "Phone case",
+    "status_code": 6,
+    "status": "failed_attempt",
+    "events": [event("18/10/2026 08:40", "Delivery attempted, nobody home", "Rennes")],
+}
+IN_TRANSIT = {**HEADPHONES, "status_code": 2, "status": "in_transit", "date_expected": "2026-10-19"}
+
+# One dataset per scene of the illustration: the featured parcel decides what the street shows.
+SCENES = {
+    "drop": DELIVERIES,
+    "transit": [IN_TRANSIT, SCREEN],
+    "pickup": [BULBS, SCREEN],
+    "failed": [PHONE_CASE, IN_TRANSIT],
+    "delivered": [BOOKS],
+    "idle": [],
 }
 
 SHOTS = [
+    {"file": "card", "theme": "light", "config": {"show_delivered": True}, "expand": "colissimo:6A12345678901"},
+    {"file": "card-dark", "theme": "dark", "config": {"show_delivered": True}, "expand": "colissimo:6A12345678901"},
+    # Night illustration (illustration_theme: night, or automatic after sunset).
+    {"file": "card-night", "theme": "light", "config": {"show_delivered": True, "illustration_theme": "night"}},
+    {"file": "card-night-dark", "theme": "dark", "config": {"show_delivered": True, "illustration_theme": "night"}},
+    # Classic header (illustration: false).
+    {"file": "card-classic", "theme": "light", "config": {"show_delivered": True, "illustration": False}},
+    {"file": "card-classic-dark", "theme": "dark", "config": {"show_delivered": True, "illustration": False}},
+    # The mini card, compact: the featured parcel on the illustrated banner.
+    {"file": "mini-card", "theme": "light", "config": {}, "element": "parcel-mini-card", "width": 300},
+    {"file": "mini-card-dark", "theme": "dark", "config": {}, "element": "parcel-mini-card", "width": 300},
     {
-        "file": "card",
+        "file": "mini-card-night",
         "theme": "light",
-        "lang": "en",
-        "config": {"show_delivered": True},
-        "expand": "colissimo:6A12345678901",
-    },
-    {
-        "file": "card-dark",
-        "theme": "dark",
-        "lang": "en",
-        "config": {"show_delivered": True},
-        "expand": "colissimo:6A12345678901",
-    },
-    # The mini card, compact: active deliveries and deliveries arriving today (the Colissimo one, expected on 18/10).
-    {"file": "mini-card", "theme": "light", "lang": "en", "element": "parcel-mini-card", "width": 260, "config": {}},
-    {
-        "file": "mini-card-dark",
-        "theme": "dark",
-        "lang": "en",
+        "config": {"illustration_theme": "night"},
         "element": "parcel-mini-card",
-        "width": 260,
+        "width": 300,
+    },
+    {
+        "file": "mini-card-night-dark",
+        "theme": "dark",
+        "config": {"illustration_theme": "night"},
+        "element": "parcel-mini-card",
+        "width": 300,
+    },
+    {
+        "file": "mini-card-idle",
+        "theme": "light",
         "config": {},
+        "scene": "idle",
+        "element": "parcel-mini-card",
+        "width": 300,
+    },
+    {
+        "file": "mini-card-idle-dark",
+        "theme": "dark",
+        "config": {},
+        "scene": "idle",
+        "element": "parcel-mini-card",
+        "width": 300,
+    },
+]
+
+# One GIF per animation (8 s, the loop of the scene), each with its -dark twin.
+ANIMATIONS = [
+    *(
+        {"file": f"scene-{scene}", "config": {}, "scene": scene, "element": "parcel-mini-card", "width": 300}
+        for scene in ("drop", "transit", "pickup", "failed", "delivered")
+    ),
+    {
+        "file": "scene-night",
+        "config": {"illustration_theme": "night"},
+        "scene": "drop",
+        "element": "parcel-mini-card",
+        "width": 300,
+    },
+    # The tiles: the van along the way of the parcel out for delivery, the failed attempt, the parcel waiting.
+    {
+        "file": "tiles",
+        "config": {"show_delivered": False, "illustration": False},
+        "deliveries": [HEADPHONES, PHONE_CASE, BULBS],
+        "seconds": 4,
+    },
+    # The delivered tab: the check mark drawn in the round icon.
+    {
+        "file": "tiles-delivered",
+        "config": {"show_delivered": True, "illustration": False},
+        "tab": "delivered",
+        "seconds": 4,
     },
 ]
 
@@ -231,20 +306,24 @@ def mount(context, shot):
     page.add_script_tag(content=HA_ELEMENTS)
     page.add_script_tag(content=CARD_JS)
     page.evaluate(
-        """({config, states, lang, element}) => {
+        """({config, states, lang, element, dark}) => {
           const el = document.createElement(element);
           el.setConfig({type: `custom:${element}`, ...config});
-          el.hass = {states, language: lang, locale: {language: lang},
+          el.hass = {states, language: lang, locale: {language: lang}, themes: {darkMode: dark},
                      callService: () => Promise.resolve(), callWS: () => Promise.resolve({})};
           document.getElementById("root").appendChild(el);
         }""",
         {
             "config": shot["config"],
-            "states": STATES,
-            "lang": shot["lang"],
+            "states": states_of(shot.get("deliveries") or SCENES[shot.get("scene", "drop")]),
+            "lang": shot.get("lang", "en"),
             "element": shot.get("element", "parcel-card"),
+            "dark": shot["theme"] == "dark",
         },
     )
+    if shot.get("tab"):
+        page.locator(f'.tab[data-tab="{shot["tab"]}"]').click()
+        page.mouse.move(0, 0)
     if shot.get("expand"):
         page.locator(f'.delivery[data-id="{shot["expand"]}"] .row').click()
         # Move the pointer off the card so the stills do not show the row hover state.
@@ -252,13 +331,14 @@ def mount(context, shot):
     return page
 
 
-def animate(context, shot, *, fps=20, seconds=2):
-    """Record the refresh spinner as a looping screenshots/<file>.gif (needs ffmpeg). Every animation is paused and
+def animate(context, shot, *, fps=15, seconds=8, refreshing=False):
+    """Record the card's animations as a looping screenshots/<file>.gif (needs ffmpeg). Every animation is paused and
     stepped frame by frame, so the GIF is identical whatever the machine's speed."""
     page = mount(context, shot)
-    page.evaluate(
-        """() => { const el = document.getElementById("root").firstElementChild; el._refreshing = true; el._render(); }"""
-    )
+    if refreshing:
+        page.evaluate(
+            """() => { const el = document.getElementById("root").firstElementChild; el._refreshing = true; el._render(); }"""
+        )
     page.wait_for_timeout(200)
     width = shot.get("width", WIDTH)
     box = page.locator("#root").bounding_box()
@@ -328,8 +408,17 @@ def main():
         for theme, suffix in (("light", ""), ("dark", "-dark")):
             animate(
                 context,
-                {"file": f"refreshing{suffix}", "theme": theme, "lang": "en", "config": {"show_delivered": True}},
+                {"file": f"refreshing{suffix}", "theme": theme, "config": {"show_delivered": True}},
+                fps=20,
+                seconds=2,
+                refreshing=True,
             )
+            for shot in ANIMATIONS:
+                animate(
+                    context,
+                    {**shot, "file": f"{shot['file']}{suffix}", "theme": theme},
+                    seconds=shot.get("seconds", 8),
+                )
         browser.close()
 
 

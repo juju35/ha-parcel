@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.6.0';
+var PARCEL_CARD_VERSION = '1.7.0';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -33,6 +33,9 @@ var ParcelI18n = {
     today: 'attendus aujourd’hui',
     show_full: 'Afficher la carte complète',
     show_compact: 'Revenir à la vue compacte',
+    tab_active: 'En cours',
+    more: '+{n} autres',
+    nothing: 'Aucun colis en route',
     editor: {
       entity: 'Capteur Parcel',
       title: 'Titre',
@@ -43,6 +46,11 @@ var ParcelI18n = {
       max_events: 'Événements affichés quand un colis est déplié',
       language: 'Langue',
       lang_auto: 'Automatique',
+      illustration: 'Illustration',
+      illustration_theme: 'Thème de l\'illustration',
+      theme_auto: 'Automatique',
+      theme_day: 'Jour',
+      theme_night: 'Nuit',
     },
     status: {
       delivered: 'Livré',
@@ -84,6 +92,9 @@ var ParcelI18n = {
     today: 'arriving today',
     show_full: 'Show the full card',
     show_compact: 'Back to the compact view',
+    tab_active: 'Active',
+    more: '+{n} more',
+    nothing: 'Nothing on the way',
     editor: {
       entity: 'Parcel sensor',
       title: 'Title',
@@ -94,6 +105,11 @@ var ParcelI18n = {
       max_events: 'Events shown when a parcel is expanded',
       language: 'Language',
       lang_auto: 'Auto',
+      illustration: 'Illustration',
+      illustration_theme: 'Illustration theme',
+      theme_auto: 'Automatic',
+      theme_day: 'Day',
+      theme_night: 'Night',
     },
     status: {
       delivered: 'Delivered',
@@ -135,6 +151,9 @@ var ParcelI18n = {
     today: 'heute erwartet',
     show_full: 'Vollständige Karte anzeigen',
     show_compact: 'Zurück zur kompakten Ansicht',
+    tab_active: 'Aktiv',
+    more: '+{n} weitere',
+    nothing: 'Nichts unterwegs',
     editor: {
       entity: 'Parcel-Sensor',
       title: 'Titel',
@@ -145,6 +164,11 @@ var ParcelI18n = {
       max_events: 'Angezeigte Ereignisse bei aufgeklappter Sendung',
       language: 'Sprache',
       lang_auto: 'Automatisch',
+      illustration: 'Illustration',
+      illustration_theme: 'Thema der Illustration',
+      theme_auto: 'Automatisch',
+      theme_day: 'Tag',
+      theme_night: 'Nacht',
     },
     status: {
       delivered: 'Zugestellt',
@@ -186,6 +210,9 @@ var ParcelI18n = {
     today: 'llegan hoy',
     show_full: 'Mostrar la tarjeta completa',
     show_compact: 'Volver a la vista compacta',
+    tab_active: 'Activos',
+    more: '+{n} más',
+    nothing: 'Nada en camino',
     editor: {
       entity: 'Sensor de Parcel',
       title: 'Título',
@@ -196,6 +223,11 @@ var ParcelI18n = {
       max_events: 'Eventos mostrados al desplegar un envío',
       language: 'Idioma',
       lang_auto: 'Automático',
+      illustration: 'Ilustración',
+      illustration_theme: 'Tema de la ilustración',
+      theme_auto: 'Automático',
+      theme_day: 'Día',
+      theme_night: 'Noche',
     },
     status: {
       delivered: 'Entregado',
@@ -237,6 +269,9 @@ var ParcelI18n = {
     today: 'стижу данас',
     show_full: 'Прикажи целу картицу',
     show_compact: 'Назад на компактни приказ',
+    tab_active: 'Активне',
+    more: 'још {n}',
+    nothing: 'Ништа није на путу',
     editor: {
       entity: 'Parcel сензор',
       title: 'Наслов',
@@ -247,6 +282,11 @@ var ParcelI18n = {
       max_events: 'Догађаји приказани када се пошиљка прошири',
       language: 'Језик',
       lang_auto: 'Аутоматски',
+      illustration: 'Илустрација',
+      illustration_theme: 'Тема илустрације',
+      theme_auto: 'Аутоматски',
+      theme_day: 'Дан',
+      theme_night: 'Ноћ',
     },
     status: {
       delivered: 'Испоручено',
@@ -288,6 +328,9 @@ var ParcelI18n = {
     today: 'stižu danas',
     show_full: 'Prikaži celu karticu',
     show_compact: 'Nazad na kompaktni prikaz',
+    tab_active: 'Aktivne',
+    more: 'još {n}',
+    nothing: 'Ništa nije na putu',
     editor: {
       entity: 'Parcel senzor',
       title: 'Naslov',
@@ -298,6 +341,11 @@ var ParcelI18n = {
       max_events: 'Događaji prikazani kada se pošiljka proširi',
       language: 'Jezik',
       lang_auto: 'Automatski',
+      illustration: 'Ilustracija',
+      illustration_theme: 'Tema ilustracije',
+      theme_auto: 'Automatski',
+      theme_day: 'Dan',
+      theme_night: 'Noć',
     },
     status: {
       delivered: 'Isporučeno',
@@ -339,6 +387,9 @@ var ParcelI18n = {
     today: 'in arrivo oggi',
     show_full: 'Mostra la scheda completa',
     show_compact: 'Torna alla vista compatta',
+    tab_active: 'Attive',
+    more: '+{n} altre',
+    nothing: 'Niente in arrivo',
     editor: {
       entity: 'Sensore Parcel',
       title: 'Titolo',
@@ -349,6 +400,11 @@ var ParcelI18n = {
       max_events: 'Eventi mostrati quando una spedizione è espansa',
       language: 'Lingua',
       lang_auto: 'Automatica',
+      illustration: 'Illustrazione',
+      illustration_theme: 'Tema dell\'illustrazione',
+      theme_auto: 'Automatico',
+      theme_day: 'Giorno',
+      theme_night: 'Notte',
     },
     status: {
       delivered: 'Consegnata',
@@ -390,6 +446,9 @@ var ParcelI18n = {
     today: 'vandaag verwacht',
     show_full: 'Volledige kaart tonen',
     show_compact: 'Terug naar de compacte weergave',
+    tab_active: 'Actief',
+    more: '+{n} meer',
+    nothing: 'Niets onderweg',
     editor: {
       entity: 'Parcel-sensor',
       title: 'Titel',
@@ -400,6 +459,11 @@ var ParcelI18n = {
       max_events: 'Getoonde gebeurtenissen bij een uitgeklapte zending',
       language: 'Taal',
       lang_auto: 'Automatisch',
+      illustration: 'Illustratie',
+      illustration_theme: 'Thema van de illustratie',
+      theme_auto: 'Automatisch',
+      theme_day: 'Dag',
+      theme_night: 'Nacht',
     },
     status: {
       delivered: 'Bezorgd',
@@ -441,6 +505,9 @@ var ParcelI18n = {
     today: 'chegam hoje',
     show_full: 'Mostrar o cartão completo',
     show_compact: 'Voltar à vista compacta',
+    tab_active: 'Ativas',
+    more: '+{n} mais',
+    nothing: 'Nada a caminho',
     editor: {
       entity: 'Sensor do Parcel',
       title: 'Título',
@@ -451,6 +518,11 @@ var ParcelI18n = {
       max_events: 'Eventos mostrados ao expandir uma encomenda',
       language: 'Idioma',
       lang_auto: 'Automático',
+      illustration: 'Ilustração',
+      illustration_theme: 'Tema da ilustração',
+      theme_auto: 'Automático',
+      theme_day: 'Dia',
+      theme_night: 'Noite',
     },
     status: {
       delivered: 'Entregue',
@@ -492,6 +564,9 @@ var ParcelI18n = {
     today: 'dostawa dziś',
     show_full: 'Pokaż pełną kartę',
     show_compact: 'Wróć do widoku kompaktowego',
+    tab_active: 'Aktywne',
+    more: '+{n} więcej',
+    nothing: 'Nic nie jest w drodze',
     editor: {
       entity: 'Sensor Parcel',
       title: 'Tytuł',
@@ -502,6 +577,11 @@ var ParcelI18n = {
       max_events: 'Zdarzenia wyświetlane po rozwinięciu przesyłki',
       language: 'Język',
       lang_auto: 'Automatycznie',
+      illustration: 'Ilustracja',
+      illustration_theme: 'Motyw ilustracji',
+      theme_auto: 'Automatycznie',
+      theme_day: 'Dzień',
+      theme_night: 'Noc',
     },
     status: {
       delivered: 'Doręczono',
@@ -543,6 +623,9 @@ var ParcelI18n = {
     today: 'sosesc azi',
     show_full: 'Afișează cardul complet',
     show_compact: 'Înapoi la vizualizarea compactă',
+    tab_active: 'Active',
+    more: 'încă {n}',
+    nothing: 'Nimic pe drum',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Titlu',
@@ -553,6 +636,11 @@ var ParcelI18n = {
       max_events: 'Evenimente afișate la extinderea unui colet',
       language: 'Limbă',
       lang_auto: 'Automat',
+      illustration: 'Ilustrație',
+      illustration_theme: 'Tema ilustrației',
+      theme_auto: 'Automat',
+      theme_day: 'Zi',
+      theme_night: 'Noapte',
     },
     status: {
       delivered: 'Livrat',
@@ -594,6 +682,9 @@ var ParcelI18n = {
     today: 'ankommer i dag',
     show_full: 'Vis hele kortet',
     show_compact: 'Tilbage til kompakt visning',
+    tab_active: 'Aktive',
+    more: '+{n} mere',
+    nothing: 'Intet på vej',
     editor: {
       entity: 'Parcel-sensor',
       title: 'Titel',
@@ -604,6 +695,11 @@ var ParcelI18n = {
       max_events: 'Hændelser, der vises, når en pakke er udvidet',
       language: 'Sprog',
       lang_auto: 'Automatisk',
+      illustration: 'Illustration',
+      illustration_theme: 'Illustrationstema',
+      theme_auto: 'Automatisk',
+      theme_day: 'Dag',
+      theme_night: 'Nat',
     },
     status: {
       delivered: 'Leveret',
@@ -645,6 +741,9 @@ var ParcelI18n = {
     today: 'kommer i dag',
     show_full: 'Visa hela kortet',
     show_compact: 'Tillbaka till kompakt vy',
+    tab_active: 'Aktiva',
+    more: '+{n} till',
+    nothing: 'Inget på väg',
     editor: {
       entity: 'Parcel-sensor',
       title: 'Titel',
@@ -655,6 +754,11 @@ var ParcelI18n = {
       max_events: 'Händelser som visas när ett paket är expanderat',
       language: 'Språk',
       lang_auto: 'Automatiskt',
+      illustration: 'Illustration',
+      illustration_theme: 'Illustrationstema',
+      theme_auto: 'Automatiskt',
+      theme_day: 'Dag',
+      theme_night: 'Natt',
     },
     status: {
       delivered: 'Levererat',
@@ -696,6 +800,9 @@ var ParcelI18n = {
     today: 'пристигат днес',
     show_full: 'Покажи цялата карта',
     show_compact: 'Обратно към компактния изглед',
+    tab_active: 'Активни',
+    more: 'още {n}',
+    nothing: 'Нищо не е на път',
     editor: {
       entity: 'Сензор на Parcel',
       title: 'Заглавие',
@@ -706,6 +813,11 @@ var ParcelI18n = {
       max_events: 'Събития, показвани при разгъната пратка',
       language: 'Език',
       lang_auto: 'Автоматично',
+      illustration: 'Илюстрация',
+      illustration_theme: 'Тема на илюстрацията',
+      theme_auto: 'Автоматично',
+      theme_day: 'Ден',
+      theme_night: 'Нощ',
     },
     status: {
       delivered: 'Доставена',
@@ -747,6 +859,9 @@ var ParcelI18n = {
     today: 'прибудут сегодня',
     show_full: 'Показать полную карточку',
     show_compact: 'Вернуться к компактному виду',
+    tab_active: 'Активные',
+    more: 'ещё {n}',
+    nothing: 'Ничего не в пути',
     editor: {
       entity: 'Сенсор Parcel',
       title: 'Заголовок',
@@ -757,6 +872,11 @@ var ParcelI18n = {
       max_events: 'Число событий в раскрытой посылке',
       language: 'Язык',
       lang_auto: 'Автоматически',
+      illustration: 'Иллюстрация',
+      illustration_theme: 'Тема иллюстрации',
+      theme_auto: 'Автоматически',
+      theme_day: 'День',
+      theme_night: 'Ночь',
     },
     status: {
       delivered: 'Доставлена',
@@ -798,6 +918,9 @@ var ParcelI18n = {
     today: 'прибудуть сьогодні',
     show_full: 'Показати повну картку',
     show_compact: 'Повернутися до компактного вигляду',
+    tab_active: 'Активні',
+    more: 'ще {n}',
+    nothing: 'Нічого не в дорозі',
     editor: {
       entity: 'Сенсор Parcel',
       title: 'Заголовок',
@@ -808,6 +931,11 @@ var ParcelI18n = {
       max_events: 'Кількість подій у розгорнутій посилці',
       language: 'Мова',
       lang_auto: 'Автоматично',
+      illustration: 'Ілюстрація',
+      illustration_theme: 'Тема ілюстрації',
+      theme_auto: 'Автоматично',
+      theme_day: 'День',
+      theme_night: 'Ніч',
     },
     status: {
       delivered: 'Доставлено',
@@ -849,6 +977,9 @@ var ParcelI18n = {
     today: 'ma érkezik',
     show_full: 'Teljes kártya megjelenítése',
     show_compact: 'Vissza a kompakt nézethez',
+    tab_active: 'Aktív',
+    more: '+{n} további',
+    nothing: 'Semmi sincs úton',
     editor: {
       entity: 'Parcel érzékelő',
       title: 'Cím',
@@ -859,6 +990,11 @@ var ParcelI18n = {
       max_events: 'Megjelenített események kibontott csomagnál',
       language: 'Nyelv',
       lang_auto: 'Automatikus',
+      illustration: 'Illusztráció',
+      illustration_theme: 'Az illusztráció témája',
+      theme_auto: 'Automatikus',
+      theme_day: 'Nappal',
+      theme_night: 'Éjszaka',
     },
     status: {
       delivered: 'Kézbesítve',
@@ -900,6 +1036,9 @@ var ParcelI18n = {
     today: 'dorazia dnes',
     show_full: 'Zobraziť celú kartu',
     show_compact: 'Späť na kompaktné zobrazenie',
+    tab_active: 'Aktívne',
+    more: '+{n} ďalšie',
+    nothing: 'Nič nie je na ceste',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Názov',
@@ -910,6 +1049,11 @@ var ParcelI18n = {
       max_events: 'Udalosti zobrazené po rozbalení zásielky',
       language: 'Jazyk',
       lang_auto: 'Automaticky',
+      illustration: 'Ilustrácia',
+      illustration_theme: 'Téma ilustrácie',
+      theme_auto: 'Automaticky',
+      theme_day: 'Deň',
+      theme_night: 'Noc',
     },
     status: {
       delivered: 'Doručené',
@@ -951,6 +1095,9 @@ var ParcelI18n = {
     today: 'dorazí dnes',
     show_full: 'Zobrazit celou kartu',
     show_compact: 'Zpět na kompaktní zobrazení',
+    tab_active: 'Aktivní',
+    more: '+{n} další',
+    nothing: 'Nic není na cestě',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Název',
@@ -961,6 +1108,11 @@ var ParcelI18n = {
       max_events: 'Události zobrazené po rozbalení zásilky',
       language: 'Jazyk',
       lang_auto: 'Automaticky',
+      illustration: 'Ilustrace',
+      illustration_theme: 'Motiv ilustrace',
+      theme_auto: 'Automaticky',
+      theme_day: 'Den',
+      theme_night: 'Noc',
     },
     status: {
       delivered: 'Doručeno',
@@ -1002,6 +1154,9 @@ var ParcelI18n = {
     today: 'prispejo danes',
     show_full: 'Prikaži celotno kartico',
     show_compact: 'Nazaj na kompaktni pogled',
+    tab_active: 'Aktivne',
+    more: 'še {n}',
+    nothing: 'Nič ni na poti',
     editor: {
       entity: 'Senzor Parcel',
       title: 'Naslov',
@@ -1012,6 +1167,11 @@ var ParcelI18n = {
       max_events: 'Dogodki, prikazani ob razširjeni pošiljki',
       language: 'Jezik',
       lang_auto: 'Samodejno',
+      illustration: 'Ilustracija',
+      illustration_theme: 'Tema ilustracije',
+      theme_auto: 'Samodejno',
+      theme_day: 'Dan',
+      theme_night: 'Noč',
     },
     status: {
       delivered: 'Dostavljeno',
@@ -1053,6 +1213,9 @@ var ParcelI18n = {
     today: 'pienāks šodien',
     show_full: 'Rādīt pilno karti',
     show_compact: 'Atpakaļ uz kompakto skatu',
+    tab_active: 'Aktīvās',
+    more: 'vēl {n}',
+    nothing: 'Nekas nav ceļā',
     editor: {
       entity: 'Parcel sensors',
       title: 'Virsraksts',
@@ -1063,6 +1226,11 @@ var ParcelI18n = {
       max_events: 'Notikumi, kas redzami izvērstam sūtījumam',
       language: 'Valoda',
       lang_auto: 'Automātiski',
+      illustration: 'Ilustrācija',
+      illustration_theme: 'Ilustrācijas tēma',
+      theme_auto: 'Automātiski',
+      theme_day: 'Diena',
+      theme_night: 'Nakts',
     },
     status: {
       delivered: 'Piegādāts',
@@ -1104,6 +1272,9 @@ var ParcelI18n = {
     today: 'φτάνουν σήμερα',
     show_full: 'Εμφάνιση πλήρους κάρτας',
     show_compact: 'Επιστροφή στη συμπαγή προβολή',
+    tab_active: 'Ενεργά',
+    more: '+{n} ακόμη',
+    nothing: 'Τίποτα καθ’ οδόν',
     editor: {
       entity: 'Αισθητήρας Parcel',
       title: 'Τίτλος',
@@ -1114,6 +1285,11 @@ var ParcelI18n = {
       max_events: 'Συμβάντα που εμφανίζονται σε ανεπτυγμένο δέμα',
       language: 'Γλώσσα',
       lang_auto: 'Αυτόματα',
+      illustration: 'Εικονογράφηση',
+      illustration_theme: 'Θέμα εικονογράφησης',
+      theme_auto: 'Αυτόματο',
+      theme_day: 'Ημέρα',
+      theme_night: 'Νύχτα',
     },
     status: {
       delivered: 'Παραδόθηκε',
@@ -1131,7 +1307,84 @@ var ParcelI18n = {
 };
 
 // Single source of the config defaults, shared by the card (setConfig) and the editor.
-var PARCEL_DEFAULTS = { show_title: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5 };
+var PARCEL_DEFAULTS = {
+  show_title: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5, illustration: true, illustration_theme: 'auto',
+};
+
+// ── The illustration: a street with houses, and the delivery van of the featured parcel ──────────────────────
+// Every animation lasts 8 s or a divisor of it, so a recording of 8 s loops. The scenery is drawn in a 200 × 80 box
+// whose bottom 5 units overlap the road strip; the van's wheels roll on that strip, the houses stand at y = 75.
+// The scene of the header follows the featured parcel (parcelFeatured): `drop` the van brings it to the door,
+// `transit` the van drives by, `pickup` it waits in the parcel shop, `failed` the van leaves a notice on the door,
+// `delivered` it lies on the doorstep, `idle` a quiet street.
+var PARCEL_SCENE_OF = {
+  out_for_delivery: 'drop', awaiting_pickup: 'pickup', failed_attempt: 'failed', exception: 'failed', delivered: 'delivered',
+};
+// The parcel the mini card puts forward: a problem first, then the one at the door, the one to pick up, the rest.
+var PARCEL_FEATURE_RANK = { failed_attempt: 0, exception: 0, out_for_delivery: 1, awaiting_pickup: 2, in_transit: 3, info_received: 4 };
+
+var PARCEL_STARS = [[8, 8], [26, 22], [44, 6], [62, 28], [80, 12], [98, 4], [110, 30], [134, 8], [160, 20], [178, 6], [194, 14]];
+
+function parcelCloud(cls, x, y, s) {
+  return `<g class="cloud ${cls}"><path transform="translate(${x} ${y}) scale(${s})" ` +
+    'd="M-14,4 C-17,4 -18,0 -14.5,-1 C-14,-5 -8,-6 -6,-3 C-4,-8 4,-8 5,-2 C9,-3 12,0 10,4 Z"/></g>';
+}
+
+var PARCEL_BOX = '<rect width="7" height="6" rx="1" class="box"/><path d="M3.5,0 V6" class="tape"/>';
+
+var PARCEL_SCENE =
+  '<svg class="scene" viewBox="0 0 200 80" preserveAspectRatio="xMaxYMax slice" aria-hidden="true" focusable="false">' +
+  '<g class="stars">' + PARCEL_STARS.map((s, i) => `<circle class="${i % 3 ? '' : 'tw'}" cx="${s[0]}" cy="${s[1]}" r=".6"/>`).join('') + '</g>' +
+  '<g class="sun"><circle cx="100" cy="18" r="10" opacity=".28"/><circle cx="100" cy="18" r="6.5"/></g>' +
+  '<mask id="parcel-moon"><rect width="200" height="80" fill="#fff"/><circle cx="103.5" cy="15.5" r="5.4" fill="#000"/></mask>' +
+  '<g class="moon"><circle cx="100" cy="18" r="9" opacity=".12"/><circle cx="100" cy="18" r="6" mask="url(#parcel-moon)"/></g>' +
+  '<g class="clouds">' + parcelCloud('c1', 70, 15, 0.9) + parcelCloud('c2', 186, 36, 0.65) + '</g>' +
+  '<path class="hill" d="M0,75 C30,70 52,62 82,63 C110,64 130,55 160,57 C180,58 190,54 200,55 L200,75 Z"/>' +
+  '<g class="shop">' +
+  '<rect x="97" y="59" width="27" height="16" class="wall"/><path d="M94,54 H127 L125,60 H96 Z" class="awning"/>' +
+  '<path d="M100,54 V60 M106,54 V60 M112,54 V60 M118,54 V60 M124,54 V59" class="stripes"/>' +
+  '<rect x="100" y="63" width="9" height="12" class="win"/><rect x="112" y="63" width="9" height="8" class="win"/>' +
+  '<g class="waiting" transform="translate(113 65)">' + PARCEL_BOX + '</g></g>' +
+  '<g class="house">' +
+  '<rect x="142" y="57" width="28" height="18" class="wall"/><path d="M139.5,58 L156,45.5 L172.5,58 Z" class="roof"/>' +
+  '<path d="M139.5,58 L156,45.5 L172.5,58" class="eave"/>' +
+  '<rect x="145" y="61" width="5" height="4.5" class="win"/><rect x="162" y="61" width="5" height="4.5" class="win"/>' +
+  '<rect x="152" y="64" width="8" height="11" class="door"/>' +
+  '<g class="notice"><rect x="152.5" y="65" width="7" height="5" rx=".6"/><path d="M156,66 V68.2 M156,69 V69.3"/></g></g>' +
+  '<g class="house small"><rect x="177" y="61" width="18" height="14" class="wall"/><path d="M175,62 L186,53 L197,62 Z" class="roof grey"/>' +
+  '<rect x="183.5" y="65" width="5" height="4.5" class="win"/></g>' +
+  '<g class="left" transform="translate(147 69)">' + PARCEL_BOX +
+  '<g class="tick"><circle cx="8" cy="-1.5" r="3"/><path d="M6.6,-1.5 L7.6,-.5 L9.5,-2.6"/></g></g>' +
+  '<g class="carried">' + PARCEL_BOX + '</g>' +
+  '<g class="van"><g class="bodywork">' +
+  '<rect x="0" y="60" width="22" height="14" rx="2" class="cargo"/><rect x="3" y="64" width="10" height="2.5" rx="1.2" class="stripe"/>' +
+  '<path d="M22,64 H28 L32.5,69 V74 H22 Z" class="cab"/><path d="M24,65.5 H27.4 L30,68.6 H24 Z" class="glass"/>' +
+  '<path d="M32.5,70.5 L46,67 V76 Z" class="beam"/><circle cx="32" cy="71.5" r="1" class="lamp"/></g>' +
+  '<circle cx="6.5" cy="76.5" r="3" class="wheel"/><circle cx="26.5" cy="76.5" r="3" class="wheel"/></g>' +
+  '</svg>';
+
+// Night illustration: forced by illustration_theme, else with the dark theme (a light sky on a dark dashboard
+// glares), else when the sun is below the horizon.
+function parcelNight(hass, config) {
+  var mode = config?.illustration_theme;
+  if (mode === 'night') return true;
+  if (mode === 'day') return false;
+  return !!hass?.themes?.darkMode || hass?.states?.['sun.sun']?.state === 'below_horizon';
+}
+
+// The featured parcel: the most pressing active one (PARCEL_FEATURE_RANK, then the list order: expected date),
+// else the first delivered one; null without any parcel.
+function parcelFeatured(deliveries) {
+  var active = deliveries.filter((d) => d.status_code !== 0);
+  if (!active.length) return deliveries[0] || null;
+  var rank = (d) => (d.status in PARCEL_FEATURE_RANK ? PARCEL_FEATURE_RANK[d.status] : 5);
+  return active.reduce((best, d) => (rank(d) < rank(best) ? d : best), active[0]);
+}
+
+function parcelSceneOf(d) {
+  if (!d) return 'idle';
+  return PARCEL_SCENE_OF[d.status] || (d.status_code === 0 ? 'delivered' : 'transit');
+}
 
 var PARCEL_STATUS_STYLE = {
   delivered: { icon: 'mdi:package-variant-closed-check', color: 'var(--success-color, #43a047)' },
@@ -1320,10 +1573,37 @@ class ParcelCard extends HTMLElement {
     this._root = this.attachShadow({ mode: 'open' });
     this._root.innerHTML =
       '<style>' + ParcelCard._styles() + '</style>' +
-      '<ha-card><div class="header"></div><div class="form" hidden></div><div class="list"></div></ha-card>';
+      '<ha-card><div class="header"></div><div class="tabs" role="tablist" hidden></div><div class="form" hidden></div><div class="list"></div></ha-card>';
     var list = this._root.querySelector('.list');
     list.addEventListener('click', this._onListClick.bind(this));
     list.addEventListener('keydown', this._onListKeydown.bind(this));
+    this._root.querySelector('.tabs').addEventListener('click', this._onTabClick.bind(this));
+  }
+
+  // Active / Delivered tabs, under the header (like the flight board): shown when delivered parcels are listed.
+  _renderTabs(all, t) {
+    var done = all.filter((d) => d.status_code === 0).length;
+    var show = !this._compact() && this._config.show_delivered && done > 0;
+    var tabs = this._root.querySelector('.tabs');
+    if (tabs) tabs.hidden = !show;
+    if (!show) {
+      this._tab = 'active';
+      return false;
+    }
+    var tab = (id, label, n) =>
+      `<button class="tab" role="tab" data-tab="${id}" aria-selected="${this._tab === id}">${parcelEsc(label)}` +
+      ` <span class="n">${n}</span></button>`;
+    if (tabs) tabs.innerHTML = tab('active', t.tab_active, all.length - done) + tab('delivered', t.status.delivered, done);
+    return true;
+  }
+
+  _onTabClick(ev) {
+    var btn = ev.target.closest && ev.target.closest('[data-tab]');
+    if (!btn) return;
+    ev.stopPropagation();
+    this._tab = btn.getAttribute('data-tab');
+    this._expanded = {};
+    this._render();
   }
 
   _render() {
@@ -1334,17 +1614,12 @@ class ParcelCard extends HTMLElement {
     var header = this._root.querySelector('.header');
     var list = this._root.querySelector('.list');
     var title = this._config.title || t.default_title;
-
-    this._renderHeader(header, t, st, title);
-    if (!st) {
-      list.innerHTML = `<div class="empty">${parcelEsc(t.no_entity)}</div>`;
-      return;
-    }
+    this._tab = this._tab || 'active';
 
     // A failed update (rate limit, Parcel down) leaves the sensor unavailable, without its attributes:
     // say so instead of showing "unavailable active" and an empty list.
-    var unavailable = st.state === 'unavailable' || st.state === 'unknown';
-    var deliveries = (st.attributes?.deliveries || []).slice();
+    var unavailable = !st || st.state === 'unavailable' || st.state === 'unknown';
+    var deliveries = unavailable ? [] : (st.attributes?.deliveries || []).slice();
     if (!this._config.show_delivered) {
       deliveries = deliveries.filter((d) => d.status_code !== 0);
     }
@@ -1356,14 +1631,23 @@ class ParcelCard extends HTMLElement {
       return expectedTs(a) - expectedTs(b);
     });
 
+    this._renderHeader(header, t, st, title, deliveries);
+    var tabbed = this._renderTabs(deliveries, t);
+    if (!st) {
+      list.innerHTML = `<div class="empty">${parcelEsc(t.no_entity)}</div>`;
+      return;
+    }
     if (unavailable) {
       list.innerHTML = `<div class="empty">${parcelEsc(t.unavailable)}</div>`;
       return;
     }
+    // The compact mini card is its banner alone.
     if (this._compact()) {
-      list.innerHTML = this._renderSummary(st.attributes?.deliveries || [], t);
+      list.innerHTML = '';
       return;
     }
+    // With the tabs, each one lists its own parcels.
+    if (tabbed) deliveries = deliveries.filter((d) => (d.status_code === 0) === (this._tab === 'delivered'));
     if (!deliveries.length) {
       list.innerHTML = `<div class="empty">${parcelEsc(t.empty)}</div>`;
       return;
@@ -1378,30 +1662,40 @@ class ParcelCard extends HTMLElement {
 
   // The header is built once and then updated in place: rebuilding it with innerHTML on every sensor update or
   // refresh dropped the keyboard focus of its buttons. It is rebuilt only when its buttons or language change.
-  _renderHeader(header, t, st, title) {
+  _renderHeader(header, t, st, title, deliveries) {
     var c = this._config;
     var compact = this._compact();
+    var hero = c.illustration !== false;
     var canAdd = c.show_add && parcelIsAdmin(this._hass);
-    var key = [!!st, c.show_refresh, canAdd, parcelLang(this._hass, c), compact].join('|');
-    if (this._headerKey !== key || !header.querySelector('.title')) {
+    var key = [!!st, c.show_refresh, canAdd, parcelLang(this._hass, c), compact, hero].join('|');
+    if (this._headerKey !== key || !header.querySelector('.head')) {
       this._headerKey = key;
+      header.className = hero ? 'header hero' : 'header';
       header.innerHTML =
-        '<div class="title">' + this._iconHtml() + '<div class="titles"><div class="name"></div>' +
-        // The refresh error survives re-renders (hass updates) until the next refresh attempt.
-        '<div class="sub error" hidden></div></div></div>' +
+        (hero ? `${PARCEL_SCENE}<div class="road"><span class="marks"></span></div>` : '') +
+        '<div class="head">' +
+        // The compact mini card counts the other parcels on the way in a badge on its icon.
+        (compact ? `<div class="mark">${this._iconHtml()}<span class="more" hidden></span></div>` : this._iconHtml()) +
+        (compact
+          // The compact mini card: the featured parcel laid on the sky, like the next flight of the flight board.
+          ? '<div class="next"><div class="name"></div>' +
+            '<div class="l1"><span class="chip" hidden><span class="dot"></span><span class="txt"></span></span></div>' +
+            '<div class="l2"></div></div>'
+          : '<div class="titles"><div class="name"></div><div class="sub count" hidden></div>' +
+            // The refresh error survives re-renders (hass updates) until the next refresh attempt.
+            '<div class="sub error" hidden></div></div>') +
+        '</div>' +
         (st && !compact
-          // Status pill on the right of the header (card convention), not a subtitle under the title.
-          ? '<span class="status" hidden><span class="status-text"></span></span>' +
-            '<div class="buttons">' +
+          ? '<div class="buttons">' +
             (c.show_refresh
               ? `<ha-icon-button class="refresh-btn" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
               : '') +
             (canAdd
               ? `<ha-icon-button class="add-btn" label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>`
               : '') +
+            this._detailButton(t) +
             '</div>'
-          : '') +
-        this._detailButton(t);
+          : this._detailButton(t));
       var addBtn = header.querySelector('.add-btn');
       if (addBtn) addBtn.addEventListener('click', this._toggleForm.bind(this));
       var refreshBtn = header.querySelector('.refresh-btn');
@@ -1409,26 +1703,78 @@ class ParcelCard extends HTMLElement {
       var detailBtn = header.querySelector('.detail');
       if (detailBtn) detailBtn.addEventListener('click', this._toggleDetail.bind(this));
     }
-    var name = header.querySelector('.name');
-    if (name) name.textContent = title;
-    var sub = header.querySelector('.sub');
-    if (sub) {
-      sub.hidden = !(st && this._refreshError);
-      sub.textContent = (st && this._refreshError) || '';
+    var unavailable = !st || st.state === 'unavailable' || st.state === 'unknown';
+    var featured = unavailable ? null : parcelFeatured(deliveries);
+    if (hero) {
+      header.classList?.toggle('night', parcelNight(this._hass, c));
+      header.setAttribute?.('data-scene', parcelSceneOf(featured));
     }
-    var pill = header.querySelector('.status');
-    if (pill) {
-      // An unavailable sensor has no count to show: the list says it is unavailable.
-      var unavailable = st.state === 'unavailable' || st.state === 'unknown';
-      var count = unavailable ? '' : `${st.state} ${t.in_progress}`;
-      pill.hidden = unavailable;
-      // Narrow cards only show the pill's dot: the count stays in its tooltip and for screen readers.
-      pill.title = count;
-      var text = header.querySelector('.status-text');
-      if (text) text.textContent = count;
+    if (compact) {
+      this._renderNext(header, t, st, title, deliveries, featured);
+    } else {
+      var name = header.querySelector('.name');
+      if (name) name.textContent = title;
+      var count = header.querySelector('.count');
+      if (count) {
+        // An unavailable sensor has no count to show: the list says it is unavailable.
+        // The sensor's state is the active count (its filter included); the parcels arriving today follow it.
+        var today = unavailable ? 0 : this._counts(st.attributes?.deliveries || []).today;
+        count.hidden = unavailable || !!this._refreshError;
+        count.textContent = unavailable ? '' : `${st.state} ${t.in_progress}` + (today ? ` · ${today} ${t.today}` : '');
+      }
+      var sub = header.querySelector('.sub.error');
+      if (sub) {
+        sub.hidden = !(st && this._refreshError);
+        sub.textContent = (st && this._refreshError) || '';
+      }
     }
     var refresh = header.querySelector('.refresh-btn');
     if (refresh) refresh.classList.toggle('spinning', !!this._refreshing);
+  }
+
+  // The banner of the compact mini card: the featured parcel, its state pill, its carrier and what comes next.
+  _renderNext(header, t, st, title, deliveries, featured) {
+    var name = header.querySelector('.name');
+    var chip = header.querySelector('.chip');
+    var l2 = header.querySelector('.l2');
+    var more = header.querySelector('.more');
+    if (!name || !chip || !l2 || !more) return;
+    var unavailable = !st || st.state === 'unavailable' || st.state === 'unknown';
+    chip.hidden = !featured;
+    more.hidden = true;
+    if (!featured) {
+      name.textContent = title;
+      l2.textContent = !st ? t.no_entity : unavailable ? t.unavailable : t.nothing;
+      return;
+    }
+    var key = featured.status || 'unknown';
+    var style = PARCEL_STATUS_STYLE[key] || PARCEL_STATUS_STYLE.unknown;
+    name.textContent = featured.description || featured.tracking_number;
+    chip.style.setProperty('--c', style.color);
+    chip.querySelector('.txt').textContent = t.status[key] || key;
+    var last = (featured.events || [])[0];
+    var expected = featured.status_code !== 0 ? this._formatExpected(featured) : '';
+    var ms = featured.timestamp_expected ? featured.timestamp_expected * 1000 : parcelParseDate(featured.date_expected);
+    if (featured.status_code === 4 || (expected && !Number.isNaN(ms) && parcelIsToday(ms, Date.now()))) expected = t.today;
+    var where = expected || last?.location || '';
+    l2.textContent = (featured.carrier_name || featured.carrier_code || '') + (where ? ` · ${where}` : '');
+    var others = deliveries.filter((d) => d.status_code !== 0 && d !== featured).length;
+    more.hidden = !others;
+    more.textContent = others ? `+${others}` : '';
+    more.title = others ? t.more.replace('{n}', others) : '';
+    if (more.setAttribute) more.setAttribute('aria-label', more.title);
+  }
+
+  // Active: not delivered yet. Arriving today: out for delivery, or expected today.
+  _counts(deliveries) {
+    var now = Date.now();
+    var active = deliveries.filter((d) => d.status_code !== 0);
+    var today = active.filter((d) => {
+      if (d.status_code === 4) return true;
+      var ms = d.timestamp_expected ? d.timestamp_expected * 1000 : parcelParseDate(d.date_expected);
+      return !Number.isNaN(ms) && parcelIsToday(ms, now);
+    });
+    return { active: active.length, today: today.length };
   }
 
   // Overridden by the mini card: compact view, and its detail button at the top right.
@@ -1455,6 +1801,8 @@ class ParcelCard extends HTMLElement {
     return '<div class="logo" aria-hidden="true"><ha-icon icon="mdi:package-variant-closed"></ha-icon></div>';
   }
 
+  // A delivery is a tile (the common tile of the cards): a tinted round icon with its state badge, the description
+  // in bold, the state line in the state color, then the expected date and the carrier as pills.
   _renderDelivery(d, t) {
     var key = d.status || 'unknown';
     var style = PARCEL_STATUS_STYLE[key] || PARCEL_STATUS_STYLE.unknown;
@@ -1462,25 +1810,30 @@ class ParcelCard extends HTMLElement {
     var expanded = !!this._expanded[id];
     var events = d.events || [];
     var last = events[0];
-    var expected = this._formatExpected(d);
+    var done = d.status_code === 0;
+    var expected = done ? '' : this._formatExpected(d);
+    var icon = done
+      // Delivered: a check mark drawn in the round icon.
+      ? '<svg class="draw" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5,12.5 L10,17 L18.5,7.5"/></svg>'
+      : `<ha-icon icon="${style.icon}"></ha-icon>`;
+    var where = [last?.location, parcelDate(last?.date)].filter(Boolean).join(' ');
 
     var html =
-      '<div class="delivery' + (d.status_code === 0 ? ' done' : '') + '" data-id="' + parcelEsc(id) + '">' +
+      `<div class="delivery s-${parcelEsc(key)}${done ? ' done' : ''}" data-id="${parcelEsc(id)}" style="--c:${style.color}">` +
       // Only the description is the keyboard toggle: a role="button" row would hide the copy button
       // inside it from screen readers (nested interactive). A click anywhere on the row still toggles it.
       '<div class="row">' +
-      '<ha-icon class="status-icon" icon="' + style.icon + '" style="color:' + style.color + '"></ha-icon>' +
+      `<div class="pill" aria-hidden="true">${icon}<span class="badge"></span></div>` +
       '<div class="main">' +
-      '<div class="line1"><span class="desc" role="button" tabindex="0" aria-expanded="' + expanded + '">' + parcelEsc(d.description || d.tracking_number) + '</span>' +
-      '<span class="chip" style="--c:' + style.color + '">' + parcelEsc(t.status[key] || key) + '</span></div>' +
-      '<div class="line2">' + parcelEsc(d.carrier_name || d.carrier_code) + ' · ' +
-      '<span class="tracking" role="button" tabindex="0" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></div>' +
-      (last
-        ? '<div class="line3">' + parcelEsc(last.event) + (last.location ? ` · ${parcelEsc(last.location)}` : '') +
-          (parcelDate(last.date) ? ` <span class="date">${parcelEsc(parcelDate(last.date))}</span>` : '') + '</div>'
-        : '') +
-      (expected && d.status_code !== 0 ? `<div class="expected">${parcelEsc(t.expected)} ${parcelEsc(expected)}</div>` : '') +
-      '</div>' +
+      '<div class="line1"><span class="desc" role="button" tabindex="0" aria-expanded="' + expanded + '">' + parcelEsc(d.description || d.tracking_number) + '</span></div>' +
+      `<div class="state"><span class="label">${parcelEsc(t.status[key] || key)}</span>${where ? ` · ${parcelEsc(where)}` : ''}</div>` +
+      (last ? `<div class="line3">${parcelEsc(last.event)}</div>` : '') +
+      (key === 'out_for_delivery' ? '<div class="track" aria-hidden="true"><span class="fill"></span><ha-icon icon="mdi:truck-fast"></ha-icon></div>' : '') +
+      '<div class="chips">' +
+      (expected ? `<span class="chip expected" title="${parcelEsc(t.expected)}"><ha-icon icon="mdi:clock-outline"></ha-icon>${parcelEsc(expected)}</span>` : '') +
+      '<span class="chip carrier">' + parcelEsc(d.carrier_name || d.carrier_code) + ' · ' +
+      '<span class="tracking" role="button" tabindex="0" data-copy="' + parcelEsc(d.tracking_number) + '" title="' + parcelEsc(t.copy) + '">' + parcelEsc(d.tracking_number) + '</span></span>' +
+      '</div></div>' +
       '<ha-icon class="chevron' + (expanded ? '' : ' closed') + '" icon="mdi:chevron-down"></ha-icon>' +
       '</div>';
 
@@ -1676,69 +2029,161 @@ class ParcelCard extends HTMLElement {
 
   static _styles() {
     return [
-      ':host { display: block; }',
+      ':host { display: block; --pc-accent: ' + PARCEL_ACCENT + '; }',
       // The container query needs size containment, which gives ha-card no intrinsic width: in an auto-sized parent
       // (inline-block, grid `auto` column, layout-card) the card fell to a few pixels. This empty, 0 px high line
       // gives the host a preferred width of 320 px (max-content) but no minimum (min-content 0), so a `1fr 1fr` grid
       // can still shrink it, even with the card wrapped in a div. contain-intrinsic-inline-size gave both: the card
       // then refused to shrink and overflowed such a grid.
       ':host::before { content: ""; display: grid; grid-template-columns: minmax(0, 320px); height: 0; }',
-      'ha-card { padding: 0 0 8px; overflow: hidden; container-type: inline-size; }',
-      '.header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 10px 8px 12px; min-height: 36px; }',
-      // Narrow header: the title takes what is left (flex-basis 0, so it does not take the pill's room) and keeps a
-      // few letters; the pill shrinks only when it really lacks room; the buttons never do.
-      '.title { flex: 1 1 0; min-width: calc(5ch + 50px); font-size: 16px; display: flex; align-items: center; gap: 10px; }',
+      'ha-card { padding: 0 0 4px; overflow: hidden; container-type: inline-size; }',
+      // ── Header. Classic (illustration: false): the round icon, the title and its subtitle, the buttons.
+      '.header { position: relative; display: flex; align-items: center; gap: 10px; padding: 12px 10px 8px 12px; min-height: 40px; }',
+      '.head { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; }',
       '.logo { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center;' +
-        ' color: ' + PARCEL_ACCENT + '; background: color-mix(in srgb, ' + PARCEL_ACCENT + ' 16%, transparent); }',
+        ' color: var(--pc-accent); background: color-mix(in srgb, var(--pc-accent) 16%, transparent); }',
       '.logo ha-icon { --mdc-icon-size: 24px; }',
-      // 5ch of the 16 px title font is the width of four letters and the ellipsis ("Deli…"). The title block has the
-      // same minimum plus the logo's 40 px and gap: a smaller one let the title slide under the pill.
-      '.titles { flex: 1 1 0; min-width: 5ch; overflow: hidden; }',
+      '.titles { flex: 1 1 0; min-width: 0; overflow: hidden; }',
       ':host([hide-title]) .titles > .name { display: none; }',
-      '.name { font-size: 16px; font-weight: 500; line-height: 1.25; color: var(--primary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-      '.sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-      '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 50%, var(--primary-text-color)); }',
-      '.buttons { display: flex; align-items: center; flex: none; }',
-      // HA's default ha-icon-button is 48 px with a 24 px glyph; match the 28/16 px icon actions of the sibling cards (wero, orphan-entities).
+      '.name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+      '.header:not(.hero) .name { color: var(--primary-text-color); }',
+      '.sub { font-size: 12px; line-height: 16px; color: var(--sky-muted, var(--secondary-text-color)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+      '.sub[hidden], .more[hidden], .chip[hidden], .tabs[hidden] { display: none; }',
+      '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 55%, var(--sky-text, var(--primary-text-color))); }',
+      '.buttons { display: flex; align-items: center; gap: 4px; flex: none; }',
+      // HA's default ha-icon-button is 48 px with a 24 px glyph; match the 28/16 px icon actions of the sibling cards.
       '.buttons ha-icon-button { flex: none; --mdc-icon-button-size: 28px; --mdc-icon-size: 16px; color: var(--secondary-text-color); }',
-      // State colors stay on the backgrounds; texts are mixed with the text color to stay readable (WCAG 4.5:1).
-      '.status { flex: 0 1 auto; min-width: 0; max-width: 50%; display: flex; align-items: center; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap; border-radius: 12px; padding: 5px 10px;' +
-        ' color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--primary-color) 15%, transparent); }',
-      '.status[hidden] { display: none; }',
-      '.status-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }',
-      // Narrow card (8-9 columns of a phone section, up to a 12-column 320 px phone section): the logo goes and the
-      // pill and the buttons get a little closer, so the pill keeps its whole label next to a 4-letter title.
-      '@container (max-width: 320px) { .header { gap: 4px; } .title { min-width: 5ch; } .logo { display: none; } .buttons { margin-left: -4px; } .status { padding: 5px 8px; } }',
-      // Narrower (the 8-column minimum on a small phone, ~210-240 px): the pill keeps only a colored dot.
-      '@container (max-width: 240px) { .status { padding: 5px; } .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--primary-color); }' +
-        ' .status-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } }',
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
-      '.empty { padding: 12px 16px; color: var(--secondary-text-color); }',
-      '.delivery { padding: 6px 12px; cursor: pointer; border-top: 1px solid var(--divider-color, rgba(0,0,0,.12)); }',
-      '.delivery:first-child { border-top: none; }',
-      '.delivery:hover { background: color-mix(in srgb, var(--primary-text-color) 4%, transparent); }',
-      // A delivered row is quieter through its title color only: fading the whole row made its texts unreadable.
-      '.delivery.done .desc { color: var(--secondary-text-color); font-weight: 400; }',
+      // ── Illustrated header: the sky, the street on the right, the road, the texts laid on the sky (as on the flight
+      // and train boards). The scene takes 2.5 times its height, at most --scene-max of the card; the texts the rest.
+      '.header.hero { display: block; padding: 0; height: var(--hero-h); overflow: hidden; --hero-h: 96px; --road-h: 12px; --scene-max: 56%;' +
+        ' --scene-w: min(calc((var(--hero-h) - var(--road-h) + 5px) * 2.5), var(--scene-max));' +
+        ' --sky-text: #0d2a45; --sky-muted: #3b5b78; color: var(--sky-text);' +
+        ' background: linear-gradient(90deg, #f1f8ff 0%, #e2f1fd 34%, #b9def8 70%, #9fd0f3 100%); }',
+      '.header.hero.night { --sky-text: #ffffff; --sky-muted: rgba(255,255,255,.78);' +
+        ' background: linear-gradient(90deg, #1b2f52 0%, #15284a 36%, #0f1f3d 72%, #0a1830 100%); }',
+      '.hero .scene { position: absolute; z-index: 1; right: 0; bottom: calc(var(--road-h) - 5px); height: calc(100% - var(--road-h) + 5px); width: var(--scene-w); }',
+      '.hero .road { position: absolute; left: 0; right: 0; bottom: 0; height: var(--road-h); background: #8e9399; box-shadow: inset 0 1px 0 #7a8087; }',
+      '.hero.night .road { background: #2c323b; box-shadow: inset 0 1px 0 #1f242b; }',
+      '.hero .road .marks { position: absolute; left: 0; right: 0; top: calc(50% - .8px); height: 1.6px;' +
+        ' background: repeating-linear-gradient(90deg, rgba(255,255,255,.85) 0 10px, transparent 10px 20px); }',
+      '.hero.night .road .marks { background: repeating-linear-gradient(90deg, rgba(255,255,255,.4) 0 10px, transparent 10px 20px); }',
+      '.hero .head { position: absolute; z-index: 2; left: 0; top: 0; bottom: var(--road-h); right: var(--scene-w); box-sizing: border-box; padding: 8px 8px 8px 14px; }',
+      // The round icon on the sky: frosted glass, the Parcel accent.
+      '.hero .logo { background: rgba(255,255,255,.62); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pc-accent) 22%, transparent); }',
+      '.hero.night .logo { background: rgba(255,255,255,.12); color: #ffb070; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }',
+      // The buttons on the sky: frosted glass, never a plain filled button.
+      '.hero .buttons { position: absolute; z-index: 3; top: 8px; right: 8px; gap: 6px; }',
+      '.hero .buttons ha-icon-button, .hero .detail { color: #33506b; background: rgba(255,255,255,.55); border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); }',
+      '.hero .buttons ha-icon-button { --mdc-icon-button-size: 30px; --mdc-icon-size: 17px; }',
+      '.hero.night .buttons ha-icon-button, .hero.night .detail { color: #ffffff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }',
+      // Scenery colours, day and night.
+      '.scene .sun { fill: #ffd65a; } .scene .moon, .scene .stars { display: none; fill: #f3eed2; }',
+      '.night .scene .sun { display: none; } .night .scene .moon, .night .scene .stars { display: inline; } .scene .stars { fill: #ffffff; }',
+      '.scene .clouds { fill: #ffffff; opacity: .92; } .night .scene .clouds { opacity: .1; }',
+      '.scene .hill { fill: #a7d39f; } .night .scene .hill { fill: #1d3a4a; }',
+      '.scene .wall { fill: #f4f6f8; stroke: #cfd7df; stroke-width: .5; } .night .scene .wall { fill: #2a3646; stroke: #3a4759; }',
+      '.scene .roof { fill: #ffffff; } .scene .roof.grey { fill: #90a4ae; } .night .scene .roof { fill: #34404f; } .night .scene .roof.grey { fill: #3a4759; }',
+      '.scene .eave { fill: none; stroke: var(--pc-accent); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }',
+      '.scene .win { fill: #86b9de; } .night .scene .win { fill: #ffcf6e; }',
+      '.scene .door { fill: #8d6e63; transform-box: fill-box; transform-origin: left; } .night .scene .door { fill: #5d4037; }',
+      '.scene .awning { fill: #ffa600; } .scene .stripes { stroke: #ffffff; stroke-width: 1.6; }',
+      '.scene .box { fill: #e0a85a; stroke: #a86a25; stroke-width: .5; } .scene .tape { stroke: #a86a25; stroke-width: .5; }',
+      '.scene .notice rect { fill: #ffffff; stroke: #db4437; stroke-width: .6; } .scene .notice path { stroke: #db4437; stroke-width: 1; stroke-linecap: round; }',
+      '.scene .tick circle { fill: #43a047; } .scene .tick path { fill: none; stroke: #ffffff; stroke-width: .9; stroke-linecap: round; stroke-linejoin: round; }',
+      '.scene .cargo { fill: #ffffff; stroke: #cfd5db; stroke-width: .5; } .night .scene .cargo { fill: #dfe5ea; }',
+      '.scene .stripe { fill: var(--pc-accent); } .scene .cab { fill: #039be5; } .scene .glass { fill: #e3f4fd; } .night .scene .glass { fill: #ffe7a8; }',
+      '.scene .beam { fill: #ffe9a0; opacity: 0; } .night .scene .beam { opacity: .35; } .scene .lamp { fill: #ffd54a; }',
+      '.scene .wheel { fill: #37474f; stroke: #263238; stroke-width: .6; }',
+      // What each scene shows (data-scene on the header): the van, the parcel it carries, the shop, the notice…
+      '.scene .shop, .scene .notice, .scene .left, .scene .carried, .scene .van { display: none; }',
+      '[data-scene="pickup"] .scene .shop, [data-scene="failed"] .scene .notice, [data-scene="delivered"] .scene .left { display: inline; }',
+      '[data-scene="drop"] .scene .carried, [data-scene="drop"] .scene .van, [data-scene="failed"] .scene .van, [data-scene="transit"] .scene .van { display: inline; }',
+      // ── Animations of the scene, each one 8 s or a divisor of it, so a recording of 8 s loops.
+      '.scene .van { transform: translateX(104px); } .scene .carried { transform: translate(152.5px, 69px); }',
+      '.scene .bodywork { animation: parcel-bob .5s ease-in-out infinite; }',
+      '[data-scene="drop"] .scene .van, [data-scene="failed"] .scene .van { animation: parcel-stop 8s infinite; }',
+      '[data-scene="transit"] .scene .van { animation: parcel-pass 8s linear infinite; }',
+      '[data-scene="drop"] .scene .carried { animation: parcel-carry 8s ease-in-out infinite; }',
+      '[data-scene="drop"] .scene .door { animation: parcel-door 8s ease-in-out infinite; }',
+      '[data-scene="failed"] .scene .notice { animation: parcel-notice 8s ease-in-out infinite; }',
+      '.scene .tick { transform-box: fill-box; transform-origin: center; animation: parcel-pop 4s ease-out infinite; }',
+      '.scene .waiting { animation: parcel-blink 2s ease-in-out infinite; }',
+      '.scene .cloud { animation: parcel-drift 4s ease-in-out infinite alternate; } .scene .cloud.c2 { animation-delay: -2s; animation-direction: alternate-reverse; }',
+      '.scene .stars .tw { animation: parcel-blink 4s ease-in-out infinite; }',
+      '@keyframes parcel-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.6px); } }',
+      '@keyframes parcel-stop { 0% { transform: translateX(-46px); animation-timing-function: ease-out; } 38%, 62% { transform: translateX(104px); animation-timing-function: ease-in; } 100% { transform: translateX(236px); } }',
+      '@keyframes parcel-pass { from { transform: translateX(-46px); } to { transform: translateX(236px); } }',
+      '@keyframes parcel-carry { 0%, 42% { transform: translate(118px, 64px) scale(.5); opacity: 0; } 47% { transform: translate(132px, 60px) scale(1); opacity: 1; }' +
+        ' 55%, 94% { transform: translate(152.5px, 69px); opacity: 1; } 100% { transform: translate(152.5px, 69px); opacity: 0; } }',
+      '@keyframes parcel-door { 0%, 42%, 60%, 100% { transform: scaleX(1); } 46%, 56% { transform: scaleX(.2); } }',
+      '@keyframes parcel-notice { 0%, 56% { opacity: 0; transform: rotate(0); } 60% { opacity: 1; transform: rotate(-6deg); } 64% { transform: rotate(5deg); } 68%, 94% { opacity: 1; transform: rotate(0); } 100% { opacity: 0; } }',
+      '.scene .notice { transform-box: fill-box; transform-origin: top center; }',
+      '@keyframes parcel-pop { 0% { transform: scale(0); } 12% { transform: scale(1.25); } 18%, 100% { transform: scale(1); } }',
+      '@keyframes parcel-blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }',
+      '@keyframes parcel-drift { from { transform: translateX(-7px); } to { transform: translateX(7px); } }',
+      // A narrow card keeps the sky and the road for its texts: no scenery.
+      '@container (max-width: 300px) { ha-card:not(.mini) .hero .scene { display: none; } ha-card:not(.mini) .hero .head { right: 0; padding-right: 84px; } }',
+      // ── Tabs, right under the header.
+      '.tabs { display: flex; gap: 18px; padding: 0 16px; border-bottom: 1px solid var(--divider-color, rgba(127,127,127,.2)); }',
+      '.tab { all: unset; cursor: pointer; padding: 9px 0 7px; font-size: 14px; font-weight: 500; color: var(--secondary-text-color);' +
+        ' border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }',
+      '.tab .n { font-weight: 400; }',
+      '.tab:hover { color: var(--primary-text-color); }',
+      '.tab:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; }',
+      '.tab[aria-selected="true"] { color: var(--primary-text-color); border-bottom-color: var(--pc-accent); }',
+      // ── Deliveries: the tiles of the cards (neutral background, tinted round icon, coloured state line).
+      '.list { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 6px; }',
+      '.list:empty { display: none; }',
+      '.empty { padding: 6px 4px; font-size: 13px; color: var(--secondary-text-color); }',
+      '.delivery { padding: 8px 10px 8px 8px; cursor: pointer; border-radius: 12px; background: var(--secondary-background-color, rgba(127,127,127,.1)); transition: background .2s; }',
+      '.delivery:hover { background: color-mix(in srgb, var(--c) 12%, var(--secondary-background-color, transparent)); }',
       '.desc:focus-visible, .tracking:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; border-radius: 4px; }',
       '.row { display: flex; align-items: flex-start; gap: 10px; }',
-      '.status-icon { flex: none; margin-top: 2px; }',
+      '.pill { position: relative; flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;' +
+        ' color: var(--c); background: color-mix(in srgb, var(--c) 18%, transparent); --mdc-icon-size: 24px; }',
+      // The state badge of every tile, on the icon's corner (red for an alert, without tinting the tile).
+      '.pill .badge { position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border-radius: 50%; background: var(--c);' +
+        ' box-shadow: 0 0 0 2px var(--secondary-background-color, var(--card-background-color, #fff)); }',
+      '.pill .draw { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round;' +
+        ' stroke-dasharray: 20; animation: parcel-draw 4s ease-out infinite; }',
+      '.s-out_for_delivery .pill { animation: parcel-ping 2s ease-out infinite; }',
+      '.s-out_for_delivery .pill ha-icon { animation: parcel-bob-icon 1s ease-in-out infinite; }',
       '.main { flex: 1; min-width: 0; }',
-      // The chip is secondary: on a narrow card it moves under the description instead of squeezing it.
-      '.line1 { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 2px; justify-content: space-between; }',
-      '.desc { min-width: 0; max-width: 100%; font-weight: 500; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
-      '.chip { flex: none; max-width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: 11px; font-weight: 500; border-radius: 12px; padding: 1px 8px; white-space: nowrap; color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
-      '.line2, .line3, .expected { font-size: 12px; color: var(--secondary-text-color); margin-top: 1px; overflow-wrap: anywhere; }',
-      '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; }',
-      '.tracking.copied::after { content: " \u2713"; color: var(--primary-text-color); }',
-      '.expected { color: var(--primary-text-color); }',
+      '.line1 { display: flex; min-width: 0; }',
+      '.desc { min-width: 0; max-width: 100%; font-size: 14px; font-weight: 500; line-height: 1.3; color: var(--primary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
+      // State texts are mixed with the text colour to stay readable (WCAG 4.5:1); the state colour stays on the icon.
+      '.state { font-size: 12.5px; line-height: 1.3; color: color-mix(in srgb, var(--c) 70%, var(--primary-text-color)); overflow-wrap: anywhere; }',
+      '.done .state, .s-info_received .state, .s-unknown .state, .s-frozen .state, .s-not_found .state { color: var(--secondary-text-color); }',
+      '.done .state .label { color: color-mix(in srgb, var(--c) 70%, var(--primary-text-color)); }',
+      '.s-failed_attempt .state .label, .s-exception .state .label { display: inline-block; animation: parcel-shake 4s ease-in-out infinite; }',
+      '.line3 { font-size: 12px; line-height: 1.3; color: var(--secondary-text-color); margin-top: 1px; overflow-wrap: anywhere; }',
+      // Out for delivery: a van runs along the last part of the way.
+      '.track { position: relative; height: 3px; margin: 10px 18px 4px 0; border-radius: 2px; background: color-mix(in srgb, var(--c) 22%, transparent); }',
+      '.track .fill { position: absolute; inset: 0 auto 0 0; width: 78%; border-radius: 2px; background: var(--c); animation: parcel-way 4s ease-in-out infinite; }',
+      '.track ha-icon { position: absolute; top: -9px; left: 74%; --mdc-icon-size: 16px; color: var(--c); animation: parcel-van 4s ease-in-out infinite; }',
+      '.chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }',
+      '.chip { display: inline-flex; align-items: center; gap: 3px; max-width: 100%; box-sizing: border-box; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;' +
+        ' font-size: 11.5px; font-weight: 500; line-height: 18px; padding: 0 7px; border-radius: 999px; --mdc-icon-size: 12px; }',
+      '.chip.expected { color: color-mix(in srgb, var(--c) 60%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      '.chip.carrier { color: var(--secondary-text-color); background: color-mix(in srgb, var(--secondary-text-color) 13%, transparent); font-weight: 400; }',
+      '.tracking { font-family: var(--code-font-family, monospace); cursor: copy; overflow: hidden; text-overflow: ellipsis; }',
+      '.tracking.copied::after { content: " ✓"; color: var(--primary-text-color); }',
       '.date { color: var(--secondary-text-color); font-size: 12px; }',
-      '.chevron { flex: none; color: var(--secondary-text-color); transition: transform .2s ease; }',
+      '.chevron { flex: none; color: var(--secondary-text-color); margin-top: 8px; transition: transform .2s ease; }',
       '.chevron.closed { transform: rotate(-90deg); }',
-      '.events { list-style: none; margin: 4px 0 0 34px; padding: 0 0 0 12px; border-left: 2px solid var(--divider-color, rgba(0,0,0,.12)); font-size: 12px; color: var(--primary-text-color); }',
+      '.events { list-style: none; margin: 6px 0 0 50px; padding: 0 0 0 12px; border-left: 2px solid color-mix(in srgb, var(--c) 35%, transparent); font-size: 12px; color: var(--primary-text-color); }',
       '.events li { margin: 4px 0; }',
       '.additional { color: var(--secondary-text-color); }',
-      '.form { padding: 6px 12px 4px; border-block: 1px solid var(--divider-color, rgba(0,0,0,.12)); display: flex; flex-direction: column; gap: 6px; }',
+      '@keyframes parcel-ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 50%, transparent); } 70%, 100% { box-shadow: 0 0 0 8px transparent; } }',
+      '@keyframes parcel-bob-icon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }',
+      '@keyframes parcel-draw { 0%, 20% { stroke-dashoffset: 20; } 45%, 100% { stroke-dashoffset: 0; } }',
+      '@keyframes parcel-shake { 0%, 80%, 100% { transform: translateX(0); } 84% { transform: translateX(-2px); } 88% { transform: translateX(2px); } 92% { transform: translateX(-1px); } }',
+      '@keyframes parcel-way { 0% { width: 30%; } 60%, 100% { width: 78%; } }',
+      '@keyframes parcel-van { 0% { left: 26%; } 60%, 100% { left: 74%; } }',
+      // ── Add form, under the header.
+      '.form { padding: 10px 12px 4px; display: flex; flex-direction: column; gap: 6px; }',
       '.form[hidden] { display: none; }',
       '.form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--secondary-text-color); }',
       '.form label.check { flex-direction: row; align-items: center; gap: 8px; }',
@@ -1754,22 +2199,42 @@ class ParcelCard extends HTMLElement {
       '.actions .submit { background: color-mix(in srgb, var(--primary-color) 16%, transparent); color: color-mix(in srgb, var(--primary-color) 50%, var(--primary-text-color)); }',
       '.actions .submit:hover:not(:disabled) { background: color-mix(in srgb, var(--primary-color) 24%, transparent); }',
       '.actions button:disabled { opacity: 0.6; cursor: default; }',
-      // Mini card: a 240 px preferred width, two count tiles, and the detail button at the top right.
+      // ── Mini card: a 240 px preferred width, a lower banner with the featured parcel, the detail button top right.
       ':host([mini])::before { grid-template-columns: minmax(0, 240px); }',
-      'ha-card.mini { padding-bottom: 12px; }',
-      '.detail { all: unset; flex: none; cursor: pointer; width: 24px; height: 24px; margin-right: 4px; border-radius: 50%; align-self: flex-start;' +
+      'ha-card.mini { padding: 0; }',
+      'ha-card.mini .header.hero { --hero-h: 84px; --road-h: 10px; --scene-max: 36%; }',
+      'ha-card.mini .header:not(.hero) { padding-bottom: 12px; }',
+      '.detail { all: unset; flex: none; cursor: pointer; width: 26px; height: 26px; border-radius: 50%; align-self: flex-start;' +
         ' display: grid; place-items: center; color: var(--secondary-text-color); --mdc-icon-size: 16px; }',
+      '.hero > .detail { position: absolute; z-index: 3; top: 6px; right: 6px; }',
+      '.hero .buttons .detail { width: 30px; height: 30px; align-self: center; }',
       '.detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
+      '.hero .detail:hover { background: rgba(255,255,255,.75); } .hero.night .detail:hover { background: rgba(255,255,255,.22); }',
       '.detail:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 1px; }',
-      '.summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 12px; }',
-      '.tile { min-width: 0; padding: 8px 10px; border-radius: 12px; background: color-mix(in srgb, var(--c) 12%, transparent); }',
-      '.tile .v { display: flex; align-items: center; gap: 6px; font-size: 22px; font-weight: 600; line-height: 1.1; color: var(--primary-text-color); --mdc-icon-size: 20px; }',
-      '.tile .v ha-icon { color: var(--c); }',
-      '.tile .l { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
-      // The mini card keeps its 40 px header icon, also where the full card hides it: it is the card's identity.
-      '@container (max-width: 320px) { ha-card.mini .logo { display: grid; } }',
-      '@container (max-width: 180px) { .summary { grid-template-columns: minmax(0, 1fr); } }',
-      '@media (prefers-reduced-motion: reduce) { .refresh-btn.spinning ha-icon { animation: none; opacity: .5; } .chevron { transition: none; } }',
+      '.next { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 1px; }',
+      '.next .name { font-size: 17px; line-height: 22px; }',
+      '.next .l1 { display: flex; align-items: center; gap: 6px; min-width: 0; margin: 1px 0; }',
+      'ha-card.mini .hero .head { gap: 8px; padding-left: 12px; }',
+      '.next .l1:not(:has(> :not([hidden]))) { display: none; }',
+      '.next .l2 { font-size: 12.5px; line-height: 16px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--sky-muted, var(--secondary-text-color)); }',
+      // The other parcels on the way: a count badge on the icon's corner, the Parcel accent.
+      '.mark { position: relative; flex: none; display: flex; }',
+      '.more { position: absolute; right: -5px; bottom: -3px; min-width: 18px; height: 18px; box-sizing: border-box; padding: 0 5px; border-radius: 9px;' +
+        ' font-size: 11px; font-weight: 500; line-height: 18px; text-align: center; color: #ffffff; background: var(--pc-accent);' +
+        ' box-shadow: 0 0 0 2px var(--card-background-color, #fff); }',
+      '.hero .more { box-shadow: 0 0 0 2px rgba(255,255,255,.85); } .hero.night .more { box-shadow: 0 0 0 2px #15284a; }',
+      // The state pill of the featured parcel, on the sky: frosted glass under the tint.
+      '.next .chip { flex: 0 1 auto; min-width: 0; gap: 5px; padding: 0 8px; line-height: 20px; font-size: 12px;' +
+        ' color: color-mix(in srgb, var(--c) 45%, var(--sky-text, var(--primary-text-color))); background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); }',
+      '.header:not(.hero) .next .chip { background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      '.hero.night .next .chip { color: color-mix(in srgb, var(--c) 35%, #ffffff); background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); }',
+      '.next .chip .txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; }',
+      '.next .chip .dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--c); }',
+      'ha-card.mini .hero .head { padding-right: 8px; }',
+      // A very narrow mini card keeps the sky for its texts, up to the detail button.
+      '@container (max-width: 280px) { ha-card.mini .hero .scene { display: none; } ha-card.mini .hero .head { right: 0; padding-right: 34px; } }',
+      '@media (prefers-reduced-motion: reduce) { .scene *, .pill, .pill *, .state .label, .track *, .refresh-btn.spinning ha-icon { animation: none !important; }' +
+        ' .pill .draw { stroke-dasharray: none; } .chevron, .delivery { transition: none; } }',
     ].join('\n');
   }
 }
@@ -1787,8 +2252,8 @@ function parcelIsToday(ms, now) {
 }
 
 // ── parcel-mini-card ──────────────────────────────────────────────────────────
-// Two counts (active deliveries, deliveries arriving today) under the header. Its detail button (top right)
-// switches to the full card and back; a click outside the card folds it back to the compact view.
+// A lower illustrated banner with the featured parcel (parcelFeatured), like the next flight of the flight board.
+// Its detail button (top right) switches to the full card and back; a click outside the card folds it back.
 class ParcelMiniCard extends ParcelCard {
   constructor() {
     super();
@@ -1854,29 +2319,6 @@ class ParcelMiniCard extends ParcelCard {
     var card = this._root?.querySelector('ha-card');
     if (card) card.classList.toggle('mini', this._compact());
   }
-
-  // Active: not delivered yet. Arriving today: out for delivery, or expected today.
-  _counts(deliveries) {
-    var now = Date.now();
-    var active = deliveries.filter((d) => d.status_code !== 0);
-    var today = active.filter((d) => {
-      if (d.status_code === 4) return true;
-      var ms = d.timestamp_expected ? d.timestamp_expected * 1000 : parcelParseDate(d.date_expected);
-      return !Number.isNaN(ms) && parcelIsToday(ms, now);
-    });
-    return { active: active.length, today: today.length };
-  }
-
-  _renderSummary(deliveries, t) {
-    var c = this._counts(deliveries);
-    var tile = (value, label, style) =>
-      `<div class="tile" style="--c:${style.color}"><div class="v"><ha-icon icon="${style.icon}"></ha-icon>${value}</div>` +
-      `<div class="l">${parcelEsc(label)}</div></div>`;
-    return '<div class="summary">' +
-      tile(c.active, t.in_progress, PARCEL_STATUS_STYLE.in_transit) +
-      tile(c.today, t.today, PARCEL_STATUS_STYLE.out_for_delivery) +
-      '</div>';
-  }
 }
 
 // ── parcel-card-editor ────────────────────────────────────────────────────────
@@ -1892,7 +2334,21 @@ function parcelEditorSchema(t) {
         { name: 'show_delivered', selector: { boolean: {} } },
         { name: 'show_refresh', selector: { boolean: {} } },
         { name: 'show_add', selector: { boolean: {} } },
+        { name: 'illustration', selector: { boolean: {} } },
       ],
+    },
+    {
+      name: 'illustration_theme',
+      selector: {
+        select: {
+          mode: 'dropdown',
+          options: [
+            { value: 'auto', label: t.theme_auto },
+            { value: 'day', label: t.theme_day },
+            { value: 'night', label: t.theme_night },
+          ],
+        },
+      },
     },
     { name: 'max_events', selector: { number: { min: 1, max: 20, mode: 'box' } } },
     {
@@ -1989,7 +2445,7 @@ if (!customElements.get('parcel-card')) {
   window.customCards.push({
     type: 'parcel-card',
     name: 'Parcel',
-    description: 'Deliveries tracked in Parcel, with a form to add one.',
+    description: 'Deliveries tracked in Parcel under an animated street, with a form to add one.',
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
@@ -2001,7 +2457,7 @@ if (!customElements.get('parcel-mini-card')) {
   window.customCards.push({
     type: 'parcel-mini-card',
     name: 'Parcel mini',
-    description: 'Active deliveries and deliveries arriving today, with a button to show the full Parcel card.',
+    description: 'The featured delivery on an animated street, with a button to show the full Parcel card.',
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
