@@ -24,6 +24,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `parcel.refresh` action to force an update
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: an animated street as header, the deliveries as tiles in **Active / Delivered** tabs, events on click, add form with carrier search
 - The illustration follows the most pressing parcel: the van brings it to the door, drives by while it is in transit, leaves a notice on the door after a failed attempt; the parcel waits in the parcel shop to be picked up, or lies on the doorstep once delivered
+- `illustration_background: false` keeps the houses and the van without the sky and the road, on the card's own background
 - **Night mode** of the illustration: stars, moon, lit windows and the van's headlight; it comes with the dark theme of Home Assistant and after sunset (`sun.sun`), or is forced with `illustration_theme`
 - Tiles with a tinted round icon and its state badge, the state line in the state's color, the expected date and the carrier as pills; the parcel out for delivery has a van running along its way, a failed attempt shakes, a delivered parcel gets its check mark drawn
 - `custom:parcel-mini-card` compact card: the featured parcel on an illustrated banner (a problem first, then the parcel at the door, the one to pick up, the rest), with a button to open the full card
@@ -98,6 +99,7 @@ type: custom:parcel-card
 | `show_refresh` | `true` | Show the refresh button (counts towards the 20 requests per hour) |
 | `max_events` | `5` | Number of events shown when a delivery is expanded |
 | `illustration` | `true` | The animated street as header; `false` for a classic header with the round icon |
+| `illustration_background` | `true` | The sky and the road behind the street; `false` keeps only the houses and the van, on the card's own background |
 | `illustration_theme` | `auto` | `auto` (night with the dark theme of Home Assistant, or when `sun.sun` is below the horizon), `day` or `night` |
 | `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |
 
@@ -111,7 +113,7 @@ A compact card for dashboards: a lower illustrated banner with the featured parc
 type: custom:parcel-mini-card
 ```
 
-It takes the same options as `custom:parcel-card` (set in the same visual editor); `show_delivered`, `show_add`, `show_refresh` and `max_events` apply to the full view, `illustration` and `illustration_theme` to both.
+It takes the same options as `custom:parcel-card` (set in the same visual editor); `show_delivered`, `show_add`, `show_refresh` and `max_events` apply to the full view, `illustration`, `illustration_background` and `illustration_theme` to both.
 
 <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card.png" alt="parcel-mini-card" width="300">
 
@@ -189,6 +191,13 @@ Night illustration (`illustration_theme: night`, or automatic after sunset):
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-night.png" alt="night illustration" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-night-dark.png" alt="night illustration, dark theme" width="400"> |
 
+Without the sky and the road (`illustration_background: false`): the houses and the van on the card's own background.
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-bare.png" alt="illustration without background" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-bare-dark.png" alt="illustration without background, dark theme" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-bare.png" alt="mini card without background" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-bare-dark.png" alt="mini card without background, dark theme" width="300"> |
+
 Classic header (`illustration: false`):
 
 | Light | Dark |
@@ -234,6 +243,12 @@ Delivered: the parcel waits on the doorstep, a green check popping above it.
 | Light | Dark |
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/scene-delivered.gif" alt="delivered" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/scene-delivered-dark.gif" alt="delivered, dark theme" width="300"> |
+
+Without background: the same scenes, on the card.
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/scene-bare.gif" alt="scene without background" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/scene-bare-dark.gif" alt="scene without background, dark theme" width="300"> |
 
 At night: stars twinkling, lit windows, the van's headlight on.
 

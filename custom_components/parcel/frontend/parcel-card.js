@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.7.0';
+var PARCEL_CARD_VERSION = '1.8.0';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -48,6 +48,7 @@ var ParcelI18n = {
       lang_auto: 'Automatique',
       illustration: 'Illustration',
       illustration_theme: 'Thème de l\'illustration',
+      illustration_background: 'Fond de l\'illustration',
       theme_auto: 'Automatique',
       theme_day: 'Jour',
       theme_night: 'Nuit',
@@ -107,6 +108,7 @@ var ParcelI18n = {
       lang_auto: 'Auto',
       illustration: 'Illustration',
       illustration_theme: 'Illustration theme',
+      illustration_background: 'Illustration background',
       theme_auto: 'Automatic',
       theme_day: 'Day',
       theme_night: 'Night',
@@ -166,6 +168,7 @@ var ParcelI18n = {
       lang_auto: 'Automatisch',
       illustration: 'Illustration',
       illustration_theme: 'Thema der Illustration',
+      illustration_background: 'Hintergrund der Illustration',
       theme_auto: 'Automatisch',
       theme_day: 'Tag',
       theme_night: 'Nacht',
@@ -225,6 +228,7 @@ var ParcelI18n = {
       lang_auto: 'Automático',
       illustration: 'Ilustración',
       illustration_theme: 'Tema de la ilustración',
+      illustration_background: 'Fondo de la ilustración',
       theme_auto: 'Automático',
       theme_day: 'Día',
       theme_night: 'Noche',
@@ -284,6 +288,7 @@ var ParcelI18n = {
       lang_auto: 'Аутоматски',
       illustration: 'Илустрација',
       illustration_theme: 'Тема илустрације',
+      illustration_background: 'Позадина илустрације',
       theme_auto: 'Аутоматски',
       theme_day: 'Дан',
       theme_night: 'Ноћ',
@@ -343,6 +348,7 @@ var ParcelI18n = {
       lang_auto: 'Automatski',
       illustration: 'Ilustracija',
       illustration_theme: 'Tema ilustracije',
+      illustration_background: 'Pozadina ilustracije',
       theme_auto: 'Automatski',
       theme_day: 'Dan',
       theme_night: 'Noć',
@@ -402,6 +408,7 @@ var ParcelI18n = {
       lang_auto: 'Automatica',
       illustration: 'Illustrazione',
       illustration_theme: 'Tema dell\'illustrazione',
+      illustration_background: 'Sfondo dell\'illustrazione',
       theme_auto: 'Automatico',
       theme_day: 'Giorno',
       theme_night: 'Notte',
@@ -461,6 +468,7 @@ var ParcelI18n = {
       lang_auto: 'Automatisch',
       illustration: 'Illustratie',
       illustration_theme: 'Thema van de illustratie',
+      illustration_background: 'Achtergrond van de illustratie',
       theme_auto: 'Automatisch',
       theme_day: 'Dag',
       theme_night: 'Nacht',
@@ -520,6 +528,7 @@ var ParcelI18n = {
       lang_auto: 'Automático',
       illustration: 'Ilustração',
       illustration_theme: 'Tema da ilustração',
+      illustration_background: 'Fundo da ilustração',
       theme_auto: 'Automático',
       theme_day: 'Dia',
       theme_night: 'Noite',
@@ -579,6 +588,7 @@ var ParcelI18n = {
       lang_auto: 'Automatycznie',
       illustration: 'Ilustracja',
       illustration_theme: 'Motyw ilustracji',
+      illustration_background: 'Tło ilustracji',
       theme_auto: 'Automatycznie',
       theme_day: 'Dzień',
       theme_night: 'Noc',
@@ -638,6 +648,7 @@ var ParcelI18n = {
       lang_auto: 'Automat',
       illustration: 'Ilustrație',
       illustration_theme: 'Tema ilustrației',
+      illustration_background: 'Fundalul ilustrației',
       theme_auto: 'Automat',
       theme_day: 'Zi',
       theme_night: 'Noapte',
@@ -697,6 +708,7 @@ var ParcelI18n = {
       lang_auto: 'Automatisk',
       illustration: 'Illustration',
       illustration_theme: 'Illustrationstema',
+      illustration_background: 'Illustrationens baggrund',
       theme_auto: 'Automatisk',
       theme_day: 'Dag',
       theme_night: 'Nat',
@@ -756,6 +768,7 @@ var ParcelI18n = {
       lang_auto: 'Automatiskt',
       illustration: 'Illustration',
       illustration_theme: 'Illustrationstema',
+      illustration_background: 'Illustrationens bakgrund',
       theme_auto: 'Automatiskt',
       theme_day: 'Dag',
       theme_night: 'Natt',
@@ -815,6 +828,7 @@ var ParcelI18n = {
       lang_auto: 'Автоматично',
       illustration: 'Илюстрация',
       illustration_theme: 'Тема на илюстрацията',
+      illustration_background: 'Фон на илюстрацията',
       theme_auto: 'Автоматично',
       theme_day: 'Ден',
       theme_night: 'Нощ',
@@ -874,6 +888,7 @@ var ParcelI18n = {
       lang_auto: 'Автоматически',
       illustration: 'Иллюстрация',
       illustration_theme: 'Тема иллюстрации',
+      illustration_background: 'Фон иллюстрации',
       theme_auto: 'Автоматически',
       theme_day: 'День',
       theme_night: 'Ночь',
@@ -933,6 +948,7 @@ var ParcelI18n = {
       lang_auto: 'Автоматично',
       illustration: 'Ілюстрація',
       illustration_theme: 'Тема ілюстрації',
+      illustration_background: 'Тло ілюстрації',
       theme_auto: 'Автоматично',
       theme_day: 'День',
       theme_night: 'Ніч',
@@ -992,6 +1008,7 @@ var ParcelI18n = {
       lang_auto: 'Automatikus',
       illustration: 'Illusztráció',
       illustration_theme: 'Az illusztráció témája',
+      illustration_background: 'Az illusztráció háttere',
       theme_auto: 'Automatikus',
       theme_day: 'Nappal',
       theme_night: 'Éjszaka',
@@ -1051,6 +1068,7 @@ var ParcelI18n = {
       lang_auto: 'Automaticky',
       illustration: 'Ilustrácia',
       illustration_theme: 'Téma ilustrácie',
+      illustration_background: 'Pozadie ilustrácie',
       theme_auto: 'Automaticky',
       theme_day: 'Deň',
       theme_night: 'Noc',
@@ -1110,6 +1128,7 @@ var ParcelI18n = {
       lang_auto: 'Automaticky',
       illustration: 'Ilustrace',
       illustration_theme: 'Motiv ilustrace',
+      illustration_background: 'Pozadí ilustrace',
       theme_auto: 'Automaticky',
       theme_day: 'Den',
       theme_night: 'Noc',
@@ -1169,6 +1188,7 @@ var ParcelI18n = {
       lang_auto: 'Samodejno',
       illustration: 'Ilustracija',
       illustration_theme: 'Tema ilustracije',
+      illustration_background: 'Ozadje ilustracije',
       theme_auto: 'Samodejno',
       theme_day: 'Dan',
       theme_night: 'Noč',
@@ -1228,6 +1248,7 @@ var ParcelI18n = {
       lang_auto: 'Automātiski',
       illustration: 'Ilustrācija',
       illustration_theme: 'Ilustrācijas tēma',
+      illustration_background: 'Ilustrācijas fons',
       theme_auto: 'Automātiski',
       theme_day: 'Diena',
       theme_night: 'Nakts',
@@ -1287,6 +1308,7 @@ var ParcelI18n = {
       lang_auto: 'Αυτόματα',
       illustration: 'Εικονογράφηση',
       illustration_theme: 'Θέμα εικονογράφησης',
+      illustration_background: 'Φόντο εικονογράφησης',
       theme_auto: 'Αυτόματο',
       theme_day: 'Ημέρα',
       theme_night: 'Νύχτα',
@@ -1308,7 +1330,7 @@ var ParcelI18n = {
 
 // Single source of the config defaults, shared by the card (setConfig) and the editor.
 var PARCEL_DEFAULTS = {
-  show_title: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5, illustration: true, illustration_theme: 'auto',
+  show_title: true, show_delivered: true, show_add: true, show_refresh: true, max_events: 5, illustration: true, illustration_theme: 'auto', illustration_background: true,
 };
 
 // ── The illustration: a street with houses, and the delivery van of the featured parcel ──────────────────────
@@ -1707,6 +1729,8 @@ class ParcelCard extends HTMLElement {
     var featured = unavailable ? null : parcelFeatured(deliveries);
     if (hero) {
       header.classList?.toggle('night', parcelNight(this._hass, c));
+      // illustration_background: false keeps the houses and the van, without the sky and the road.
+      header.classList?.toggle('bare', c.illustration_background === false);
       header.setAttribute?.('data-scene', parcelSceneOf(featured));
     }
     if (compact) {
@@ -2123,6 +2147,15 @@ class ParcelCard extends HTMLElement {
       '@keyframes parcel-pop { 0% { transform: scale(0); } 12% { transform: scale(1.25); } 18%, 100% { transform: scale(1); } }',
       '@keyframes parcel-blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }',
       '@keyframes parcel-drift { from { transform: translateX(-7px); } to { transform: translateX(7px); } }',
+      // Without background (illustration_background: false): the houses and the van stand on a hairline of the card,
+      // without the sky, its sun, moon, stars, clouds and hill, nor the road; texts, icon and buttons take the card's look.
+      '.header.hero.bare, .header.hero.bare.night { background: none; --sky-text: var(--primary-text-color); --sky-muted: var(--secondary-text-color); }',
+      '.bare .scene .sun, .bare .scene .moon, .bare .scene .stars, .bare .scene .clouds, .bare .scene .hill, .bare .road .marks { display: none; }',
+      '.hero.bare .road, .hero.bare.night .road { background: none; box-shadow: inset 0 -1px 0 var(--divider-color, rgba(127,127,127,.25)); }',
+      '.hero.bare .logo, .hero.bare.night .logo { color: var(--pc-accent); background: color-mix(in srgb, var(--pc-accent) 16%, transparent); box-shadow: none; }',
+      '.hero.bare .buttons ha-icon-button, .hero.bare .detail, .hero.bare.night .buttons ha-icon-button, .hero.bare.night .detail { color: var(--secondary-text-color); background: none; box-shadow: none; }',
+      '.hero.bare .next .chip, .hero.bare.night .next .chip { color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      '.hero.bare .more, .hero.bare.night .more { box-shadow: 0 0 0 2px var(--card-background-color, #fff); }',
       // A narrow card keeps the sky and the road for its texts: no scenery.
       '@container (max-width: 300px) { ha-card:not(.mini) .hero .scene { display: none; } ha-card:not(.mini) .hero .head { right: 0; padding-right: 84px; } }',
       // ── Tabs, right under the header.
@@ -2335,6 +2368,7 @@ function parcelEditorSchema(t) {
         { name: 'show_refresh', selector: { boolean: {} } },
         { name: 'show_add', selector: { boolean: {} } },
         { name: 'illustration', selector: { boolean: {} } },
+        { name: 'illustration_background', selector: { boolean: {} } },
       ],
     },
     {

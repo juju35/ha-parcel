@@ -187,6 +187,23 @@ SHOTS = [
     # Classic header (illustration: false).
     {"file": "card-classic", "theme": "light", "config": {"show_delivered": True, "illustration": False}},
     {"file": "card-classic-dark", "theme": "dark", "config": {"show_delivered": True, "illustration": False}},
+    # Without the sky and the road (illustration_background: false).
+    {"file": "card-bare", "theme": "light", "config": {"show_delivered": True, "illustration_background": False}},
+    {"file": "card-bare-dark", "theme": "dark", "config": {"show_delivered": True, "illustration_background": False}},
+    {
+        "file": "mini-card-bare",
+        "theme": "light",
+        "config": {"illustration_background": False},
+        "element": "parcel-mini-card",
+        "width": 300,
+    },
+    {
+        "file": "mini-card-bare-dark",
+        "theme": "dark",
+        "config": {"illustration_background": False},
+        "element": "parcel-mini-card",
+        "width": 300,
+    },
     # The mini card, compact: the featured parcel on the illustrated banner.
     {"file": "mini-card", "theme": "light", "config": {}, "element": "parcel-mini-card", "width": 300},
     {"file": "mini-card-dark", "theme": "dark", "config": {}, "element": "parcel-mini-card", "width": 300},
@@ -231,6 +248,13 @@ ANIMATIONS = [
     {
         "file": "scene-night",
         "config": {"illustration_theme": "night"},
+        "scene": "drop",
+        "element": "parcel-mini-card",
+        "width": 300,
+    },
+    {
+        "file": "scene-bare",
+        "config": {"illustration_background": False},
         "scene": "drop",
         "element": "parcel-mini-card",
         "width": 300,
