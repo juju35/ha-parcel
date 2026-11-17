@@ -1562,10 +1562,24 @@ class ParcelCard extends HTMLElement {
       }
     });
     document.addEventListener('click', this._onOutside, true);
+    // A new width (or the web font loaded): the status pill is fitted again, in the next frame.
+    if (typeof ResizeObserver === 'function') {
+      this._resize = this._resize || new ResizeObserver((entries) => {
+        var w = Math.round(entries[entries.length - 1].contentRect.width);
+        if (w === this._fitWidth) return;
+        this._fitWidth = w;
+        cancelAnimationFrame(this._fitFrame);
+        this._fitFrame = requestAnimationFrame(() => this._fitPill());
+      });
+      this._resize.observe(this);
+    }
+    document.fonts?.ready?.then(() => this._fitPill());
   }
 
   disconnectedCallback() {
     document.removeEventListener('click', this._onOutside, true);
+    this._resize?.disconnect();
+    this._fitWidth = null;
   }
 
   getCardSize() {
@@ -1778,6 +1792,47 @@ class ParcelCard extends HTMLElement {
     }
     var refresh = header.querySelector('.refresh-btn');
     if (refresh) refresh.classList.toggle('spinning', !!this._refreshing);
+    this._fitPill();
+  }
+
+  // The status pill goes right after the title only when the whole title and the whole label fit there; otherwise it
+  // takes a line of its own under the subtitle (.below, the subtitle on one line). When the label does not fit that
+  // line either, or the banner has no room for the lines above its road, the pill keeps its dot only (.dot-only, back
+  // beside the title when the dot fits there). Measured after render, so that it holds in every language.
+  _fitPill() {
+    var root = this._root;
+    if (!root?.querySelectorAll || typeof getComputedStyle !== 'function' || !document.createRange) return;
+    for (var t of root.querySelectorAll('.head .titles, .head .next')) {
+      var chip = t.querySelector('.trow > .chip.st');
+      t.classList.remove('below', 'dot-only');
+      if (!chip || !chip.getClientRects().length) continue;
+      var row = chip.parentElement;
+      var name = row.querySelector('.name');
+      var fits = () => {
+        var title = 0;
+        if (name && getComputedStyle(name).display !== 'none') {
+          var range = document.createRange();
+          range.selectNodeContents(name);
+          var cs = getComputedStyle(name);
+          title = Math.max(name.scrollWidth, range.getBoundingClientRect().width) + (parseFloat(cs.marginLeft) || 0) + (parseFloat(cs.marginRight) || 0) +
+            (parseFloat(getComputedStyle(row).columnGap) || 0);
+        }
+        return title + chip.getBoundingClientRect().width <= row.getBoundingClientRect().width + 0.5;
+      };
+      if (fits()) continue;
+      t.classList.add('below');
+      for (var sub of t.querySelectorAll('.sub, .l2')) sub.title = sub.scrollWidth > sub.clientWidth ? sub.textContent.trim() : '';
+      var text = chip.querySelector('.txt');
+      var banner = t.closest('.hero');
+      var tb = t.getBoundingClientRect();
+      var bb = banner?.getBoundingClientRect();
+      var ground = banner ? parseFloat(getComputedStyle(banner).getPropertyValue('--road-h')) || 0 : 0;
+      var tall = !!bb && (tb.top < bb.top - 0.5 || tb.bottom > bb.bottom - ground + 0.5);
+      if (!tall && !(text && text.scrollWidth > text.clientWidth + 0.5)) continue;
+      t.classList.add('dot-only');
+      t.classList.remove('below');
+      if (!fits()) t.classList.add('below');
+    }
   }
 
   // The banner of the compact mini card: the featured parcel, its state pill, its carrier and what comes next.
@@ -2093,21 +2148,19 @@ class ParcelCard extends HTMLElement {
         ' color: var(--pc-state, var(--pc-accent)); background: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 16%, transparent); }',
       '.logo ha-icon { --mdc-icon-size: 24px; }',
       '.titles { flex: 1 1 0; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }',
-      // Title row: the name, then the status pill right after it (the name gives way first, down to four characters).
-      // When the row is too narrow for both, the pill takes a line of its own under the subtitle; on the narrowest
-      // cards only its dot stays (its label in its title).
-      '.titles, .next { container: pc-titles / inline-size; }',
+      // Title row: the name, then the status pill right after it, only when the whole name and the whole label fit there
+      // (measured by the card, see _fitPill); else the pill takes a line of its own under the subtitle (.below), and
+      // when even that does not fit, only its dot stays (.dot-only, its label in its title).
       '.trow { display: flex; align-items: center; gap: 8px; min-width: 0; }',
       '.trow > .name { flex: 0 1 auto; min-width: 4ch; }',
-      '.head .chip.st { flex: none; max-width: 51%; display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 12px; box-sizing: border-box;' +
+      '.head .chip.st { flex: none; max-width: none; display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 12px; box-sizing: border-box;' +
         ' overflow: hidden; white-space: nowrap; font-size: 11px; font-weight: 500; line-height: 16px;' +
         ' color: color-mix(in srgb, var(--c) 45%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.head .chip.st .txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; }',
       '.head .chip.st .dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--c); }',
-      // On a line of its own the pill may run past the texts over the street's sky (a long label beside a short title).
-      '.hero .titles { overflow: visible; }',
-      '@container pc-titles (max-width: 230px) { .trow { display: contents; } .head .chip.st { order: 3; align-self: flex-start; max-width: none; margin-top: 2px; } }',
-      '@container pc-card (max-width: 260px) { .trow { display: contents; } .head .chip.st { order: 3; align-self: flex-start; max-width: 100%; margin-top: 2px; } }',
+      '.below > .trow { display: contents; }',
+      '.below .chip.st { order: 3; align-self: flex-start; max-width: 100%; margin-top: 2px; }',
+      '.dot-only .chip.st { padding: 0; width: 16px; height: 16px; justify-content: center; } .dot-only .chip.st .txt { display: none; }',
       '@container pc-card (max-width: 200px) { .head .chip.st { padding: 0; width: 16px; height: 16px; justify-content: center; } .head .chip.st .txt { display: none; } }',
       ':host([hide-title]) .titles > .name { display: none; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
@@ -2394,6 +2447,7 @@ class ParcelMiniCard extends ParcelCard {
     super._render();
     var card = this._root?.querySelector('ha-card');
     if (card) card.classList.toggle('mini', this._compact());
+    this._fitPill();
   }
 }
 
