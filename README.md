@@ -25,7 +25,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `custom:parcel-card` card, **shipped with the integration** and loaded automatically: an animated street as header, the deliveries as tiles in **Active / Delivered** tabs, events on click, add form with carrier search
 - The illustration follows the most pressing parcel: the van brings it to the door, drives by while it is in transit, leaves a notice on the door after a failed attempt; the parcel waits in the parcel shop to be picked up, or lies on the doorstep once delivered
 - `illustration_background: false` keeps the houses and the van without the sky and the road, on the card's own background
-- **Night mode** of the illustration: stars, moon, lit windows and the van's headlight; it comes with the dark theme of Home Assistant and after sunset (`sun.sun`), or is forced with `illustration_theme`
+- **Night mode** of the illustration: stars, moon, lit windows and the van's headlight; it comes with the dark theme of Home Assistant (a light theme keeps the day picture after sunset), or is forced with `illustration_theme`
 - Tiles with a tinted round icon and its state badge, the state line in the state's color, the expected date and the carrier as pills; the parcel out for delivery has a van running along its way, a failed attempt shakes, a delivered parcel gets its check mark drawn
 - `custom:parcel-mini-card` compact card: the featured parcel on an illustrated banner (a problem first, then the parcel at the door, the one to pick up, the rest), with a button to open the full card
 - `parcel_out_for_delivery` and `parcel_delivered` events when a delivery changes status, for automations
@@ -100,7 +100,7 @@ type: custom:parcel-card
 | `max_events` | `5` | Number of events shown when a delivery is expanded |
 | `illustration` | `true` | The animated street as header; `false` for a classic header with the round icon |
 | `illustration_background` | `true` | The sky and the road behind the street; `false` keeps only the houses and the van, on the card's own background |
-| `illustration_theme` | `auto` | `auto` (night with the dark theme of Home Assistant, or when `sun.sun` is below the horizon), `day` or `night` |
+| `illustration_theme` | `auto` | `auto` (follows the Home Assistant theme: night with a dark theme, day with a light theme), `day` or `night` |
 | `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |
 
 Click a delivery to see its events, and the tracking number to copy it.
@@ -185,7 +185,7 @@ The card, with one delivery expanded to its events: the van has brought the parc
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-dark.png" alt="card, dark theme" width="400"> |
 
-Night illustration (`illustration_theme: night`, or automatic after sunset or with the dark theme):
+Night illustration (`illustration_theme: night`, or automatic with the dark theme):
 
 | Light | Dark |
 |---|---|
