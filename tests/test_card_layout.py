@@ -77,3 +77,92 @@ def test_the_card_width_in_intrinsic_and_shared_containers():
                 failures.append((ctx, "in a div" if wrap else "direct", width, out))
         browser.close()
     assert not failures, failures
+
+
+# Measures the header's status pill and title of the card mounted by `mount`, once it has fitted its pill.
+MEASURE_PILL = """async () => {
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await document.fonts.ready;
+  const card = document.querySelector('#root > *');
+  const sr = card.shadowRoot;
+  const rect = (n) => n.getBoundingClientRect();
+  const shown = (n) => n && n.getClientRects().length > 0 && getComputedStyle(n).display !== 'none';
+  const textWidth = (n) => {
+    const r = document.createRange();
+    r.selectNodeContents(n);
+    return Math.max(n.scrollWidth, r.getBoundingClientRect().width);
+  };
+  const name = sr.querySelector('.head .name');
+  const chip = sr.querySelector('.head .chip.st');
+  const txt = chip && chip.querySelector('.txt');
+  const block = name.closest('.titles, .next');
+  const mid = (n) => rect(n).top + rect(n).height / 2;
+  const onRow = shown(chip) && Math.abs(mid(chip) - mid(name)) < 3;
+  const margin = parseFloat(getComputedStyle(name).marginRight) || 0;
+  const hero = sr.querySelector('.header.hero');
+  const out = [];
+  if (hero) {
+    const b = rect(hero);
+    for (const n of [name, chip, ...block.querySelectorAll('.sub, .l2')]) {
+      if (!shown(n)) continue;
+      const r = rect(n);
+      const off = r.bottom > b.bottom - 10 + 0.5 || r.top < b.top - 0.5;
+      if (off || r.right > b.right + 0.5 || r.left < b.left - 0.5) out.push(n.className);
+    }
+  }
+  return {
+    pill: !shown(chip) ? 'none' : !shown(txt) ? 'dot' : textWidth(txt) > rect(txt).width + 0.5 ? 'cut' : 'full',
+    nameOk: rect(name).width >= 4 * parseFloat(getComputedStyle(name).fontSize) * 0.5,
+    onRow,
+    titleCut: onRow && textWidth(name) > rect(name).width + 1,
+    couldFit: !onRow && shown(chip) && textWidth(name) + margin + 8 + rect(chip).width <= rect(block).width - 1,
+    outside: out,
+  };
+}"""
+
+
+def test_the_status_pill_beside_the_whole_title_or_under_the_subtitle():
+    """The header's status pill (the featured parcel's state, in the icon's colour), in six languages from 190 to 500
+    px, on the full card and the mini card (compact and expanded): right after the title only when the whole title
+    and the whole label fit there, else on its own line under the subtitle; its label whole or only its dot (always
+    at 190 px); nothing of the title block over the road strip or out of the banner."""
+    spec = importlib.util.spec_from_file_location("parcel_screenshots", SCRIPT)
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+    sync_api = pytest.importorskip("playwright.sync_api")
+    failures = []
+    with sync_api.sync_playwright() as p:
+        try:
+            browser = p.chromium.launch()
+        except Exception as err:  # noqa: BLE001 - no browser installed here
+            pytest.skip(f"no Chromium: {err}")
+        context = browser.new_context()
+        for element, zoom in (("parcel-card", False), ("parcel-mini-card", False), ("parcel-mini-card", True)):
+            for lang in ("en", "fr", "de", "hu", "el", "ru"):
+                for scene in ("drop", "failed"):
+                    for width in (190, 245, 300, 400, 460, 500):
+                        shot = {
+                            "file": "x",
+                            "theme": "light",
+                            "config": {},
+                            "element": element,
+                            "scene": scene,
+                            "width": width,
+                            "lang": lang,
+                            "zoom": zoom,
+                        }
+                        page = script.mount(context, shot)
+                        out = page.evaluate(MEASURE_PILL)
+                        page.close()
+                        ok = (
+                            out["pill"] in ("full", "dot")
+                            and (out["pill"] == "dot" or width > 200)
+                            and out["nameOk"]
+                            and not out["titleCut"]
+                            and not out["couldFit"]
+                            and not out["outside"]
+                        )
+                        if not ok:
+                            failures.append((element, zoom, lang, scene, width, {k: v for k, v in out.items() if v}))
+        browser.close()
+    assert not failures, failures

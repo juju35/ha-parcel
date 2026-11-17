@@ -185,7 +185,7 @@ The card, with one delivery expanded to its events: the van has brought the parc
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-dark.png" alt="card, dark theme" width="400"> |
 
-Night illustration (`illustration_theme: night`, or automatic after sunset):
+Night illustration (`illustration_theme: night`, or automatic after sunset or with the dark theme):
 
 | Light | Dark |
 |---|---|
@@ -211,6 +211,12 @@ The mini card, compact, and with nothing on the way:
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card.png" alt="mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-dark.png" alt="mini card, dark theme" width="300"> |
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-night.png" alt="mini card at night" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-night-dark.png" alt="mini card at night, dark theme" width="300"> |
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-idle.png" alt="mini card, nothing on the way" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-idle-dark.png" alt="mini card, nothing on the way, dark theme" width="300"> |
+
+The mini card expanded by its detail button: the full card.
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-zoom.png" alt="mini card expanded" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-zoom-dark.png" alt="mini card expanded, dark theme" width="400"> |
 
 ### Animations
 

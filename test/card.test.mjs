@@ -661,7 +661,7 @@ const fakeEl = () => {
   };
 };
 const fakeHeader = () => {
-  const header = { writes: 0, els: {}, html: '', classList: fakeEl().classList, setAttribute() {} };
+  const header = { writes: 0, els: {}, html: '', classList: fakeEl().classList, style: fakeEl().style, setAttribute() {} };
   Object.defineProperty(header, 'innerHTML', {
     get: () => header.html,
     set: (v) => { header.html = v; header.writes++; header.els = {}; },
@@ -786,9 +786,12 @@ test('narrow header: the title truncates, the buttons never shrink, the scenery 
   // scenery goes and the texts get the sky, up to the buttons.
   assert.match(rule('.hero .head'), /right: var\(--scene-w\)/);
   assert.match(rule('.header.hero'), /--scene-w: min\(calc\(\(var\(--hero-h\) - var\(--road-h\) \+ 5px\) \* 2\.5\), var\(--scene-max\)\)/);
-  const query = (w) => css.split('\n').find((l) => l.startsWith(`@container (max-width: ${w}px)`)) || '';
+  const query = (w) => css.split('\n').filter((l) => l.startsWith(`@container pc-card (max-width: ${w}px)`)).join('\n');
   assert.match(query(300), /\.hero \.scene \{ display: none; \}/);
-  assert.match(query(300), /\.hero \.head \{ right: 0; padding-right: 84px; \}/);
+  // The texts keep clear of the corner buttons (as many as the header has: --btns-w), only on the title line once the
+  // pill has a line of its own.
+  assert.match(query(300), /\.hero \.head \{ right: 0; padding-right: var\(--btns-w\); \}/);
+  assert.match(query(260), /\.hero \.trow > \.name \{ margin-right: calc\(var\(--btns-w\) - 8px\); \}/);
   assert.match(rule('.desc'), /min-width: 0/);
   assert.match(rule('.desc'), /text-overflow: ellipsis/);
 });
@@ -954,6 +957,36 @@ test('the illustration turns to night with the sun, the dark theme or illustrati
   assert.equal(hero.header.className, 'header hero');
 });
 
+test('the banner is 90 px with a 10 px road on the full and the mini card', () => {
+  const css = styles();
+  assert.match(css, /\.header\.hero \{[^}]*--hero-h: 90px; --road-h: 10px;/);
+  assert.doesNotMatch(css, /ha-card\.mini \.header\.hero \{[^}]*--hero-h/);
+});
+
+test('the header icon takes the colour of the featured parcel, grey without any', () => {
+  const color = vm.runInContext('parcelHeaderColor', context);
+  assert.equal(color(null), 'var(--disabled-text-color, #9e9e9e)');
+  assert.match(color(deliveryOf('O', { status_code: 4, status: 'out_for_delivery' })), /primary-color/);
+  assert.match(color(deliveryOf('T')), /info-color/);
+  assert.match(color(deliveryOf('I', { status: 'info_received' })), /info-color/);
+  assert.match(color(deliveryOf('P', { status_code: 3, status: 'awaiting_pickup' })), /warning-color/);
+  assert.match(color(deliveryOf('D', { status_code: 0, status: 'delivered' })), /success-color/);
+  assert.match(color(deliveryOf('E', { status_code: 7, status: 'exception' })), /error-color/);
+  const self = headerCard({ 'sensor.a': sensor('sensor.a') });
+  assert.equal(self.header.style['--pc-state'], 'var(--disabled-text-color, #9e9e9e)');
+  const css = styles();
+  assert.match(css, /\.logo \{[^}]*color: var\(--pc-state, var\(--pc-accent\)\)/);
+  assert.match(css, /\.hero\.night \.logo \{[^}]*color: color-mix\(in srgb, var\(--pc-state/);
+});
+
+test('each card gets its own moon mask id, so two cards on a page never clash', () => {
+  const a = headerCard({ 'sensor.a': sensor('sensor.a') });
+  const b = headerCard({ 'sensor.a': sensor('sensor.a') });
+  const id = (h) => h.match(/<mask id="([^"]+)"/)[1];
+  assert.notEqual(id(a.header.html), id(b.header.html));
+  assert.match(a.header.html, new RegExp(`mask="url\\(#${id(a.header.html)}\\)"`));
+});
+
 test('delivered parcels get their own tab, the active ones stay first', () => {
   const self = renderDeliveries([deliveryOf('A1'), deliveryOf('D1', { status_code: 0, status: 'delivered' })]);
   assert.match(self.list.innerHTML, /data-id="ups:A1"/);
@@ -1010,7 +1043,7 @@ test('the mini card is offered in the card picker and keeps a 240 px preferred w
   assert.match(source, /customElements\.define\('parcel-mini-card', ParcelMiniCard\)/);
   const css = ParcelCard._styles();
   assert.match(css, /:host\(\[mini\]\)::before \{ grid-template-columns: minmax\(0, 240px\); \}/);
-  assert.match(css, /ha-card\.mini \.header\.hero \{ --hero-h: 84px; --road-h: 10px; --scene-max: 36%; \}/);
+  assert.match(css, /ha-card\.mini \.header\.hero \{ --scene-max: 36%; \}/);
 });
 
 test('the add button is hidden from non-admin users: adding a delivery is an admin-only service', () => {
