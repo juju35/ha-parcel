@@ -212,6 +212,12 @@ The mini card, compact, and with nothing on the way:
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-night.png" alt="mini card at night" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-night-dark.png" alt="mini card at night, dark theme" width="300"> |
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-idle.png" alt="mini card, nothing on the way" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-idle-dark.png" alt="mini card, nothing on the way, dark theme" width="300"> |
 
+The mini card expanded by its detail button: the full card.
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-zoom.png" alt="mini card expanded" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card-zoom-dark.png" alt="mini card expanded, dark theme" width="400"> |
+
 ### Animations
 
 Every scene of the illustration loops in 8 s, following the featured parcel. Out for delivery: the van stops at the house, the door opens and the parcel lands on the doorstep, then the van leaves.

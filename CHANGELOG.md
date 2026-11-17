@@ -8,6 +8,9 @@
 - Each card draws its scene with its own SVG ids, so several Parcel cards on one dashboard never share the moon's mask.
 - **Status pill on the title row** of both cards: the featured parcel's state (or "Nothing on the way") in the header icon's colour, right after the title, or on a line of its own under the subtitle when the title row is too narrow; on the narrowest cards only its dot stays. The header buttons (refresh, add, detail) are small frosted rounds lined up in the banner's top right corner, the detail button last; with the classic header the mini card's detail button sits in the card's corner.
 
+### Documentation
+- README: screenshots of the mini card expanded to the full card, light and dark.
+
 ## 1.8.0 - 2026-11-17
 
 ### Features

@@ -207,6 +207,9 @@ SHOTS = [
     # The mini card, compact: the featured parcel on the illustrated banner.
     {"file": "mini-card", "theme": "light", "config": {}, "element": "parcel-mini-card", "width": 300},
     {"file": "mini-card-dark", "theme": "dark", "config": {}, "element": "parcel-mini-card", "width": 300},
+    # The mini card expanded by its detail button: the full card, at the full card's width.
+    {"file": "mini-card-zoom", "theme": "light", "config": {}, "element": "parcel-mini-card", "zoom": True},
+    {"file": "mini-card-zoom-dark", "theme": "dark", "config": {}, "element": "parcel-mini-card", "zoom": True},
     {
         "file": "mini-card-night",
         "theme": "light",
@@ -345,6 +348,9 @@ def mount(context, shot):
             "dark": shot["theme"] == "dark",
         },
     )
+    if shot.get("zoom"):
+        page.locator(".detail").click()
+        page.mouse.move(0, 0)
     if shot.get("tab"):
         page.locator(f'.tab[data-tab="{shot["tab"]}"]').click()
         page.mouse.move(0, 0)
