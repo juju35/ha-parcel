@@ -928,10 +928,12 @@ test('the mini card features a problem first, then the parcel at the door, else 
   assert.ok(self.header.querySelector('.more').hidden);
 });
 
-test('the illustration turns to night with the sun, the dark theme or illustration_theme', () => {
+test('the illustration turns to night with the dark theme alone or illustration_theme', () => {
   const night = vm.runInContext('parcelNight', context);
   const sun = (state) => ({ states: { 'sun.sun': { state } } });
-  assert.equal(night(sun('below_horizon'), {}), true);
+  // A light theme keeps the day sky after sunset.
+  assert.equal(night(sun('below_horizon'), {}), false);
+  assert.equal(night({ ...sun('below_horizon'), themes: { darkMode: true } }, {}), true);
   assert.equal(night(sun('above_horizon'), { illustration_theme: 'auto' }), false);
   assert.equal(night({ states: {}, themes: { darkMode: true } }, {}), true);
   // The dark theme gets the night sky, even by day.
