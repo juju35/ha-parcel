@@ -11,6 +11,9 @@
 ### Documentation
 - README: screenshots of the mini card expanded to the full card, light and dark.
 
+### Fixes
+- `show_title: false` hides the title again in the illustrated header, where it sits in the title row with the status pill.
+
 ## 1.8.0 - 2026-11-17
 
 ### Features

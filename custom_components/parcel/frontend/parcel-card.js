@@ -2162,7 +2162,7 @@ class ParcelCard extends HTMLElement {
       '.below .chip.st { order: 3; align-self: flex-start; max-width: 100%; margin-top: 2px; }',
       '.dot-only .chip.st { padding: 0; width: 16px; height: 16px; justify-content: center; } .dot-only .chip.st .txt { display: none; }',
       '@container pc-card (max-width: 200px) { .head .chip.st { padding: 0; width: 16px; height: 16px; justify-content: center; } .head .chip.st .txt { display: none; } }',
-      ':host([hide-title]) .titles > .name { display: none; }',
+      ':host([hide-title]) .titles .name { display: none; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.header:not(.hero) .name { color: var(--primary-text-color); }',
       '.sub { font-size: 12px; line-height: 16px; color: var(--sky-muted, var(--secondary-text-color)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
