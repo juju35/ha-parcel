@@ -1407,6 +1407,9 @@ function parcelFeatured(deliveries) {
 
 // Colour of the header icon: the state of the featured parcel (out for delivery / in transit, awaiting pickup,
 // delivered, failed attempt or exception), a neutral grey without any parcel or with the sensor unavailable.
+// The header's status pill: a dot and the state of the featured parcel, in the header icon's colour.
+var PARCEL_CHIP = '<span class="chip st" hidden><span class="dot"></span><span class="txt"></span></span>';
+
 function parcelHeaderColor(d) {
   if (!d) return 'var(--disabled-text-color, #9e9e9e)';
   var key = d.status in PARCEL_STATUS_STYLE ? d.status : d.status_code === 0 ? 'delivered' : 'in_transit';
@@ -1711,10 +1714,9 @@ class ParcelCard extends HTMLElement {
         (compact ? `<div class="mark">${this._iconHtml()}<span class="more" hidden></span></div>` : this._iconHtml()) +
         (compact
           // The compact mini card: the featured parcel laid on the sky, like the next flight of the flight board.
-          ? '<div class="next"><div class="name"></div>' +
-            '<div class="l1"><span class="chip" hidden><span class="dot"></span><span class="txt"></span></span></div>' +
+          ? `<div class="next"><div class="trow"><div class="name"></div>${PARCEL_CHIP}</div>` +
             '<div class="l2"></div></div>'
-          : '<div class="titles"><div class="name"></div><div class="sub count" hidden></div>' +
+          : `<div class="titles"><div class="trow"><div class="name"></div>${PARCEL_CHIP}</div><div class="sub count" hidden></div>` +
             // The refresh error survives re-renders (hass updates) until the next refresh attempt.
             '<div class="sub error" hidden></div></div>') +
         '</div>' +
@@ -1758,6 +1760,16 @@ class ParcelCard extends HTMLElement {
         count.hidden = unavailable || !!this._refreshError;
         count.textContent = unavailable ? '' : `${st.state} ${t.in_progress}` + (today ? ` · ${today} ${t.today}` : '');
       }
+      // The status pill: the featured parcel's state (the one the icon's colour and the street show), else nothing
+      // on the way.
+      var pill = header.querySelector('.chip.st');
+      if (pill) {
+        pill.hidden = unavailable;
+        pill.style.setProperty('--c', parcelHeaderColor(featured));
+        var label = featured ? t.status[featured.status || 'unknown'] || featured.status : t.nothing;
+        pill.querySelector('.txt').textContent = unavailable ? '' : label;
+        pill.title = unavailable ? '' : label;
+      }
       var sub = header.querySelector('.sub.error');
       if (sub) {
         sub.hidden = !(st && this._refreshError);
@@ -1786,8 +1798,9 @@ class ParcelCard extends HTMLElement {
     var key = featured.status || 'unknown';
     var style = PARCEL_STATUS_STYLE[key] || PARCEL_STATUS_STYLE.unknown;
     name.textContent = featured.description || featured.tracking_number;
-    chip.style.setProperty('--c', style.color);
+    chip.style.setProperty('--c', parcelHeaderColor(featured));
     chip.querySelector('.txt').textContent = t.status[key] || key;
+    chip.title = t.status[key] || key;
     var last = (featured.events || [])[0];
     var expected = featured.status_code !== 0 ? this._formatExpected(featured) : '';
     var ms = featured.timestamp_expected ? featured.timestamp_expected * 1000 : parcelParseDate(featured.date_expected);
@@ -2072,14 +2085,30 @@ class ParcelCard extends HTMLElement {
       // can still shrink it, even with the card wrapped in a div. contain-intrinsic-inline-size gave both: the card
       // then refused to shrink and overflowed such a grid.
       ':host::before { content: ""; display: grid; grid-template-columns: minmax(0, 320px); height: 0; }',
-      'ha-card { padding: 0 0 4px; overflow: hidden; container-type: inline-size; }',
+      'ha-card { padding: 0 0 4px; overflow: hidden; container-type: inline-size; container-name: pc-card; }',
       // ── Header. Classic (illustration: false): the round icon, the title and its subtitle, the buttons.
       '.header { position: relative; display: flex; align-items: center; gap: 10px; padding: 12px 10px 8px 12px; min-height: 40px; }',
       '.head { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; }',
       '.logo { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center;' +
         ' color: var(--pc-state, var(--pc-accent)); background: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 16%, transparent); }',
       '.logo ha-icon { --mdc-icon-size: 24px; }',
-      '.titles { flex: 1 1 0; min-width: 0; overflow: hidden; }',
+      '.titles { flex: 1 1 0; min-width: 0; overflow: hidden; display: flex; flex-direction: column; }',
+      // Title row: the name, then the status pill right after it (the name gives way first, down to four characters).
+      // When the row is too narrow for both, the pill takes a line of its own under the subtitle; on the narrowest
+      // cards only its dot stays (its label in its title).
+      '.titles, .next { container: pc-titles / inline-size; }',
+      '.trow { display: flex; align-items: center; gap: 8px; min-width: 0; }',
+      '.trow > .name { flex: 0 1 auto; min-width: 4ch; }',
+      '.head .chip.st { flex: none; max-width: 51%; display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 12px; box-sizing: border-box;' +
+        ' overflow: hidden; white-space: nowrap; font-size: 11px; font-weight: 500; line-height: 16px;' +
+        ' color: color-mix(in srgb, var(--c) 45%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      '.head .chip.st .txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; }',
+      '.head .chip.st .dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--c); }',
+      // On a line of its own the pill may run past the texts over the street's sky (a long label beside a short title).
+      '.hero .titles { overflow: visible; }',
+      '@container pc-titles (max-width: 230px) { .trow { display: contents; } .head .chip.st { order: 3; align-self: flex-start; max-width: none; margin-top: 2px; } }',
+      '@container pc-card (max-width: 260px) { .trow { display: contents; } .head .chip.st { order: 3; align-self: flex-start; max-width: 100%; margin-top: 2px; } }',
+      '@container pc-card (max-width: 200px) { .head .chip.st { padding: 0; width: 16px; height: 16px; justify-content: center; } .head .chip.st .txt { display: none; } }',
       ':host([hide-title]) .titles > .name { display: none; }',
       '.name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
       '.header:not(.hero) .name { color: var(--primary-text-color); }',
@@ -2111,9 +2140,10 @@ class ParcelCard extends HTMLElement {
       // At night the state colour is lifted toward white so it stays readable on the dark sky.
       '.hero.night .logo { background: rgba(255,255,255,.12); color: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 78%, #ffffff); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }',
       // The buttons on the sky: frosted glass, never a plain filled button.
-      '.hero .buttons { position: absolute; z-index: 3; top: 8px; right: 8px; gap: 6px; }',
+      // The header's buttons in the banner's top right corner, small frosted rounds, the detail button last.
+      '.hero .buttons { position: absolute; z-index: 3; top: 5px; right: 5px; gap: 4px; }',
       '.hero .buttons ha-icon-button, .hero .detail { color: #33506b; background: rgba(255,255,255,.55); border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); }',
-      '.hero .buttons ha-icon-button { --mdc-icon-button-size: 30px; --mdc-icon-size: 17px; }',
+      '.hero .buttons ha-icon-button { --mdc-icon-button-size: 24px; --mdc-icon-size: 16px; backdrop-filter: blur(4px); }',
       '.hero.night .buttons ha-icon-button, .hero.night .detail { color: #ffffff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }',
       // Scenery colours, day and night.
       '.scene .sun { fill: #ffd65a; } .scene .moon, .scene .stars { display: none; fill: #f3eed2; }',
@@ -2167,10 +2197,13 @@ class ParcelCard extends HTMLElement {
       '.hero.bare .road, .hero.bare.night .road { background: none; box-shadow: inset 0 -1px 0 var(--divider-color, rgba(127,127,127,.25)); }',
       '.hero.bare .logo, .hero.bare.night .logo { color: var(--pc-state, var(--pc-accent)); background: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 16%, transparent); box-shadow: none; }',
       '.hero.bare .buttons ha-icon-button, .hero.bare .detail, .hero.bare.night .buttons ha-icon-button, .hero.bare.night .detail { color: var(--secondary-text-color); background: none; box-shadow: none; }',
-      '.hero.bare .next .chip, .hero.bare.night .next .chip { color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
+      '.hero.bare .head .chip.st, .hero.bare.night .head .chip.st { color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.hero.bare .more, .hero.bare.night .more { box-shadow: 0 0 0 2px var(--card-background-color, #fff); }',
       // A narrow card keeps the sky and the road for its texts: no scenery.
-      '@container (max-width: 300px) { ha-card:not(.mini) .hero .scene { display: none; } ha-card:not(.mini) .hero .head { right: 0; padding-right: 84px; } }',
+      // Narrow card: no street, the texts take the width; only the title line keeps clear of the corner buttons.
+      '.hero { --btns-w: 34px; } .hero:has(.buttons > :nth-child(2)) { --btns-w: 62px; } .hero:has(.buttons > :nth-child(3)) { --btns-w: 90px; }',
+      '@container pc-card (max-width: 300px) { ha-card:not(.mini) .hero .scene { display: none; } ha-card:not(.mini) .hero .head { right: 0; padding-right: var(--btns-w); } }',
+      '@container pc-card (max-width: 260px) { .hero .head { padding-right: 8px !important; } .hero .trow > .name { margin-right: calc(var(--btns-w) - 8px); } }',
       // ── Tabs, right under the header.
       '.tabs { display: flex; gap: 18px; padding: 0 16px; border-bottom: 1px solid var(--divider-color, rgba(127,127,127,.2)); }',
       '.tab { all: unset; cursor: pointer; padding: 9px 0 7px; font-size: 14px; font-weight: 500; color: var(--secondary-text-color);' +
@@ -2252,16 +2285,17 @@ class ParcelCard extends HTMLElement {
       'ha-card.mini .header:not(.hero) { padding-bottom: 12px; }',
       '.detail { all: unset; flex: none; cursor: pointer; width: 26px; height: 26px; border-radius: 50%; align-self: flex-start;' +
         ' display: grid; place-items: center; color: var(--secondary-text-color); --mdc-icon-size: 16px; }',
-      '.hero > .detail { position: absolute; z-index: 3; top: 6px; right: 6px; }',
-      '.hero .buttons .detail { width: 30px; height: 30px; align-self: center; }',
+      '.hero > .detail { position: absolute; z-index: 3; top: 5px; right: 5px; }',
+      // Classic header: the mini card's detail button in the card's top right corner, out of the title row.
+      'ha-card.mini .header:not(.hero) { padding-right: 40px; }',
+      '.header:not(.hero) > .detail { position: absolute; top: 8px; right: 8px; box-shadow: inset 0 0 0 1px var(--divider-color, rgba(127,127,127,.3)); }',
+      '.hero .detail { width: 24px; height: 24px; align-self: center; backdrop-filter: blur(4px); }',
       '.detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
       '.hero .detail:hover { background: rgba(255,255,255,.75); } .hero.night .detail:hover { background: rgba(255,255,255,.22); }',
       '.detail:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 1px; }',
       '.next { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 1px; }',
       '.next .name { font-size: 17px; line-height: 22px; }',
-      '.next .l1 { display: flex; align-items: center; gap: 6px; min-width: 0; margin: 1px 0; }',
       'ha-card.mini .hero .head { gap: 8px; padding-left: 12px; }',
-      '.next .l1:not(:has(> :not([hidden]))) { display: none; }',
       '.next .l2 { font-size: 12.5px; line-height: 16px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--sky-muted, var(--secondary-text-color)); }',
       // The other parcels on the way: a count badge on the icon's corner, the Parcel accent.
       '.mark { position: relative; flex: none; display: flex; }',
@@ -2270,15 +2304,11 @@ class ParcelCard extends HTMLElement {
         ' box-shadow: 0 0 0 2px var(--card-background-color, #fff); }',
       '.hero .more { box-shadow: 0 0 0 2px rgba(255,255,255,.85); } .hero.night .more { box-shadow: 0 0 0 2px #15284a; }',
       // The state pill of the featured parcel, on the sky: frosted glass under the tint.
-      '.next .chip { flex: 0 1 auto; min-width: 0; gap: 5px; padding: 0 8px; line-height: 20px; font-size: 12px;' +
-        ' color: color-mix(in srgb, var(--c) 45%, var(--sky-text, var(--primary-text-color))); background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); }',
-      '.header:not(.hero) .next .chip { background: color-mix(in srgb, var(--c) 15%, transparent); }',
-      '.hero.night .next .chip { color: color-mix(in srgb, var(--c) 35%, #ffffff); background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); }',
-      '.next .chip .txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; }',
-      '.next .chip .dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--c); }',
+      '.hero .head .chip.st { color: color-mix(in srgb, var(--c) 45%, #0d2a45); background: color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); }',
+      '.hero.night .head .chip.st { color: color-mix(in srgb, var(--c) 35%, #ffffff); background: color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); }',
       'ha-card.mini .hero .head { padding-right: 8px; }',
       // A very narrow mini card keeps the sky for its texts, up to the detail button.
-      '@container (max-width: 280px) { ha-card.mini .hero .scene { display: none; } ha-card.mini .hero .head { right: 0; padding-right: 34px; } }',
+      '@container pc-card (max-width: 280px) { ha-card.mini .hero .scene { display: none; } ha-card.mini .hero .head { right: 0; padding-right: var(--btns-w); } }',
       '@media (prefers-reduced-motion: reduce) { .scene *, .pill, .pill *, .state .label, .track *, .refresh-btn.spinning ha-icon { animation: none !important; }' +
         ' .pill .draw { stroke-dasharray: none; } .chevron, .delivery { transition: none; } }',
     ].join('\n');

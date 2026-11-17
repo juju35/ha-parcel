@@ -6,6 +6,7 @@
 - **Header on the common look of the ha-* cards**: the illustrated banner is now 90 px high on the full card and on the mini card alike, with a 10 px road edge to edge at the bottom.
 - **The round icon of the header takes the colour of the featured parcel**: blue when out for delivery or in transit, amber when awaiting pickup, green once delivered, red after a failed attempt or an exception, grey with nothing on the way. Day and night (lifted toward white on the night sky), on the full card, the mini card and without background.
 - Each card draws its scene with its own SVG ids, so several Parcel cards on one dashboard never share the moon's mask.
+- **Status pill on the title row** of both cards: the featured parcel's state (or "Nothing on the way") in the header icon's colour, right after the title, or on a line of its own under the subtitle when the title row is too narrow; on the narrowest cards only its dot stays. The header buttons (refresh, add, detail) are small frosted rounds lined up in the banner's top right corner, the detail button last; with the classic header the mini card's detail button sits in the card's corner.
 
 ## 1.8.0 - 2026-11-17
 

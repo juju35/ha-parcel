@@ -786,9 +786,12 @@ test('narrow header: the title truncates, the buttons never shrink, the scenery 
   // scenery goes and the texts get the sky, up to the buttons.
   assert.match(rule('.hero .head'), /right: var\(--scene-w\)/);
   assert.match(rule('.header.hero'), /--scene-w: min\(calc\(\(var\(--hero-h\) - var\(--road-h\) \+ 5px\) \* 2\.5\), var\(--scene-max\)\)/);
-  const query = (w) => css.split('\n').find((l) => l.startsWith(`@container (max-width: ${w}px)`)) || '';
+  const query = (w) => css.split('\n').filter((l) => l.startsWith(`@container pc-card (max-width: ${w}px)`)).join('\n');
   assert.match(query(300), /\.hero \.scene \{ display: none; \}/);
-  assert.match(query(300), /\.hero \.head \{ right: 0; padding-right: 84px; \}/);
+  // The texts keep clear of the corner buttons (as many as the header has: --btns-w), only on the title line once the
+  // pill has a line of its own.
+  assert.match(query(300), /\.hero \.head \{ right: 0; padding-right: var\(--btns-w\); \}/);
+  assert.match(query(260), /\.hero \.trow > \.name \{ margin-right: calc\(var\(--btns-w\) - 8px\); \}/);
   assert.match(rule('.desc'), /min-width: 0/);
   assert.match(rule('.desc'), /text-overflow: ellipsis/);
 });
