@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.8.0';
+var PARCEL_CARD_VERSION = '1.9.0';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -1354,12 +1354,14 @@ function parcelCloud(cls, x, y, s) {
 
 var PARCEL_BOX = '<rect width="7" height="6" rx="1" class="box"/><path d="M3.5,0 V6" class="tape"/>';
 
-var PARCEL_SCENE =
+// Each card instance passes its own uid, so the moon's mask id never clashes with another card on the page.
+var parcelUid = 0;
+var parcelScene = (uid) =>
   '<svg class="scene" viewBox="0 0 200 80" preserveAspectRatio="xMaxYMax slice" aria-hidden="true" focusable="false">' +
   '<g class="stars">' + PARCEL_STARS.map((s, i) => `<circle class="${i % 3 ? '' : 'tw'}" cx="${s[0]}" cy="${s[1]}" r=".6"/>`).join('') + '</g>' +
   '<g class="sun"><circle cx="100" cy="18" r="10" opacity=".28"/><circle cx="100" cy="18" r="6.5"/></g>' +
-  '<mask id="parcel-moon"><rect width="200" height="80" fill="#fff"/><circle cx="103.5" cy="15.5" r="5.4" fill="#000"/></mask>' +
-  '<g class="moon"><circle cx="100" cy="18" r="9" opacity=".12"/><circle cx="100" cy="18" r="6" mask="url(#parcel-moon)"/></g>' +
+  `<mask id="parcel-moon-${uid}">`+'<rect width="200" height="80" fill="#fff"/><circle cx="103.5" cy="15.5" r="5.4" fill="#000"/></mask>' +
+  '<g class="moon"><circle cx="100" cy="18" r="9" opacity=".12"/><circle cx="100" cy="18" r="6" mask="url(#parcel-moon-' + uid + ')"/></g>' +
   '<g class="clouds">' + parcelCloud('c1', 70, 15, 0.9) + parcelCloud('c2', 186, 36, 0.65) + '</g>' +
   '<path class="hill" d="M0,75 C30,70 52,62 82,63 C110,64 130,55 160,57 C180,58 190,54 200,55 L200,75 Z"/>' +
   '<g class="shop">' +
@@ -1401,6 +1403,15 @@ function parcelFeatured(deliveries) {
   if (!active.length) return deliveries[0] || null;
   var rank = (d) => (d.status in PARCEL_FEATURE_RANK ? PARCEL_FEATURE_RANK[d.status] : 5);
   return active.reduce((best, d) => (rank(d) < rank(best) ? d : best), active[0]);
+}
+
+// Colour of the header icon: the state of the featured parcel (out for delivery / in transit, awaiting pickup,
+// delivered, failed attempt or exception), a neutral grey without any parcel or with the sensor unavailable.
+function parcelHeaderColor(d) {
+  if (!d) return 'var(--disabled-text-color, #9e9e9e)';
+  var key = d.status in PARCEL_STATUS_STYLE ? d.status : d.status_code === 0 ? 'delivered' : 'in_transit';
+  if (key === 'info_received' || key === 'unknown') key = 'in_transit';
+  return PARCEL_STATUS_STYLE[key].color;
 }
 
 function parcelSceneOf(d) {
@@ -1694,7 +1705,7 @@ class ParcelCard extends HTMLElement {
       this._headerKey = key;
       header.className = hero ? 'header hero' : 'header';
       header.innerHTML =
-        (hero ? `${PARCEL_SCENE}<div class="road"><span class="marks"></span></div>` : '') +
+        (hero ? `${parcelScene(this._uid || (this._uid = ++parcelUid))}<div class="road"><span class="marks"></span></div>` : '') +
         '<div class="head">' +
         // The compact mini card counts the other parcels on the way in a badge on its icon.
         (compact ? `<div class="mark">${this._iconHtml()}<span class="more" hidden></span></div>` : this._iconHtml()) +
@@ -1727,6 +1738,7 @@ class ParcelCard extends HTMLElement {
     }
     var unavailable = !st || st.state === 'unavailable' || st.state === 'unknown';
     var featured = unavailable ? null : parcelFeatured(deliveries);
+    header.style?.setProperty('--pc-state', parcelHeaderColor(featured));
     if (hero) {
       header.classList?.toggle('night', parcelNight(this._hass, c));
       // illustration_background: false keeps the houses and the van, without the sky and the road.
@@ -2065,7 +2077,7 @@ class ParcelCard extends HTMLElement {
       '.header { position: relative; display: flex; align-items: center; gap: 10px; padding: 12px 10px 8px 12px; min-height: 40px; }',
       '.head { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; }',
       '.logo { width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center;' +
-        ' color: var(--pc-accent); background: color-mix(in srgb, var(--pc-accent) 16%, transparent); }',
+        ' color: var(--pc-state, var(--pc-accent)); background: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 16%, transparent); }',
       '.logo ha-icon { --mdc-icon-size: 24px; }',
       '.titles { flex: 1 1 0; min-width: 0; overflow: hidden; }',
       ':host([hide-title]) .titles > .name { display: none; }',
@@ -2081,7 +2093,7 @@ class ParcelCard extends HTMLElement {
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       // ── Illustrated header: the sky, the street on the right, the road, the texts laid on the sky (as on the flight
       // and train boards). The scene takes 2.5 times its height, at most --scene-max of the card; the texts the rest.
-      '.header.hero { display: block; padding: 0; height: var(--hero-h); overflow: hidden; --hero-h: 96px; --road-h: 12px; --scene-max: 56%;' +
+      '.header.hero { display: block; padding: 0; height: var(--hero-h); overflow: hidden; --hero-h: 90px; --road-h: 10px; --scene-max: 56%;' +
         ' --scene-w: min(calc((var(--hero-h) - var(--road-h) + 5px) * 2.5), var(--scene-max));' +
         ' --sky-text: #0d2a45; --sky-muted: #3b5b78; color: var(--sky-text);' +
         ' background: linear-gradient(90deg, #f1f8ff 0%, #e2f1fd 34%, #b9def8 70%, #9fd0f3 100%); }',
@@ -2095,8 +2107,9 @@ class ParcelCard extends HTMLElement {
       '.hero.night .road .marks { background: repeating-linear-gradient(90deg, rgba(255,255,255,.4) 0 10px, transparent 10px 20px); }',
       '.hero .head { position: absolute; z-index: 2; left: 0; top: 0; bottom: var(--road-h); right: var(--scene-w); box-sizing: border-box; padding: 8px 8px 8px 14px; }',
       // The round icon on the sky: frosted glass, the Parcel accent.
-      '.hero .logo { background: rgba(255,255,255,.62); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pc-accent) 22%, transparent); }',
-      '.hero.night .logo { background: rgba(255,255,255,.12); color: #ffb070; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }',
+      '.hero .logo { background: rgba(255,255,255,.62); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pc-state, var(--pc-accent)) 22%, transparent); }',
+      // At night the state colour is lifted toward white so it stays readable on the dark sky.
+      '.hero.night .logo { background: rgba(255,255,255,.12); color: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 78%, #ffffff); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }',
       // The buttons on the sky: frosted glass, never a plain filled button.
       '.hero .buttons { position: absolute; z-index: 3; top: 8px; right: 8px; gap: 6px; }',
       '.hero .buttons ha-icon-button, .hero .detail { color: #33506b; background: rgba(255,255,255,.55); border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); }',
@@ -2152,7 +2165,7 @@ class ParcelCard extends HTMLElement {
       '.header.hero.bare, .header.hero.bare.night { background: none; --sky-text: var(--primary-text-color); --sky-muted: var(--secondary-text-color); }',
       '.bare .scene .sun, .bare .scene .moon, .bare .scene .stars, .bare .scene .clouds, .bare .scene .hill, .bare .road .marks { display: none; }',
       '.hero.bare .road, .hero.bare.night .road { background: none; box-shadow: inset 0 -1px 0 var(--divider-color, rgba(127,127,127,.25)); }',
-      '.hero.bare .logo, .hero.bare.night .logo { color: var(--pc-accent); background: color-mix(in srgb, var(--pc-accent) 16%, transparent); box-shadow: none; }',
+      '.hero.bare .logo, .hero.bare.night .logo { color: var(--pc-state, var(--pc-accent)); background: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 16%, transparent); box-shadow: none; }',
       '.hero.bare .buttons ha-icon-button, .hero.bare .detail, .hero.bare.night .buttons ha-icon-button, .hero.bare.night .detail { color: var(--secondary-text-color); background: none; box-shadow: none; }',
       '.hero.bare .next .chip, .hero.bare.night .next .chip { color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.hero.bare .more, .hero.bare.night .more { box-shadow: 0 0 0 2px var(--card-background-color, #fff); }',
@@ -2235,7 +2248,7 @@ class ParcelCard extends HTMLElement {
       // ── Mini card: a 240 px preferred width, a lower banner with the featured parcel, the detail button top right.
       ':host([mini])::before { grid-template-columns: minmax(0, 240px); }',
       'ha-card.mini { padding: 0; }',
-      'ha-card.mini .header.hero { --hero-h: 84px; --road-h: 10px; --scene-max: 36%; }',
+      'ha-card.mini .header.hero { --scene-max: 36%; }',
       'ha-card.mini .header:not(.hero) { padding-bottom: 12px; }',
       '.detail { all: unset; flex: none; cursor: pointer; width: 26px; height: 26px; border-radius: 50%; align-self: flex-start;' +
         ' display: grid; place-items: center; color: var(--secondary-text-color); --mdc-icon-size: 16px; }',

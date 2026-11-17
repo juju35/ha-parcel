@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.0 - 2026-11-17
+
+### Features
+- **Header on the common look of the ha-* cards**: the illustrated banner is now 90 px high on the full card and on the mini card alike, with a 10 px road edge to edge at the bottom.
+- **The round icon of the header takes the colour of the featured parcel**: blue when out for delivery or in transit, amber when awaiting pickup, green once delivered, red after a failed attempt or an exception, grey with nothing on the way. Day and night (lifted toward white on the night sky), on the full card, the mini card and without background.
+- Each card draws its scene with its own SVG ids, so several Parcel cards on one dashboard never share the moon's mask.
+
 ## 1.8.0 - 2026-11-17
 
 ### Features
