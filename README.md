@@ -185,7 +185,7 @@ The card, with one delivery expanded to its events: the van has brought the parc
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card.png" alt="card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/card-dark.png" alt="card, dark theme" width="400"> |
 
-Night illustration (`illustration_theme: night`, or automatic after sunset):
+Night illustration (`illustration_theme: night`, or automatic after sunset or with the dark theme):
 
 | Light | Dark |
 |---|---|

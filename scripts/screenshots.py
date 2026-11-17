@@ -181,7 +181,7 @@ SCENES = {
 SHOTS = [
     {"file": "card", "theme": "light", "config": {"show_delivered": True}, "expand": "colissimo:6A12345678901"},
     {"file": "card-dark", "theme": "dark", "config": {"show_delivered": True}, "expand": "colissimo:6A12345678901"},
-    # Night illustration (illustration_theme: night, or automatic after sunset).
+    # Night illustration (illustration_theme: night, or automatic after sunset or with the dark theme).
     {"file": "card-night", "theme": "light", "config": {"show_delivered": True, "illustration_theme": "night"}},
     {"file": "card-night-dark", "theme": "dark", "config": {"show_delivered": True, "illustration_theme": "night"}},
     # Classic header (illustration: false).
