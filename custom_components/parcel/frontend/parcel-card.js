@@ -1791,6 +1791,9 @@ class ParcelCard extends HTMLElement {
         sub.textContent = (st && this._refreshError) || '';
       }
     }
+    // The mini card has nothing to unfold without a parcel: no detail button (kept once unfolded, to fold back).
+    var detail = header.querySelector('.detail');
+    if (detail) detail.hidden = compact && (unavailable || !deliveries.length);
     var refresh = header.querySelector('.refresh-btn');
     if (refresh) refresh.classList.toggle('spinning', !!this._refreshing);
     this._fitPill();
@@ -2346,6 +2349,7 @@ class ParcelCard extends HTMLElement {
       '.hero .hbtn, .hero .detail { width: 24px; height: 24px; align-self: center; backdrop-filter: blur(4px); }',
       '.hbtn:hover, .detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
       '.hero .hbtn:hover, .hero .detail:hover { background: rgba(255,255,255,.75); } .hero.night .hbtn:hover, .hero.night .detail:hover { background: rgba(255,255,255,.22); }',
+      '.detail[hidden] { display: none; }',
       '.hbtn:focus-visible, .detail:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 1px; }',
       '.next { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 1px; }',
       '.next .name { font-size: 17px; line-height: 22px; }',

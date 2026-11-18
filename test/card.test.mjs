@@ -1093,3 +1093,9 @@ test('no parcel to show: the card ends on its header, with no line and no band u
   assert.equal(self.list.innerHTML, '');
   assert.ok(styles().includes('ha-card:not(:has(> .list:not(:empty), > .form:not([hidden]), > .tabs:not([hidden]))) { padding-bottom: 0; }'));
 });
+
+test('mini card with no parcel to show: the expand button is hidden', () => {
+  assert.equal(miniCard([]).header.querySelector('.detail').hidden, true);
+  assert.equal(miniCard([deliveryOf('A1')]).header.querySelector('.detail').hidden, false);
+  assert.ok(styles().includes('.detail[hidden] { display: none; }'));
+});
