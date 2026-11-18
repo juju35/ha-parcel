@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.9.1';
+var PARCEL_CARD_VERSION = '1.9.2';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -1698,8 +1698,9 @@ class ParcelCard extends HTMLElement {
     }
     // With the tabs, each one lists its own parcels.
     if (tabbed) deliveries = deliveries.filter((d) => (d.status_code === 0) === (this._tab === 'delivered'));
+    // Nothing to show: the card ends on its header (its road), as the camera cards do; an empty tab keeps its line.
     if (!deliveries.length) {
-      list.innerHTML = `<div class="empty">${parcelEsc(t.empty)}</div>`;
+      list.innerHTML = tabbed ? `<div class="empty">${parcelEsc(t.empty)}</div>` : '';
       return;
     }
     // innerHTML replaces the focused row: put the keyboard focus back on the same row or tracking number.
@@ -1737,10 +1738,10 @@ class ParcelCard extends HTMLElement {
         (st && !compact
           ? '<div class="buttons">' +
             (c.show_refresh
-              ? `<ha-icon-button class="refresh-btn" label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></ha-icon-button>`
+              ? `<button class="hbtn refresh-btn" aria-label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></button>`
               : '') +
             (canAdd
-              ? `<ha-icon-button class="add-btn" label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></ha-icon-button>`
+              ? `<button class="hbtn add-btn" aria-label="${parcelEsc(t.add)}" title="${parcelEsc(t.add)}"><ha-icon icon="mdi:plus"></ha-icon></button>`
               : '') +
             this._detailButton(t) +
             '</div>'
@@ -2169,8 +2170,7 @@ class ParcelCard extends HTMLElement {
       '.sub[hidden], .more[hidden], .chip[hidden], .tabs[hidden] { display: none; }',
       '.sub.error { color: color-mix(in srgb, var(--error-color, #db4437) 55%, var(--sky-text, var(--primary-text-color))); }',
       '.buttons { display: flex; align-items: center; gap: 4px; flex: none; }',
-      // HA's default ha-icon-button is 48 px with a 24 px glyph; match the 28/16 px icon actions of the sibling cards.
-      '.buttons ha-icon-button { flex: none; --mdc-icon-button-size: 28px; --mdc-icon-size: 16px; color: var(--secondary-text-color); }',
+      // Plain buttons sized like the detail button: HA 2026.11's ha-icon-button ignores --mdc-icon-button-size (48 px).
       '.refresh-btn.spinning ha-icon { animation: parcel-spin 1s linear infinite; }',
       '@keyframes parcel-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }',
       // ── Illustrated header: the sky, the street on the right, the road, the texts laid on the sky (as on the flight
@@ -2195,9 +2195,8 @@ class ParcelCard extends HTMLElement {
       // The buttons on the sky: frosted glass, never a plain filled button.
       // The header's buttons in the banner's top right corner, small frosted rounds, the detail button last.
       '.hero .buttons { position: absolute; z-index: 3; top: 5px; right: 5px; gap: 4px; }',
-      '.hero .buttons ha-icon-button, .hero .detail { color: #33506b; background: rgba(255,255,255,.55); border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); }',
-      '.hero .buttons ha-icon-button { --mdc-icon-button-size: 24px; --mdc-icon-size: 16px; backdrop-filter: blur(4px); }',
-      '.hero.night .buttons ha-icon-button, .hero.night .detail { color: #ffffff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }',
+      '.hero .hbtn, .hero .detail { color: #33506b; background: rgba(255,255,255,.55); border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); }',
+      '.hero.night .hbtn, .hero.night .detail { color: #ffffff; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }',
       // Scenery colours, day and night.
       '.scene .sun { fill: #ffd65a; } .scene .moon, .scene .stars { display: none; fill: #f3eed2; }',
       '.night .scene .sun { display: none; } .night .scene .moon, .night .scene .stars { display: inline; } .scene .stars { fill: #ffffff; }',
@@ -2249,7 +2248,7 @@ class ParcelCard extends HTMLElement {
       '.bare .scene .sun, .bare .scene .moon, .bare .scene .stars, .bare .scene .clouds, .bare .scene .hill, .bare .road .marks { display: none; }',
       '.hero.bare .road, .hero.bare.night .road { background: none; box-shadow: inset 0 -1px 0 var(--divider-color, rgba(127,127,127,.25)); }',
       '.hero.bare .logo, .hero.bare.night .logo { color: var(--pc-state, var(--pc-accent)); background: color-mix(in srgb, var(--pc-state, var(--pc-accent)) 16%, transparent); box-shadow: none; }',
-      '.hero.bare .buttons ha-icon-button, .hero.bare .detail, .hero.bare.night .buttons ha-icon-button, .hero.bare.night .detail { color: var(--secondary-text-color); background: none; box-shadow: none; }',
+      '.hero.bare .hbtn, .hero.bare .detail, .hero.bare.night .hbtn, .hero.bare.night .detail { color: var(--secondary-text-color); background: none; box-shadow: none; }',
       '.hero.bare .head .chip.st, .hero.bare.night .head .chip.st { color: color-mix(in srgb, var(--c) 50%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 15%, transparent); }',
       '.hero.bare .more, .hero.bare.night .more { box-shadow: 0 0 0 2px var(--card-background-color, #fff); }',
       // A narrow card keeps the sky and the road for its texts: no scenery.
@@ -2334,18 +2333,20 @@ class ParcelCard extends HTMLElement {
       // ── Mini card: a 240 px preferred width, a lower banner with the featured parcel, the detail button top right.
       ':host([mini])::before { grid-template-columns: minmax(0, 240px); }',
       'ha-card.mini { padding: 0; }',
+      // Nothing under the header (no list, form or tabs): no band under the road.
+      'ha-card:not(:has(> .list:not(:empty), > .form:not([hidden]), > .tabs:not([hidden]))) { padding-bottom: 0; }',
       'ha-card.mini .header.hero { --scene-max: 36%; }',
       'ha-card.mini .header:not(.hero) { padding-bottom: 12px; }',
-      '.detail { all: unset; flex: none; cursor: pointer; width: 26px; height: 26px; border-radius: 50%; align-self: flex-start;' +
+      '.hbtn, .detail { all: unset; box-sizing: border-box; flex: none; cursor: pointer; width: 26px; height: 26px; border-radius: 50%; align-self: flex-start;' +
         ' display: grid; place-items: center; color: var(--secondary-text-color); --mdc-icon-size: 16px; }',
       '.hero > .detail { position: absolute; z-index: 3; top: 5px; right: 5px; }',
       // Classic header: the mini card's detail button in the card's top right corner, out of the title row.
       'ha-card.mini .header:not(.hero) { padding-right: 40px; }',
       '.header:not(.hero) > .detail { position: absolute; top: 8px; right: 8px; box-shadow: inset 0 0 0 1px var(--divider-color, rgba(127,127,127,.3)); }',
-      '.hero .detail { width: 24px; height: 24px; align-self: center; backdrop-filter: blur(4px); }',
-      '.detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
-      '.hero .detail:hover { background: rgba(255,255,255,.75); } .hero.night .detail:hover { background: rgba(255,255,255,.22); }',
-      '.detail:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 1px; }',
+      '.hero .hbtn, .hero .detail { width: 24px; height: 24px; align-self: center; backdrop-filter: blur(4px); }',
+      '.hbtn:hover, .detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
+      '.hero .hbtn:hover, .hero .detail:hover { background: rgba(255,255,255,.75); } .hero.night .hbtn:hover, .hero.night .detail:hover { background: rgba(255,255,255,.22); }',
+      '.hbtn:focus-visible, .detail:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 1px; }',
       '.next { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 1px; }',
       '.next .name { font-size: 17px; line-height: 22px; }',
       'ha-card.mini .hero .head { gap: 8px; padding-left: 12px; }',
