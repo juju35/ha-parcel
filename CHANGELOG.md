@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.2 - 2026-11-18
+
+### Fixes
+- Header buttons: refresh and add are back to the size of the detail button (24 px on the illustrated banner, 26 px otherwise) — Home Assistant 2026.11's `ha-icon-button` ignored the size override and drew them at 48 px.
+- No parcel to show: the card now ends on its header — the "No deliveries to show" line and the band under the road are gone (an empty tab still says so).
+- Mini card with no parcel to show: the expand button is hidden.
+
 ## 1.9.1 - 2026-11-18
 
 ### Fixes

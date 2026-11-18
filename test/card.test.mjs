@@ -781,7 +781,8 @@ test('narrow header: the title truncates, the buttons never shrink, the scenery 
   assert.match(rule('.name'), /text-overflow: ellipsis/);
   assert.match(rule('.sub'), /text-overflow: ellipsis/);
   assert.match(rule('.buttons'), /flex: none/);
-  assert.match(rule('.buttons ha-icon-button'), /flex: none/);
+  assert.match(rule('.hbtn, .detail'), /flex: none; cursor: pointer; width: 26px; height: 26px/);
+  assert.ok(css.includes('.hero .hbtn, .hero .detail { width: 24px; height: 24px;'));
   // The texts sit left of the scene, which takes 2.5 times its height, at most a share of the card; under 300 px the
   // scenery goes and the texts get the sky, up to the buttons.
   assert.match(rule('.hero .head'), /right: var\(--scene-w\)/);
@@ -1084,4 +1085,17 @@ test('a translated refresh error is shown alone, without the generic prefix', as
   self._refresh();
   for (let i = 0; i < 4; i++) await flush();
   assert.equal(self.header.querySelector('.sub.error').textContent, 'Parcel update failed: timeout');
+});
+
+test('no parcel to show: the card ends on its header, with no line and no band under the road', () => {
+  const self = renderable({ _hass: { locale: { language: 'en' }, states: { 'sensor.a': sensor('sensor.a', { deliveries: [] }) } } });
+  self.setConfig({ entity: 'sensor.a' });
+  assert.equal(self.list.innerHTML, '');
+  assert.ok(styles().includes('ha-card:not(:has(> .list:not(:empty), > .form:not([hidden]), > .tabs:not([hidden]))) { padding-bottom: 0; }'));
+});
+
+test('mini card with no parcel to show: the expand button is hidden', () => {
+  assert.equal(miniCard([]).header.querySelector('.detail').hidden, true);
+  assert.equal(miniCard([deliveryOf('A1')]).header.querySelector('.detail').hidden, false);
+  assert.ok(styles().includes('.detail[hidden] { display: none; }'));
 });
