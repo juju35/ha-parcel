@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.9.2';
+var PARCEL_CARD_VERSION = '1.9.3';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -1718,7 +1718,10 @@ class ParcelCard extends HTMLElement {
     var compact = this._compact();
     var hero = c.illustration !== false;
     var canAdd = c.show_add && parcelIsAdmin(this._hass);
-    var key = [!!st, c.show_refresh, canAdd, parcelLang(this._hass, c), compact, hero].join('|');
+    var unavailable = !st || st.state === 'unavailable' || st.state === 'unknown';
+    // The mini card with nothing to unfold keeps the refresh and add buttons in its banner, in place of the expand one.
+    var idle = compact && !!st && (unavailable || !deliveries.length);
+    var key = [!!st, c.show_refresh, canAdd, parcelLang(this._hass, c), compact, hero, idle].join('|');
     if (this._headerKey !== key || !header.querySelector('.head')) {
       this._headerKey = key;
       header.className = hero ? 'header hero' : 'header';
@@ -1735,7 +1738,7 @@ class ParcelCard extends HTMLElement {
             // The refresh error survives re-renders (hass updates) until the next refresh attempt.
             '<div class="sub error" hidden></div></div>') +
         '</div>' +
-        (st && !compact
+        (st && (!compact || idle)
           ? '<div class="buttons">' +
             (c.show_refresh
               ? `<button class="hbtn refresh-btn" aria-label="${parcelEsc(t.refresh)}" title="${parcelEsc(t.refresh)}"><ha-icon icon="mdi:refresh"></ha-icon></button>`
@@ -1753,7 +1756,6 @@ class ParcelCard extends HTMLElement {
       var detailBtn = header.querySelector('.detail');
       if (detailBtn) detailBtn.addEventListener('click', this._toggleDetail.bind(this));
     }
-    var unavailable = !st || st.state === 'unavailable' || st.state === 'unknown';
     var featured = unavailable ? null : parcelFeatured(deliveries);
     header.style?.setProperty('--pc-state', parcelHeaderColor(featured));
     if (hero) {
@@ -1793,7 +1795,7 @@ class ParcelCard extends HTMLElement {
     }
     // The mini card has nothing to unfold without a parcel: no detail button (kept once unfolded, to fold back).
     var detail = header.querySelector('.detail');
-    if (detail) detail.hidden = compact && (unavailable || !deliveries.length);
+    if (detail) detail.hidden = idle;
     var refresh = header.querySelector('.refresh-btn');
     if (refresh) refresh.classList.toggle('spinning', !!this._refreshing);
     this._fitPill();
@@ -2336,6 +2338,7 @@ class ParcelCard extends HTMLElement {
       // ── Mini card: a 240 px preferred width, a lower banner with the featured parcel, the detail button top right.
       ':host([mini])::before { grid-template-columns: minmax(0, 240px); }',
       'ha-card.mini { padding: 0; }',
+      'ha-card.mini > .form { padding-bottom: 12px; }',
       // Nothing under the header (no list, form or tabs): no band under the road.
       'ha-card:not(:has(> .list:not(:empty), > .form:not([hidden]), > .tabs:not([hidden]))) { padding-bottom: 0; }',
       'ha-card.mini .header.hero { --scene-max: 36%; }',

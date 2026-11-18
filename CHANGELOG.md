@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.3 - 2026-11-18
+
+### Fixes
+- Mini card with no parcel to show: the refresh and add buttons are back in the banner, in place of the hidden expand button (1.9.2 had left no way to reach them).
+
 ## 1.9.2 - 2026-11-18
 
 ### Fixes
