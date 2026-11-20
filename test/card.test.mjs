@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 // Run west of UTC: a date-only "YYYY-MM-DD" parsed as UTC midnight shows the day before there,
@@ -18,7 +19,10 @@ const context = {
   console,
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard };`, context);
+// Named after the card file, so that node --experimental-test-coverage reports it.
+vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard };`, context, {
+  filename: fileURLToPath(new URL('../custom_components/parcel/frontend/parcel-card.js', import.meta.url)),
+});
 const { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard } = context.parcel;
 const card = ParcelCard.prototype;
 
