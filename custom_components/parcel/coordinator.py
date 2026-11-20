@@ -17,6 +17,7 @@ from homeassistant.util import dt as dt_util
 from .api import ParcelApi, ParcelAuthError, ParcelError, ParcelRateLimitError
 from .const import (
     CARRIERS_REFRESH,
+    CARRIERS_RETRY,
     CONF_FILTER_MODE,
     CONF_NOTIFY,
     CONF_SCAN_INTERVAL,
@@ -57,6 +58,7 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         self.notify_services: list[str] = list(entry.options.get(CONF_NOTIFY, []))
         self.carriers: dict[str, str] = {}
         self._carriers_updated: datetime | None = None
+        self._carriers_failed: datetime | None = None
         # Last known deliveries by key; None until the first successful update, so nothing fires at startup.
         self._known: dict[str, dict[str, Any]] | None = None
         # Active filter: undelivered deliveries missing from the last successful update, delivered if still missing
@@ -163,15 +165,19 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
                 _LOGGER.exception("Could not notify with notify.%s", target)
 
     async def async_ensure_carriers(self) -> dict[str, str]:
-        """Load the carriers list at most once a day; keep the old one on failure."""
+        """Load the carriers list at most once a day; keep the old one on failure, retried after CARRIERS_RETRY."""
         now = dt_util.utcnow()
         if self.carriers and self._carriers_updated and now - self._carriers_updated < CARRIERS_REFRESH:
+            return self.carriers
+        if self._carriers_failed and now - self._carriers_failed < CARRIERS_RETRY:
             return self.carriers
         try:
             self.carriers = await self.api.get_carriers()
             self._carriers_updated = now
+            self._carriers_failed = None
         except ParcelError as err:
-            _LOGGER.warning("Could not load Parcel carriers: %s", err)
+            self._carriers_failed = now
+            _LOGGER.warning("Could not load Parcel carriers (next try in %s): %s", CARRIERS_RETRY, err)
         return self.carriers
 
 
