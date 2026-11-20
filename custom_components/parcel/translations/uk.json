@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel не вдалося додати відправлення: {error}" },
     "refresh_failed": { "message": "Не вдалося оновити Parcel: {error}" },
     "rate_limited": { "message": "Досягнуто ліміту запитів Parcel, повтор пізніше: {error}" },
+    "refresh_throttled": { "message": "Parcel щойно оновлювався, і останнє оновлення не вдалося: спробуйте ще раз за кілька хвилин." },
     "notify_out_for_delivery": { "message": "У доставці" },
     "notify_delivered": { "message": "Доставлено" },
     "notify_unnamed": { "message": "Посилка" }

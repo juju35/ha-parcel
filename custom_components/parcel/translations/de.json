@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel konnte die Sendung nicht hinzufügen: {error}" },
     "refresh_failed": { "message": "Parcel-Aktualisierung fehlgeschlagen: {error}" },
     "rate_limited": { "message": "Parcel-Anfragelimit erreicht, neuer Versuch später: {error}" },
+    "refresh_throttled": { "message": "Parcel wurde gerade erst aktualisiert und die letzte Aktualisierung ist fehlgeschlagen: Versuche es in ein paar Minuten erneut." },
     "notify_out_for_delivery": { "message": "In Zustellung" },
     "notify_delivered": { "message": "Zugestellt" },
     "notify_unnamed": { "message": "Paket" }

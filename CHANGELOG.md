@@ -8,6 +8,7 @@
 - Card: leaving the page (another dashboard view, a conditional card hidden) brings the card back to its default state — add form closed, deliveries folded, mini card compact.
 - Card: the frosted header buttons keep their blur on Safari before 18 (WebKit prefix).
 - Card: a state update patches the card in place instead of drawing it again — the delivery rows and the tabs keep their nodes, an unfolded delivery stays as it is, and the card keeps its height: a re-created card is laid out again, which can make the dashboard jump (scroll anchoring). Updates of other entities still touch nothing.
+- `parcel.refresh` is throttled: a call less than 3 minutes after the previous one reuses the last fetch (or reports the last failure, translated) instead of spending another of the account's 20 requests per hour. The action stays open to every user.
 
 ### Maintenance
 - Tests: the coverage of the card is now measured (`node --test --experimental-test-coverage`).

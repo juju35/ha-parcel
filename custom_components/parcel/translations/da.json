@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel kunne ikke tilføje forsendelsen: {error}" },
     "refresh_failed": { "message": "Opdatering af Parcel mislykkedes: {error}" },
     "rate_limited": { "message": "Parcels grænse for forespørgsler er nået, prøver igen senere: {error}" },
+    "refresh_throttled": { "message": "Parcel blev opdateret for et øjeblik siden, og den seneste opdatering mislykkedes: prøv igen om et par minutter." },
     "notify_out_for_delivery": { "message": "Ude til levering" },
     "notify_delivered": { "message": "Leveret" },
     "notify_unnamed": { "message": "Pakke" }

@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel не удалось добавить отправление: {error}" },
     "refresh_failed": { "message": "Не удалось обновить Parcel: {error}" },
     "rate_limited": { "message": "Достигнут лимит запросов Parcel, повтор позже: {error}" },
+    "refresh_throttled": { "message": "Parcel только что обновлялся, и последнее обновление не удалось: повторите попытку через несколько минут." },
     "notify_out_for_delivery": { "message": "Передано курьеру" },
     "notify_delivered": { "message": "Доставлено" },
     "notify_unnamed": { "message": "Посылка" }

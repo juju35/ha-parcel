@@ -66,6 +66,8 @@ class ParcelCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         # Set while Parcel fails (rate limit, timeout, server error) and the last deliveries are kept: the sensor shows
         # it in its `stale` / `last_error` attributes and the refresh service reports it.
         self.last_error: ParcelError | None = None
+        # When parcel.refresh last fetched from Parcel (throttled by MIN_MANUAL_REFRESH).
+        self.last_manual_refresh: datetime | None = None
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
         try:

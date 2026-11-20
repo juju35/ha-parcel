@@ -24,6 +24,9 @@ CONF_NOTIFY: Final = "notify_services"
 DEFAULT_SCAN_INTERVAL: Final = 10
 MIN_SCAN_INTERVAL: Final = 5
 CARRIERS_REFRESH: Final = timedelta(hours=24)
+# parcel.refresh is open to every user: two manual refreshes closer than this reuse the last fetch instead of spending
+# another of the 20 hourly requests (a looping automation or repeated taps can't drain the quota).
+MIN_MANUAL_REFRESH: Final = timedelta(minutes=3)
 
 SERVICE_ADD_DELIVERY: Final = "add_delivery"
 SERVICE_REFRESH: Final = "refresh"

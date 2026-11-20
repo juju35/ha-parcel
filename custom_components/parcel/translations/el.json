@@ -83,6 +83,7 @@
     "add_failed": { "message": "Το Parcel δεν μπόρεσε να προσθέσει την αποστολή: {error}" },
     "refresh_failed": { "message": "Η ενημέρωση του Parcel απέτυχε: {error}" },
     "rate_limited": { "message": "Συμπληρώθηκε το όριο αιτημάτων του Parcel, νέα προσπάθεια αργότερα: {error}" },
+    "refresh_throttled": { "message": "Το Parcel ενημερώθηκε μόλις πριν και η τελευταία ενημέρωση απέτυχε: δοκιμάστε ξανά σε λίγα λεπτά." },
     "notify_out_for_delivery": { "message": "Προς παράδοση" },
     "notify_delivered": { "message": "Παραδόθηκε" },
     "notify_unnamed": { "message": "Δέμα" }

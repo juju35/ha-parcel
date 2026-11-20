@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel nemohol pridať zásielku: {error}" },
     "refresh_failed": { "message": "Aktualizácia Parcel zlyhala: {error}" },
     "rate_limited": { "message": "Dosiahnutý limit požiadaviek Parcel, nový pokus neskôr: {error}" },
+    "refresh_throttled": { "message": "Parcel bol práve aktualizovaný a posledná aktualizácia zlyhala: skúste to znova o niekoľko minút." },
     "notify_out_for_delivery": { "message": "Na doručení" },
     "notify_delivered": { "message": "Doručené" },
     "notify_unnamed": { "message": "Zásielka" }

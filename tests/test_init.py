@@ -1,5 +1,6 @@
 """Tests for the Parcel integration."""
 
+from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -511,3 +512,33 @@ async def test_service_errors_are_translated(hass, aioclient_mock, entry):
     with pytest.raises(ServiceValidationError) as err:
         await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
     assert err.value.translation_key == "several_accounts"
+
+
+async def test_refresh_service_is_throttled(hass, aioclient_mock, entry, freezer):
+    """Two manual refreshes within MIN_MANUAL_REFRESH spend one request; after the window, a new one is made."""
+    await _setup(hass, aioclient_mock, entry)
+
+    def calls() -> int:
+        return len([c for c in aioclient_mock.mock_calls if str(c[1]).startswith(API_DELIVERIES)])
+
+    before = calls()
+    await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    assert calls() == before + 1
+    freezer.tick(timedelta(minutes=3, seconds=1))
+    await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    assert calls() == before + 2
+
+
+async def test_throttled_refresh_reports_last_failure(hass, aioclient_mock, entry):
+    """Within the window, a refresh after a failed one is refused (translated) without calling Parcel again."""
+    await _setup(hass, aioclient_mock, entry)
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(API_DELIVERIES, status=429, json={"success": False})
+    with pytest.raises(HomeAssistantError):
+        await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    calls = len(aioclient_mock.mock_calls)
+    with pytest.raises(ServiceValidationError) as err:
+        await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    assert err.value.translation_key == "refresh_throttled"
+    assert len(aioclient_mock.mock_calls) == calls

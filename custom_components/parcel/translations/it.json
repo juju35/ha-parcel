@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel non è riuscito ad aggiungere la spedizione: {error}" },
     "refresh_failed": { "message": "Aggiornamento di Parcel non riuscito: {error}" },
     "rate_limited": { "message": "Limite di richieste Parcel raggiunto, nuovo tentativo più tardi: {error}" },
+    "refresh_throttled": { "message": "Parcel è stato aggiornato poco fa e l'ultimo aggiornamento non è riuscito: riprova tra qualche minuto." },
     "notify_out_for_delivery": { "message": "In consegna" },
     "notify_delivered": { "message": "Consegnato" },
     "notify_unnamed": { "message": "Pacco" }

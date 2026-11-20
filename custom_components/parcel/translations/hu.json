@@ -83,6 +83,7 @@
     "add_failed": { "message": "A Parcel nem tudta hozzáadni a küldeményt: {error}" },
     "refresh_failed": { "message": "A Parcel frissítése sikertelen: {error}" },
     "rate_limited": { "message": "Elérte a Parcel kéréskorlátját, később újrapróbálja: {error}" },
+    "refresh_throttled": { "message": "A Parcel épp most frissült, és az utolsó frissítés sikertelen volt: próbálja újra néhány perc múlva." },
     "notify_out_for_delivery": { "message": "Kézbesítés alatt" },
     "notify_delivered": { "message": "Kézbesítve" },
     "notify_unnamed": { "message": "Csomag" }
