@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel could not add the delivery: {error}" },
     "refresh_failed": { "message": "Parcel update failed: {error}" },
     "rate_limited": { "message": "Parcel rate limit reached, will retry later: {error}" },
+    "refresh_throttled": { "message": "Parcel was updated moments ago and the last update failed: try again in a few minutes." },
     "notify_out_for_delivery": { "message": "Out for delivery" },
     "notify_delivered": { "message": "Delivered" },
     "notify_unnamed": { "message": "Parcel" }

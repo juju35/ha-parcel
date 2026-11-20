@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.9.3';
+var PARCEL_CARD_VERSION = '1.9.4';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -1494,6 +1494,67 @@ function parcelLocale(hass, config) {
 }
 
 // ── parcel-card ───────────────────────────────────────────────────────────────
+// Shadow DOM patching: a redraw updates the nodes already on the page (text, attributes, classes) instead of replacing
+// them, so that a state update never re-creates the pictures (SVG scenes, logos) nor restarts their animations, and the
+// card keeps its height (a re-created card is laid out again, which can move the dashboard under the reader's eyes).
+// An open <dialog> keeps its `open` state: it is driven by showModal() / close().
+function parcelMorphAttrs(cur, next) {
+  for (var a of Array.from(cur.attributes)) {
+    if (!next.hasAttribute(a.name) && !(a.name === 'open' && cur.localName === 'dialog')) cur.removeAttribute(a.name);
+  }
+  for (var b of Array.from(next.attributes)) {
+    if (cur.getAttribute(b.name) === b.value) continue;
+    if (b.namespaceURI) cur.setAttributeNS(b.namespaceURI, b.name, b.value);
+    else cur.setAttribute(b.name, b.value);
+  }
+}
+
+// A Home Assistant element given no content (<ha-icon>…) draws itself: what it adds to its own node is not ours to
+// remove. It is kept as long as the attributes the HTML gives it do not change, and replaced when they do.
+function parcelMorphOwnDrawn(o, n) {
+  if (!n.localName.includes('-') || n.firstChild) return false;
+  var key = Array.from(n.attributes, (a) => `${a.name}=${a.value}`).join('\n');
+  if (o.__morphKey === undefined && Array.from(n.attributes).every((a) => o.getAttribute(a.name) === a.value)) o.__morphKey = key;
+  if (o.__morphKey !== key) {
+    n.__morphKey = key;
+    o.parentNode.replaceChild(n, o);
+  }
+  return true;
+}
+
+function parcelMorphChildren(cur, next) {
+  var old = Array.from(cur.childNodes);
+  var fresh = Array.from(next.childNodes);
+  fresh.forEach((n, i) => {
+    var o = old[i];
+    var ref = cur.childNodes[i] || null;
+    if (!o || o.nodeType !== n.nodeType || o.nodeName !== n.nodeName) {
+      cur.insertBefore(n, ref);
+      return;
+    }
+    if (o !== ref) cur.insertBefore(o, ref);
+    if (n.nodeType !== 1) {
+      if (o.nodeValue !== n.nodeValue) o.nodeValue = n.nodeValue;
+    } else if (!parcelMorphOwnDrawn(o, n)) {
+      parcelMorphAttrs(o, n);
+      parcelMorphChildren(o, n);
+    }
+  });
+  while (cur.childNodes.length > fresh.length) cur.removeChild(cur.lastChild);
+}
+
+// Gives `root` (a shadow root or an element) the content of `html`, patching what is already there (a plain
+// innerHTML where there is no DOM to patch, as in the unit tests' stubs).
+function parcelMorph(root, html) {
+  var tpl = root.childNodes && typeof document !== 'undefined' && document.createElement?.('template');
+  if (!tpl?.content) {
+    root.innerHTML = html;
+    return;
+  }
+  tpl.innerHTML = html;
+  parcelMorphChildren(root, tpl.content);
+}
+
 class ParcelCard extends HTMLElement {
   static getConfigElement() {
     return document.createElement('parcel-card-editor');
@@ -1561,7 +1622,10 @@ class ParcelCard extends HTMLElement {
         this._render();
       }
     });
-    document.addEventListener('click', this._onOutside, true);
+    (this._outsideWatch = this._outsideWatch || parcelWatchOutside(this, (ev) => this._onOutside(ev))).on();
+    // Back on the page after leaving it: drawn again in its default state.
+    if (this._left && this._hass && this._config) this._render();
+    this._left = false;
     // A new width (or the web font loaded): the status pill is fitted again, in the next frame.
     if (typeof ResizeObserver === 'function') {
       this._resize = this._resize || new ResizeObserver((entries) => {
@@ -1577,9 +1641,16 @@ class ParcelCard extends HTMLElement {
   }
 
   disconnectedCallback() {
-    document.removeEventListener('click', this._onOutside, true);
+    this._outsideWatch?.off();
     this._resize?.disconnect();
     this._fitWidth = null;
+    if (this._fitFrame) cancelAnimationFrame(this._fitFrame);
+    // Left (another dashboard view, a conditional card hidden): back to its default state, without the add form open
+    // or a delivery unfolded.
+    this._left = true;
+    this._expanded = {};
+    var form = this._root?.querySelector('.form');
+    if (form) form.hidden = true;
   }
 
   getCardSize() {
@@ -1643,7 +1714,7 @@ class ParcelCard extends HTMLElement {
     var tab = (id, label, n) =>
       `<button class="tab" role="tab" data-tab="${id}" aria-selected="${this._tab === id}">${parcelEsc(label)}` +
       ` <span class="n">${n}</span></button>`;
-    if (tabs) tabs.innerHTML = tab('active', t.tab_active, all.length - done) + tab('delivered', t.status.delivered, done);
+    if (tabs) parcelMorph(tabs, tab('active', t.tab_active, all.length - done) + tab('delivered', t.status.delivered, done));
     return true;
   }
 
@@ -1684,29 +1755,31 @@ class ParcelCard extends HTMLElement {
     this._renderHeader(header, t, st, title, deliveries);
     var tabbed = this._renderTabs(deliveries, t);
     if (!st) {
-      list.innerHTML = `<div class="empty">${parcelEsc(t.no_entity)}</div>`;
+      parcelMorph(list, `<div class="empty">${parcelEsc(t.no_entity)}</div>`);
       return;
     }
     if (unavailable) {
-      list.innerHTML = `<div class="empty">${parcelEsc(t.unavailable)}</div>`;
+      parcelMorph(list, `<div class="empty">${parcelEsc(t.unavailable)}</div>`);
       return;
     }
     // The compact mini card is its banner alone.
     if (this._compact()) {
-      list.innerHTML = '';
+      parcelMorph(list, '');
       return;
     }
     // With the tabs, each one lists its own parcels.
     if (tabbed) deliveries = deliveries.filter((d) => (d.status_code === 0) === (this._tab === 'delivered'));
     // Nothing to show: the card ends on its header (its road), as the camera cards do; an empty tab keeps its line.
     if (!deliveries.length) {
-      list.innerHTML = tabbed ? `<div class="empty">${parcelEsc(t.empty)}</div>` : '';
+      parcelMorph(list, tabbed ? `<div class="empty">${parcelEsc(t.empty)}</div>` : '');
       return;
     }
-    // innerHTML replaces the focused row: put the keyboard focus back on the same row or tracking number.
+    // The rows are patched in place (parcelMorph): the focused row normally keeps the focus; if it was replaced, the
+    // focus goes back on the same row or tracking number.
     var focus = this._focusSelector();
-    list.innerHTML = deliveries.map((d) => this._renderDelivery(d, t)).join('');
+    parcelMorph(list, deliveries.map((d) => this._renderDelivery(d, t)).join(''));
     var again = focus && list.querySelector ? list.querySelector(focus) : null;
+    if (again && this._root.activeElement === again) again = null;
     // Without preventScroll the browser scrolls the dashboard to the row on every sensor update.
     if (again) again.focus({ preventScroll: true });
   }
@@ -1806,6 +1879,16 @@ class ParcelCard extends HTMLElement {
   // line either, or the banner has no room for the lines above its road, the pill keeps its dot only (.dot-only, back
   // beside the title when the dot fits there). Measured after render, so that it holds in every language.
   _fitPill() {
+    // Home Assistant's <ha-card> (a Lit element) shows its content only from its first update, a microtask after it
+    // is connected: measured before, everything is 0 px wide and the pill lands on the wrong line. Fitted then.
+    var haCard = this._root?.querySelector?.('ha-card');
+    if (haCard && haCard.hasUpdated === false) {
+      this._pillWait ??= (haCard.updateComplete?.then ? haCard.updateComplete : new Promise((r) => requestAnimationFrame(r))).then(() => {
+        this._pillWait = null;
+        this._fitPill();
+      });
+      return;
+    }
     var root = this._root;
     if (!root?.querySelectorAll || typeof getComputedStyle !== 'function' || !document.createRange) return;
     for (var t of root.querySelectorAll('.head .titles, .head .next')) {
@@ -2349,7 +2432,7 @@ class ParcelCard extends HTMLElement {
       // Classic header: the mini card's detail button in the card's top right corner, out of the title row.
       'ha-card.mini .header:not(.hero) { padding-right: 40px; }',
       '.header:not(.hero) > .detail { position: absolute; top: 8px; right: 8px; box-shadow: inset 0 0 0 1px var(--divider-color, rgba(127,127,127,.3)); }',
-      '.hero .hbtn, .hero .detail { width: 24px; height: 24px; align-self: center; backdrop-filter: blur(4px); }',
+      '.hero .hbtn, .hero .detail { width: 24px; height: 24px; align-self: center; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }',
       '.hbtn:hover, .detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
       '.hero .hbtn:hover, .hero .detail:hover { background: rgba(255,255,255,.75); } .hero.night .hbtn:hover, .hero.night .detail:hover { background: rgba(255,255,255,.22); }',
       '.detail[hidden] { display: none; }',
@@ -2381,6 +2464,42 @@ function parcelInDialog(ev) {
   return ev.composedPath().some((n) => ['ha-more-info-dialog', 'ha-dialog', 'dialog'].includes(n.localName));
 }
 
+// « A click elsewhere », caught on the pointer: iOS (Safari and the companion app) sends no click for a tap on
+// something that is not clickable. It counts when the press and the release are both outside the card (a slider
+// dragged out of it does not count, nor a scroll, which cancels the pointer); keyboard clicks (no click count) go
+// through the click event. Clicks in a dialog opened from the card are not outside it.
+function parcelWatchOutside(card, handler) {
+  var downOutside = false;
+  var outside = (ev) => !ev.composedPath().includes(card) && !parcelInDialog(ev);
+  var onDown = (ev) => {
+    downOutside = outside(ev);
+  };
+  var onUp = (ev) => {
+    if (downOutside && outside(ev)) handler(ev);
+    downOutside = false;
+  };
+  var onClick = (ev) => {
+    if (ev.detail === 0 && outside(ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener('pointerdown', onDown, true);
+      document.addEventListener('pointerup', onUp, true);
+      document.addEventListener('click', onClick, true);
+    },
+    off() {
+      document.removeEventListener('pointerdown', onDown, true);
+      document.removeEventListener('pointerup', onUp, true);
+      document.removeEventListener('click', onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+  };
+}
+
 // Same calendar day, in the browser's time zone.
 function parcelIsToday(ms, now) {
   var d = new Date(ms);
@@ -2401,13 +2520,15 @@ class ParcelMiniCard extends ParcelCard {
   }
 
   connectedCallback() {
+    // Compact again before the base card draws it back.
+    (this._miniWatch = this._miniWatch || parcelWatchOutside(this, this._onOutsideMini)).on();
     super.connectedCallback();
-    document.addEventListener('click', this._onOutsideMini, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this._onOutsideMini, true);
+    this._miniWatch?.off();
+    this._zoomed = false;
   }
 
   setConfig(config) {

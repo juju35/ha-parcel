@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.4 - 2026-11-20
+
+### Fixes
+- The status pill is placed from the card's first frame: it was measured before Home Assistant's `<ha-card>` had laid out its content (0 px wide), so for a frame it showed on the wrong line (under the title, or beside it when it belongs under it), sometimes changing the card's height, before jumping to its place. It is now fitted once the card is drawn.
+- Card: a tap elsewhere on the page folds the card back on iOS too (Safari and the companion app send no click for a tap on something that is not clickable): the unfolded deliveries, the add form and the mini card's full view. A click in a dialog opened from the card no longer folds it.
+- Card: leaving the page (another dashboard view, a conditional card hidden) brings the card back to its default state — add form closed, deliveries folded, mini card compact.
+- Card: the frosted header buttons keep their blur on Safari before 18 (WebKit prefix).
+- Card: a state update patches the card in place instead of drawing it again — the delivery rows and the tabs keep their nodes, an unfolded delivery stays as it is, and the card keeps its height: a re-created card is laid out again, which can make the dashboard jump (scroll anchoring). Updates of other entities still touch nothing.
+- `parcel.refresh` is throttled: a call less than 3 minutes after the previous one reuses the last fetch (or reports the last failure, translated) instead of spending another of the account's 20 requests per hour. The action stays open to every user.
+- A failed download of the carriers list is tried again after 30 minutes, not at every deliveries update.
+
+### Maintenance
+- Tests: the coverage of the card is now measured (`node --test --experimental-test-coverage`).
+
 ## 1.9.3 - 2026-11-18
 
 ### Fixes

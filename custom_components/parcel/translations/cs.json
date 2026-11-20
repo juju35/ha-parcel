@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel nemohl přidat zásilku: {error}" },
     "refresh_failed": { "message": "Aktualizace Parcel selhala: {error}" },
     "rate_limited": { "message": "Dosažen limit požadavků Parcel, nový pokus později: {error}" },
+    "refresh_throttled": { "message": "Parcel byl právě aktualizován a poslední aktualizace selhala: zkuste to znovu za několik minut." },
     "notify_out_for_delivery": { "message": "Na doručení" },
     "notify_delivered": { "message": "Doručeno" },
     "notify_unnamed": { "message": "Zásilka" }

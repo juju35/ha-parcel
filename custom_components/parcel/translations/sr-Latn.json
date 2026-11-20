@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel nije mogao da doda pošiljku: {error}" },
     "refresh_failed": { "message": "Ažuriranje Parcel-a nije uspelo: {error}" },
     "rate_limited": { "message": "Dostignuto je ograničenje zahteva za Parcel, novi pokušaj kasnije: {error}" },
+    "refresh_throttled": { "message": "Parcel je upravo ažuriran i poslednje ažuriranje nije uspelo: pokušajte ponovo za nekoliko minuta." },
     "notify_out_for_delivery": { "message": "Na isporuci" },
     "notify_delivered": { "message": "Isporučeno" },
     "notify_unnamed": { "message": "Paket" }

@@ -83,6 +83,7 @@
     "add_failed": { "message": "O Parcel não conseguiu adicionar a encomenda: {error}" },
     "refresh_failed": { "message": "Falha ao atualizar o Parcel: {error}" },
     "rate_limited": { "message": "Limite de pedidos do Parcel atingido, nova tentativa mais tarde: {error}" },
+    "refresh_throttled": { "message": "O Parcel foi atualizado há instantes e a última atualização falhou: tente novamente dentro de alguns minutos." },
     "notify_out_for_delivery": { "message": "Em distribuição" },
     "notify_delivered": { "message": "Entregue" },
     "notify_unnamed": { "message": "Encomenda" }

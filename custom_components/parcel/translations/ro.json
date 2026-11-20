@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel nu a putut adăuga livrarea: {error}" },
     "refresh_failed": { "message": "Actualizarea Parcel a eșuat: {error}" },
     "rate_limited": { "message": "Limita de cereri Parcel a fost atinsă, se reîncearcă mai târziu: {error}" },
+    "refresh_throttled": { "message": "Parcel a fost actualizat acum câteva momente, iar ultima actualizare a eșuat: încercați din nou peste câteva minute." },
     "notify_out_for_delivery": { "message": "În livrare" },
     "notify_delivered": { "message": "Livrat" },
     "notify_unnamed": { "message": "Colet" }

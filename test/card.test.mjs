@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
 // Run west of UTC: a date-only "YYYY-MM-DD" parsed as UTC midnight shows the day before there,
@@ -18,7 +19,10 @@ const context = {
   console,
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard };`, context);
+// Named after the card file, so that node --experimental-test-coverage reports it.
+vm.runInContext(`${source}\nthis.parcel = { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard };`, context, {
+  filename: fileURLToPath(new URL('../custom_components/parcel/frontend/parcel-card.js', import.meta.url)),
+});
 const { parcelEsc, parcelDate, parcelLang, parcelLocale, parcelErrorText, ParcelCard, ParcelMiniCard } = context.parcel;
 const card = ParcelCard.prototype;
 
@@ -1102,4 +1106,173 @@ test('mini card with no parcel to show: the expand button is hidden, refresh and
   assert.equal(full.querySelector('.detail').hidden, false);
   assert.equal(full.querySelector('.refresh-btn'), null);
   assert.ok(styles().includes('.detail[hidden] { display: none; }'));
+});
+
+test('a tap elsewhere folds the mini card back (iOS sends no click), and leaving the page brings it back compact', () => {
+  const self = miniCard([deliveryOf('A1')]);
+  self.connectedCallback();
+  self._setZoom(true);
+  self._miniWatch.tap({ composedPath: () => [self] });
+  assert.equal(self._zoomed, true);
+  self._miniWatch.tap({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
+  assert.equal(self._zoomed, true);
+  self._miniWatch.tap({ composedPath: () => [{ localName: 'div' }] });
+  assert.equal(self._zoomed, false);
+  self._setZoom(true);
+  self._expanded['ups:A1'] = true;
+  self.form.hidden = false;
+  self.disconnectedCallback();
+  assert.equal(self._zoomed, false);
+  assert.deepEqual({ ...self._expanded }, {});
+  assert.equal(self.form.hidden, true);
+  self.connectedCallback();
+  assert.match(self.header.html, /Show the full card/);
+});
+
+// ── DOM patching (layout shift): a redraw keeps the nodes on the page ───────────────────────────────────────────
+// A tiny DOM, enough for the patch helper: elements with attributes and children, and text nodes.
+class FakeNode {
+  constructor(type, name, value = null) {
+    this.nodeType = type;
+    this.nodeName = name.toUpperCase();
+    this.localName = name.toLowerCase();
+    this.nodeValue = value;
+    this.childNodes = [];
+    this.parentNode = null;
+    this.attrs = new Map();
+  }
+  get attributes() {
+    return [...this.attrs].map(([name, value]) => ({ name, value, namespaceURI: null }));
+  }
+  hasAttribute(n) {
+    return this.attrs.has(n);
+  }
+  getAttribute(n) {
+    return this.attrs.has(n) ? this.attrs.get(n) : null;
+  }
+  setAttribute(n, v) {
+    this.attrs.set(n, String(v));
+  }
+  removeAttribute(n) {
+    this.attrs.delete(n);
+  }
+  get lastChild() {
+    return this.childNodes[this.childNodes.length - 1] || null;
+  }
+  insertBefore(n, ref) {
+    if (n.parentNode) n.parentNode.removeChild(n);
+    const i = ref ? this.childNodes.indexOf(ref) : this.childNodes.length;
+    this.childNodes.splice(i, 0, n);
+    n.parentNode = this;
+    return n;
+  }
+  removeChild(n) {
+    this.childNodes.splice(this.childNodes.indexOf(n), 1);
+    n.parentNode = null;
+    return n;
+  }
+  replaceChild(n, o) {
+    this.insertBefore(n, o);
+    return this.removeChild(o);
+  }
+  get firstChild() {
+    return this.childNodes[0] || null;
+  }
+}
+const domEl = (name, attrs = {}, ...kids) => {
+  const e = new FakeNode(1, name);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  for (const k of kids) e.insertBefore(typeof k === "string" ? new FakeNode(3, "#text", k) : k, null);
+  return e;
+};
+
+test("a redraw patches the card in place: pictures, images and texts keep their nodes", () => {
+  const patch = vm.runInContext("parcelMorphChildren", context);
+  const img = domEl("img", { src: "logo.svg", alt: "" });
+  const svg = domEl("svg", { class: "scene" }, domEl("path", { d: "M0 0" }));
+  const label = domEl("span", { class: "t" }, "3 min");
+  const root = domEl("div", {}, domEl("div", { class: "banner st-ok", "data-wrap": "" }, svg, img), label, domEl("p", {}, "gone"));
+  const next = domEl("div", {}, domEl("div", { class: "banner st-late" }, domEl("svg", { class: "scene" }, domEl("path", { d: "M0 0" })), domEl("img", { src: "logo.svg", alt: "" })), domEl("span", { class: "t" }, "2 min"));
+  const banner = root.childNodes[0];
+  const text = label.childNodes[0];
+  patch(root, next);
+  // The same nodes, updated: no picture or image is re-created (they would be laid out again)
+  assert.equal(root.childNodes[0], banner);
+  assert.equal(banner.childNodes[0], svg);
+  assert.equal(banner.childNodes[1], img);
+  assert.equal(root.childNodes[1], label);
+  assert.equal(label.childNodes[0], text);
+  assert.equal(text.nodeValue, "2 min");
+  assert.equal(banner.getAttribute("class"), "banner st-late");
+  assert.equal(banner.hasAttribute("data-wrap"), false);
+  // What the new HTML no longer has is removed
+  assert.equal(root.childNodes.length, 2);
+});
+
+test("a redraw replaces only the nodes whose element changed, and keeps an open dialog open", () => {
+  const patch = vm.runInContext("parcelMorphChildren", context);
+  const dlg = domEl("dialog", { id: "zoom", open: "" });
+  const keep = domEl("div", { class: "a" });
+  const root = domEl("div", {}, keep, domEl("span", {}, "x"), dlg);
+  const fresh = domEl("button", { class: "b" });
+  patch(root, domEl("div", {}, domEl("div", { class: "a" }), fresh, domEl("dialog", { id: "zoom" })));
+  assert.deepEqual(root.childNodes.map((n) => n.localName), ["div", "button", "dialog"]);
+  assert.equal(root.childNodes[0], keep);
+  assert.equal(root.childNodes[1], fresh);
+  assert.equal(root.childNodes[2], dlg);
+  // `open` belongs to showModal() / close(), not to the HTML
+  assert.equal(dlg.hasAttribute("open"), true);
+});
+
+test("a redraw keeps what a Home Assistant element drew in itself, and replaces it when its attributes change", () => {
+  const patch = vm.runInContext("parcelMorphChildren", context);
+  // <ha-icon> draws its own content (and may style its own node): the redraw leaves it alone
+  const icon = domEl("ha-icon", { icon: "mdi:refresh", style: "display: inline-flex" }, domEl("svg"));
+  const root = domEl("div", {}, icon);
+  patch(root, domEl("div", {}, domEl("ha-icon", { icon: "mdi:refresh" })));
+  assert.equal(root.childNodes[0], icon);
+  assert.equal(icon.childNodes.length, 1);
+  assert.equal(icon.getAttribute("style"), "display: inline-flex");
+  // Another icon: a new element, which draws the new icon
+  patch(root, domEl("div", {}, domEl("ha-icon", { icon: "mdi:check" })));
+  assert.notEqual(root.childNodes[0], icon);
+  assert.equal(root.childNodes[0].getAttribute("icon"), "mdi:check");
+  // An element we fill ourselves (<ha-card>) is patched like any other
+  const card = domEl("ha-card", { class: "mini" }, domEl("div", {}, "a"));
+  const host = domEl("div", {}, card);
+  patch(host, domEl("div", {}, domEl("ha-card", {}, domEl("div", {}, "b"))));
+  assert.equal(host.childNodes[0], card);
+  assert.equal(card.hasAttribute("class"), false);
+  assert.equal(card.childNodes[0].childNodes[0].nodeValue, "b");
+});
+
+// Home Assistant's <ha-card> is a Lit element: it lays out its content from its first update only, a microtask after it
+// is connected. Measured before, the title and the pill are 0 px wide and the pill lands on the wrong line for a frame:
+// the card waits for that update (updateComplete), then measures once.
+test("the status pill is measured only once <ha-card> has drawn its content", async () => {
+  context.getComputedStyle = () => ({});
+  context.document.createRange = () => ({});
+  const card = Object.create(ParcelCard.prototype);
+  const asked = [];
+  let drawn;
+  const haCard = { hasUpdated: false, updateComplete: new Promise((done) => (drawn = done)) };
+  const root = {
+    querySelector: (sel) => (sel === "ha-card" ? haCard : (asked.push(sel), null)),
+    querySelectorAll: (sel) => (asked.push(sel), []),
+  };
+  card._root = root;
+  card._fitPill();
+  card._fitPill();
+  await null;
+  assert.deepEqual(asked, [], "nothing measured before <ha-card>'s first update");
+  haCard.hasUpdated = true;
+  drawn(true);
+  await haCard.updateComplete;
+  await null;
+  assert.ok(asked.length > 0, "measured once it is drawn");
+  const once = asked.length;
+  card._fitPill();
+  assert.equal(asked.length, once * 2, "then measured right away, with no wait");
+  delete context.getComputedStyle;
+  delete context.document.createRange;
 });

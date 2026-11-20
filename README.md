@@ -132,7 +132,7 @@ Carrier codes are listed in [supported_carriers.json](https://api.parcel.app/ext
 
 > Parcel limits additions to **20 per day**, failures included. A new delivery shows up after Parcel's next update.
 
-`parcel.add_delivery` is reserved to administrators (the card hides its add button from other users); `parcel.refresh` is open to every user. Service errors are translated in the Home Assistant language.
+`parcel.add_delivery` is reserved to administrators (the card hides its add button from other users); `parcel.refresh` is open to every user, but throttled: a call less than 3 minutes after the previous one reuses the last fetch (or reports the last failure) instead of spending another of the 20 hourly requests. Service errors are translated in the Home Assistant language.
 
 ### Events
 

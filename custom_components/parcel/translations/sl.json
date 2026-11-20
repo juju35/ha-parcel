@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel ni mogel dodati pošiljke: {error}" },
     "refresh_failed": { "message": "Posodobitev Parcel ni uspela: {error}" },
     "rate_limited": { "message": "Dosežena je omejitev zahtev Parcel, ponoven poskus pozneje: {error}" },
+    "refresh_throttled": { "message": "Parcel je bil pravkar posodobljen in zadnja posodobitev ni uspela: poskusite znova čez nekaj minut." },
     "notify_out_for_delivery": { "message": "Na dostavi" },
     "notify_delivered": { "message": "Dostavljeno" },
     "notify_unnamed": { "message": "Paket" }

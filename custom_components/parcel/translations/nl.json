@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel kon de zending niet toevoegen: {error}" },
     "refresh_failed": { "message": "Bijwerken van Parcel mislukt: {error}" },
     "rate_limited": { "message": "Parcel-verzoeklimiet bereikt, later opnieuw: {error}" },
+    "refresh_throttled": { "message": "Parcel is zojuist bijgewerkt en de laatste update is mislukt: probeer het over een paar minuten opnieuw." },
     "notify_out_for_delivery": { "message": "Onderweg voor bezorging" },
     "notify_delivered": { "message": "Bezorgd" },
     "notify_unnamed": { "message": "Pakket" }

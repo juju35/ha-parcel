@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel не успя да добави пратката: {error}" },
     "refresh_failed": { "message": "Неуспешно обновяване на Parcel: {error}" },
     "rate_limited": { "message": "Достигнат е лимитът на заявки към Parcel, нов опит по-късно: {error}" },
+    "refresh_throttled": { "message": "Parcel беше обновен преди малко и последното обновяване не успя: опитайте отново след няколко минути." },
     "notify_out_for_delivery": { "message": "За доставка" },
     "notify_delivered": { "message": "Доставено" },
     "notify_unnamed": { "message": "Пратка" }

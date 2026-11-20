@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel n'a pas pu ajouter le colis : {error}" },
     "refresh_failed": { "message": "Échec de la mise à jour Parcel : {error}" },
     "rate_limited": { "message": "Limite de requêtes Parcel atteinte, nouvel essai plus tard : {error}" },
+    "refresh_throttled": { "message": "Parcel a été mis à jour il y a un instant et la dernière mise à jour a échoué : réessayez dans quelques minutes." },
     "notify_out_for_delivery": { "message": "En cours de livraison" },
     "notify_delivered": { "message": "Livré" },
     "notify_unnamed": { "message": "Colis" }

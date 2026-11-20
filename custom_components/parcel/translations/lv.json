@@ -83,6 +83,7 @@
     "add_failed": { "message": "Parcel nevarēja pievienot sūtījumu: {error}" },
     "refresh_failed": { "message": "Parcel atjaunināšana neizdevās: {error}" },
     "rate_limited": { "message": "Sasniegts Parcel pieprasījumu limits, vēlāk mēģinās vēlreiz: {error}" },
+    "refresh_throttled": { "message": "Parcel tikko tika atjaunināts, un pēdējā atjaunināšana neizdevās: mēģiniet vēlreiz pēc dažām minūtēm." },
     "notify_out_for_delivery": { "message": "Piegādē" },
     "notify_delivered": { "message": "Piegādāts" },
     "notify_unnamed": { "message": "Sūtījums" }

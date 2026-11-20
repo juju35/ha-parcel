@@ -19,6 +19,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.util import dt as dt_util
 
 from .api import ParcelApi, ParcelError, ParcelRateLimitError
 from .const import (
@@ -33,6 +34,7 @@ from .const import (
     CARD_FILENAME,
     DOMAIN,
     FRONTEND_URL,
+    MIN_MANUAL_REFRESH,
     SERVICE_ADD_DELIVERY,
     SERVICE_REFRESH,
 )
@@ -90,6 +92,16 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         # async_refresh (not async_request_refresh): the service returns once the
         # data is actually fetched, so the card's spinner matches the update.
         coordinator = _get_coordinator(hass, call.data.get(ATTR_CONFIG_ENTRY_ID))
+        now = dt_util.utcnow()
+        last = coordinator.last_manual_refresh
+        if last is not None and now - last < MIN_MANUAL_REFRESH:
+            # Throttled: the deliveries were fetched moments ago. A good last fetch is simply reused; a failed one is
+            # reported, rather than retried at once against a rate limit.
+            if coordinator.last_update_success and not coordinator.last_error:
+                _LOGGER.debug("Parcel refresh skipped: last manual refresh less than %s ago", MIN_MANUAL_REFRESH)
+                return
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="refresh_throttled")
+        coordinator.last_manual_refresh = now
         await coordinator.async_refresh()
         # async_refresh never raises: report a failed update (rate limit, timeout, refused key) to the caller.
         error = coordinator.last_error if coordinator.last_update_success else coordinator.last_exception
