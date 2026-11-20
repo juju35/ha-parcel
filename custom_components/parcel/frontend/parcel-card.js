@@ -1879,6 +1879,16 @@ class ParcelCard extends HTMLElement {
   // line either, or the banner has no room for the lines above its road, the pill keeps its dot only (.dot-only, back
   // beside the title when the dot fits there). Measured after render, so that it holds in every language.
   _fitPill() {
+    // Home Assistant's <ha-card> (a Lit element) shows its content only from its first update, a microtask after it
+    // is connected: measured before, everything is 0 px wide and the pill lands on the wrong line. Fitted then.
+    var haCard = this._root?.querySelector?.('ha-card');
+    if (haCard && haCard.hasUpdated === false) {
+      this._pillWait ??= (haCard.updateComplete?.then ? haCard.updateComplete : new Promise((r) => requestAnimationFrame(r))).then(() => {
+        this._pillWait = null;
+        this._fitPill();
+      });
+      return;
+    }
     var root = this._root;
     if (!root?.querySelectorAll || typeof getComputedStyle !== 'function' || !document.createRange) return;
     for (var t of root.querySelectorAll('.head .titles, .head .next')) {
