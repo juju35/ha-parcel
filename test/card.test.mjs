@@ -1171,6 +1171,13 @@ class FakeNode {
     n.parentNode = null;
     return n;
   }
+  replaceChild(n, o) {
+    this.insertBefore(n, o);
+    return this.removeChild(o);
+  }
+  get firstChild() {
+    return this.childNodes[0] || null;
+  }
 }
 const domEl = (name, attrs = {}, ...kids) => {
   const e = new FakeNode(1, name);
@@ -1215,4 +1222,26 @@ test("a redraw replaces only the nodes whose element changed, and keeps an open 
   assert.equal(root.childNodes[2], dlg);
   // `open` belongs to showModal() / close(), not to the HTML
   assert.equal(dlg.hasAttribute("open"), true);
+});
+
+test("a redraw keeps what a Home Assistant element drew in itself, and replaces it when its attributes change", () => {
+  const patch = vm.runInContext("parcelMorphChildren", context);
+  // <ha-icon> draws its own content (and may style its own node): the redraw leaves it alone
+  const icon = domEl("ha-icon", { icon: "mdi:refresh", style: "display: inline-flex" }, domEl("svg"));
+  const root = domEl("div", {}, icon);
+  patch(root, domEl("div", {}, domEl("ha-icon", { icon: "mdi:refresh" })));
+  assert.equal(root.childNodes[0], icon);
+  assert.equal(icon.childNodes.length, 1);
+  assert.equal(icon.getAttribute("style"), "display: inline-flex");
+  // Another icon: a new element, which draws the new icon
+  patch(root, domEl("div", {}, domEl("ha-icon", { icon: "mdi:check" })));
+  assert.notEqual(root.childNodes[0], icon);
+  assert.equal(root.childNodes[0].getAttribute("icon"), "mdi:check");
+  // An element we fill ourselves (<ha-card>) is patched like any other
+  const card = domEl("ha-card", { class: "mini" }, domEl("div", {}, "a"));
+  const host = domEl("div", {}, card);
+  patch(host, domEl("div", {}, domEl("ha-card", {}, domEl("div", {}, "b"))));
+  assert.equal(host.childNodes[0], card);
+  assert.equal(card.hasAttribute("class"), false);
+  assert.equal(card.childNodes[0].childNodes[0].nodeValue, "b");
 });
