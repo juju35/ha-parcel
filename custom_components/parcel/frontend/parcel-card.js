@@ -1561,7 +1561,10 @@ class ParcelCard extends HTMLElement {
         this._render();
       }
     });
-    document.addEventListener('click', this._onOutside, true);
+    (this._outsideWatch = this._outsideWatch || parcelWatchOutside(this, (ev) => this._onOutside(ev))).on();
+    // Back on the page after leaving it: drawn again in its default state.
+    if (this._left && this._hass && this._config) this._render();
+    this._left = false;
     // A new width (or the web font loaded): the status pill is fitted again, in the next frame.
     if (typeof ResizeObserver === 'function') {
       this._resize = this._resize || new ResizeObserver((entries) => {
@@ -1577,9 +1580,16 @@ class ParcelCard extends HTMLElement {
   }
 
   disconnectedCallback() {
-    document.removeEventListener('click', this._onOutside, true);
+    this._outsideWatch?.off();
     this._resize?.disconnect();
     this._fitWidth = null;
+    if (this._fitFrame) cancelAnimationFrame(this._fitFrame);
+    // Left (another dashboard view, a conditional card hidden): back to its default state, without the add form open
+    // or a delivery unfolded.
+    this._left = true;
+    this._expanded = {};
+    var form = this._root?.querySelector('.form');
+    if (form) form.hidden = true;
   }
 
   getCardSize() {
@@ -2381,6 +2391,42 @@ function parcelInDialog(ev) {
   return ev.composedPath().some((n) => ['ha-more-info-dialog', 'ha-dialog', 'dialog'].includes(n.localName));
 }
 
+// « A click elsewhere », caught on the pointer: iOS (Safari and the companion app) sends no click for a tap on
+// something that is not clickable. It counts when the press and the release are both outside the card (a slider
+// dragged out of it does not count, nor a scroll, which cancels the pointer); keyboard clicks (no click count) go
+// through the click event. Clicks in a dialog opened from the card are not outside it.
+function parcelWatchOutside(card, handler) {
+  var downOutside = false;
+  var outside = (ev) => !ev.composedPath().includes(card) && !parcelInDialog(ev);
+  var onDown = (ev) => {
+    downOutside = outside(ev);
+  };
+  var onUp = (ev) => {
+    if (downOutside && outside(ev)) handler(ev);
+    downOutside = false;
+  };
+  var onClick = (ev) => {
+    if (ev.detail === 0 && outside(ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener('pointerdown', onDown, true);
+      document.addEventListener('pointerup', onUp, true);
+      document.addEventListener('click', onClick, true);
+    },
+    off() {
+      document.removeEventListener('pointerdown', onDown, true);
+      document.removeEventListener('pointerup', onUp, true);
+      document.removeEventListener('click', onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+  };
+}
+
 // Same calendar day, in the browser's time zone.
 function parcelIsToday(ms, now) {
   var d = new Date(ms);
@@ -2401,13 +2447,15 @@ class ParcelMiniCard extends ParcelCard {
   }
 
   connectedCallback() {
+    // Compact again before the base card draws it back.
+    (this._miniWatch = this._miniWatch || parcelWatchOutside(this, this._onOutsideMini)).on();
     super.connectedCallback();
-    document.addEventListener('click', this._onOutsideMini, true);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this._onOutsideMini, true);
+    this._miniWatch?.off();
+    this._zoomed = false;
   }
 
   setConfig(config) {

@@ -1107,3 +1107,24 @@ test('mini card with no parcel to show: the expand button is hidden, refresh and
   assert.equal(full.querySelector('.refresh-btn'), null);
   assert.ok(styles().includes('.detail[hidden] { display: none; }'));
 });
+
+test('a tap elsewhere folds the mini card back (iOS sends no click), and leaving the page brings it back compact', () => {
+  const self = miniCard([deliveryOf('A1')]);
+  self.connectedCallback();
+  self._setZoom(true);
+  self._miniWatch.tap({ composedPath: () => [self] });
+  assert.equal(self._zoomed, true);
+  self._miniWatch.tap({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
+  assert.equal(self._zoomed, true);
+  self._miniWatch.tap({ composedPath: () => [{ localName: 'div' }] });
+  assert.equal(self._zoomed, false);
+  self._setZoom(true);
+  self._expanded['ups:A1'] = true;
+  self.form.hidden = false;
+  self.disconnectedCallback();
+  assert.equal(self._zoomed, false);
+  assert.deepEqual({ ...self._expanded }, {});
+  assert.equal(self.form.hidden, true);
+  self.connectedCallback();
+  assert.match(self.header.html, /Show the full card/);
+});
