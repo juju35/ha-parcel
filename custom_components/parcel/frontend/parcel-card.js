@@ -2359,7 +2359,7 @@ class ParcelCard extends HTMLElement {
       // Classic header: the mini card's detail button in the card's top right corner, out of the title row.
       'ha-card.mini .header:not(.hero) { padding-right: 40px; }',
       '.header:not(.hero) > .detail { position: absolute; top: 8px; right: 8px; box-shadow: inset 0 0 0 1px var(--divider-color, rgba(127,127,127,.3)); }',
-      '.hero .hbtn, .hero .detail { width: 24px; height: 24px; align-self: center; backdrop-filter: blur(4px); }',
+      '.hero .hbtn, .hero .detail { width: 24px; height: 24px; align-self: center; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }',
       '.hbtn:hover, .detail:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); color: var(--primary-text-color); }',
       '.hero .hbtn:hover, .hero .detail:hover { background: rgba(255,255,255,.75); } .hero.night .hbtn:hover, .hero.night .detail:hover { background: rgba(255,255,255,.22); }',
       '.detail[hidden] { display: none; }',
