@@ -1128,3 +1128,91 @@ test('a tap elsewhere folds the mini card back (iOS sends no click), and leaving
   self.connectedCallback();
   assert.match(self.header.html, /Show the full card/);
 });
+
+// ── DOM patching (layout shift): a redraw keeps the nodes on the page ───────────────────────────────────────────
+// A tiny DOM, enough for the patch helper: elements with attributes and children, and text nodes.
+class FakeNode {
+  constructor(type, name, value = null) {
+    this.nodeType = type;
+    this.nodeName = name.toUpperCase();
+    this.localName = name.toLowerCase();
+    this.nodeValue = value;
+    this.childNodes = [];
+    this.parentNode = null;
+    this.attrs = new Map();
+  }
+  get attributes() {
+    return [...this.attrs].map(([name, value]) => ({ name, value, namespaceURI: null }));
+  }
+  hasAttribute(n) {
+    return this.attrs.has(n);
+  }
+  getAttribute(n) {
+    return this.attrs.has(n) ? this.attrs.get(n) : null;
+  }
+  setAttribute(n, v) {
+    this.attrs.set(n, String(v));
+  }
+  removeAttribute(n) {
+    this.attrs.delete(n);
+  }
+  get lastChild() {
+    return this.childNodes[this.childNodes.length - 1] || null;
+  }
+  insertBefore(n, ref) {
+    if (n.parentNode) n.parentNode.removeChild(n);
+    const i = ref ? this.childNodes.indexOf(ref) : this.childNodes.length;
+    this.childNodes.splice(i, 0, n);
+    n.parentNode = this;
+    return n;
+  }
+  removeChild(n) {
+    this.childNodes.splice(this.childNodes.indexOf(n), 1);
+    n.parentNode = null;
+    return n;
+  }
+}
+const domEl = (name, attrs = {}, ...kids) => {
+  const e = new FakeNode(1, name);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  for (const k of kids) e.insertBefore(typeof k === "string" ? new FakeNode(3, "#text", k) : k, null);
+  return e;
+};
+
+test("a redraw patches the card in place: pictures, images and texts keep their nodes", () => {
+  const patch = vm.runInContext("parcelMorphChildren", context);
+  const img = domEl("img", { src: "logo.svg", alt: "" });
+  const svg = domEl("svg", { class: "scene" }, domEl("path", { d: "M0 0" }));
+  const label = domEl("span", { class: "t" }, "3 min");
+  const root = domEl("div", {}, domEl("div", { class: "banner st-ok", "data-wrap": "" }, svg, img), label, domEl("p", {}, "gone"));
+  const next = domEl("div", {}, domEl("div", { class: "banner st-late" }, domEl("svg", { class: "scene" }, domEl("path", { d: "M0 0" })), domEl("img", { src: "logo.svg", alt: "" })), domEl("span", { class: "t" }, "2 min"));
+  const banner = root.childNodes[0];
+  const text = label.childNodes[0];
+  patch(root, next);
+  // The same nodes, updated: no picture or image is re-created (they would be laid out again)
+  assert.equal(root.childNodes[0], banner);
+  assert.equal(banner.childNodes[0], svg);
+  assert.equal(banner.childNodes[1], img);
+  assert.equal(root.childNodes[1], label);
+  assert.equal(label.childNodes[0], text);
+  assert.equal(text.nodeValue, "2 min");
+  assert.equal(banner.getAttribute("class"), "banner st-late");
+  assert.equal(banner.hasAttribute("data-wrap"), false);
+  // What the new HTML no longer has is removed
+  assert.equal(root.childNodes.length, 2);
+});
+
+test("a redraw replaces only the nodes whose element changed, and keeps an open dialog open", () => {
+  const patch = vm.runInContext("parcelMorphChildren", context);
+  const dlg = domEl("dialog", { id: "zoom", open: "" });
+  const keep = domEl("div", { class: "a" });
+  const root = domEl("div", {}, keep, domEl("span", {}, "x"), dlg);
+  const fresh = domEl("button", { class: "b" });
+  patch(root, domEl("div", {}, domEl("div", { class: "a" }), fresh, domEl("dialog", { id: "zoom" })));
+  assert.deepEqual(root.childNodes.map((n) => n.localName), ["div", "button", "dialog"]);
+  assert.equal(root.childNodes[0], keep);
+  assert.equal(root.childNodes[1], fresh);
+  assert.equal(root.childNodes[2], dlg);
+  // `open` belongs to showModal() / close(), not to the HTML
+  assert.equal(dlg.hasAttribute("open"), true);
+});

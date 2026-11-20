@@ -6,6 +6,7 @@
 - Card: a tap elsewhere on the page folds the card back on iOS too (Safari and the companion app send no click for a tap on something that is not clickable): the unfolded deliveries, the add form and the mini card's full view. A click in a dialog opened from the card no longer folds it.
 - Card: leaving the page (another dashboard view, a conditional card hidden) brings the card back to its default state — add form closed, deliveries folded, mini card compact.
 - Card: the frosted header buttons keep their blur on Safari before 18 (WebKit prefix).
+- Card: a state update patches the card in place instead of drawing it again — the delivery rows and the tabs keep their nodes, an unfolded delivery stays as it is, and the card keeps its height: a re-created card is laid out again, which can make the dashboard jump (scroll anchoring). Updates of other entities still touch nothing.
 
 ### Maintenance
 - Tests: the coverage of the card is now measured (`node --test --experimental-test-coverage`).

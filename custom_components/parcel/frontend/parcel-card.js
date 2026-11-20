@@ -1494,6 +1494,52 @@ function parcelLocale(hass, config) {
 }
 
 // ── parcel-card ───────────────────────────────────────────────────────────────
+// Shadow DOM patching: a redraw updates the nodes already on the page (text, attributes, classes) instead of replacing
+// them, so that a state update never re-creates the pictures (SVG scenes, logos) nor restarts their animations, and the
+// card keeps its height (a re-created card is laid out again, which can move the dashboard under the reader's eyes).
+// An open <dialog> keeps its `open` state: it is driven by showModal() / close().
+function parcelMorphAttrs(cur, next) {
+  for (var a of Array.from(cur.attributes)) {
+    if (!next.hasAttribute(a.name) && !(a.name === 'open' && cur.localName === 'dialog')) cur.removeAttribute(a.name);
+  }
+  for (var b of Array.from(next.attributes)) {
+    if (cur.getAttribute(b.name) === b.value) continue;
+    if (b.namespaceURI) cur.setAttributeNS(b.namespaceURI, b.name, b.value);
+    else cur.setAttribute(b.name, b.value);
+  }
+}
+
+function parcelMorphChildren(cur, next) {
+  var old = Array.from(cur.childNodes);
+  var fresh = Array.from(next.childNodes);
+  fresh.forEach((n, i) => {
+    var o = old[i];
+    var ref = cur.childNodes[i] || null;
+    if (!o || o.nodeType !== n.nodeType || o.nodeName !== n.nodeName) {
+      cur.insertBefore(n, ref);
+      return;
+    }
+    if (o !== ref) cur.insertBefore(o, ref);
+    if (n.nodeType === 1) {
+      parcelMorphAttrs(o, n);
+      parcelMorphChildren(o, n);
+    } else if (o.nodeValue !== n.nodeValue) o.nodeValue = n.nodeValue;
+  });
+  while (cur.childNodes.length > fresh.length) cur.removeChild(cur.lastChild);
+}
+
+// Gives `root` (a shadow root or an element) the content of `html`, patching what is already there (a plain
+// innerHTML where there is no DOM to patch, as in the unit tests' stubs).
+function parcelMorph(root, html) {
+  var tpl = root.childNodes && typeof document !== 'undefined' && document.createElement?.('template');
+  if (!tpl?.content) {
+    root.innerHTML = html;
+    return;
+  }
+  tpl.innerHTML = html;
+  parcelMorphChildren(root, tpl.content);
+}
+
 class ParcelCard extends HTMLElement {
   static getConfigElement() {
     return document.createElement('parcel-card-editor');
@@ -1653,7 +1699,7 @@ class ParcelCard extends HTMLElement {
     var tab = (id, label, n) =>
       `<button class="tab" role="tab" data-tab="${id}" aria-selected="${this._tab === id}">${parcelEsc(label)}` +
       ` <span class="n">${n}</span></button>`;
-    if (tabs) tabs.innerHTML = tab('active', t.tab_active, all.length - done) + tab('delivered', t.status.delivered, done);
+    if (tabs) parcelMorph(tabs, tab('active', t.tab_active, all.length - done) + tab('delivered', t.status.delivered, done));
     return true;
   }
 
@@ -1694,29 +1740,31 @@ class ParcelCard extends HTMLElement {
     this._renderHeader(header, t, st, title, deliveries);
     var tabbed = this._renderTabs(deliveries, t);
     if (!st) {
-      list.innerHTML = `<div class="empty">${parcelEsc(t.no_entity)}</div>`;
+      parcelMorph(list, `<div class="empty">${parcelEsc(t.no_entity)}</div>`);
       return;
     }
     if (unavailable) {
-      list.innerHTML = `<div class="empty">${parcelEsc(t.unavailable)}</div>`;
+      parcelMorph(list, `<div class="empty">${parcelEsc(t.unavailable)}</div>`);
       return;
     }
     // The compact mini card is its banner alone.
     if (this._compact()) {
-      list.innerHTML = '';
+      parcelMorph(list, '');
       return;
     }
     // With the tabs, each one lists its own parcels.
     if (tabbed) deliveries = deliveries.filter((d) => (d.status_code === 0) === (this._tab === 'delivered'));
     // Nothing to show: the card ends on its header (its road), as the camera cards do; an empty tab keeps its line.
     if (!deliveries.length) {
-      list.innerHTML = tabbed ? `<div class="empty">${parcelEsc(t.empty)}</div>` : '';
+      parcelMorph(list, tabbed ? `<div class="empty">${parcelEsc(t.empty)}</div>` : '');
       return;
     }
-    // innerHTML replaces the focused row: put the keyboard focus back on the same row or tracking number.
+    // The rows are patched in place (parcelMorph): the focused row normally keeps the focus; if it was replaced, the
+    // focus goes back on the same row or tracking number.
     var focus = this._focusSelector();
-    list.innerHTML = deliveries.map((d) => this._renderDelivery(d, t)).join('');
+    parcelMorph(list, deliveries.map((d) => this._renderDelivery(d, t)).join(''));
     var again = focus && list.querySelector ? list.querySelector(focus) : null;
+    if (again && this._root.activeElement === again) again = null;
     // Without preventScroll the browser scrolls the dashboard to the row on every sensor update.
     if (again) again.focus({ preventScroll: true });
   }
