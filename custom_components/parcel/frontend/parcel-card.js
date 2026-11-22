@@ -1,4 +1,72 @@
-var PARCEL_CARD_VERSION = '1.9.5';
+// ── Card picker: light previews ──────────────────────────────────────────────
+// Home Assistant's card picker builds a live preview of every card registered with `preview: true`, all at once and
+// with no lazy loading. A preview here is drawn only once it scrolls into view: the picker calls getStubConfig() right
+// before it creates the preview, which marks the next instance of that card; once connected under <hui-card-picker>,
+// that instance holds Home Assistant's state (no render, no history, no animation) until it is visible. Anywhere else
+// (a dashboard, the card editor) the card behaves as before. Editors and other elements are defined unchanged.
+function pickerDefine(tag, Card, options) {
+  const isCard = !tag.endsWith("-editor") && (typeof Card.getStubConfig === "function" || typeof Card.getConfigElement === "function");
+  if (!isCard || typeof IntersectionObserver !== "function") return customElements.define(tag, Card, options);
+  let marks = [];
+  const lazy = class extends Card {
+    static getStubConfig(...args) {
+      marks.push(Date.now());
+      return Card.getStubConfig ? Card.getStubConfig(...args) : {};
+    }
+
+    constructor() {
+      super();
+      const now = Date.now();
+      marks = marks.filter((t) => now - t < 5000);
+      if (marks.length) {
+        marks.shift();
+        this._plHold = true;
+      }
+    }
+
+    set hass(hass) {
+      if (this._plHold) this._plHass = hass;
+      else super.hass = hass;
+    }
+
+    get hass() {
+      return this._plHold ? this._plHass : super.hass;
+    }
+
+    connectedCallback() {
+      if (!this._plHold) return super.connectedCallback?.();
+      if (this.getRootNode()?.host?.localName !== "hui-card-picker") return this._plRelease();
+      if (this._plIo) return;
+      // A custom element is inline until its styles arrive: a block of a card's height keeps the cells apart, so
+      // that only the previews actually on screen intersect.
+      this.style.display = "block";
+      this.style.minHeight = "120px";
+      this._plIo = new IntersectionObserver((entries) => entries.some((e) => e.isIntersecting) && this._plRelease(), {
+        rootMargin: "200px",
+      });
+      this._plIo.observe(this);
+    }
+
+    disconnectedCallback() {
+      if (this._plHold) return;
+      super.disconnectedCallback?.();
+    }
+
+    _plRelease() {
+      this._plIo?.disconnect();
+      this._plIo = null;
+      this._plHold = false;
+      this.style.display = "";
+      this.style.minHeight = "";
+      if (this._plHass !== undefined) super.hass = this._plHass;
+      this._plHass = undefined;
+      if (this.isConnected) super.connectedCallback?.();
+    }
+  };
+  return customElements.define(tag, lazy, options);
+}
+
+var PARCEL_CARD_VERSION = '1.9.6';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -2694,31 +2762,31 @@ class ParcelCardEditor extends HTMLElement {
 }
 
 if (!customElements.get('parcel-card-editor')) {
-  customElements.define('parcel-card-editor', ParcelCardEditor);
+  pickerDefine('parcel-card-editor', ParcelCardEditor);
 }
 
 var parcelDefined = false;
 if (!customElements.get('parcel-card')) {
-  customElements.define('parcel-card', ParcelCard);
+  pickerDefine('parcel-card', ParcelCard);
   parcelDefined = true;
   window.customCards = window.customCards || [];
   window.customCards.push({
     type: 'parcel-card',
     name: 'Parcel',
     description: 'Deliveries tracked in Parcel under an animated street, with a form to add one.',
-    preview: false,
+    preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
 }
 if (!customElements.get('parcel-mini-card')) {
-  customElements.define('parcel-mini-card', ParcelMiniCard);
+  pickerDefine('parcel-mini-card', ParcelMiniCard);
   parcelDefined = true;
   window.customCards = window.customCards || [];
   window.customCards.push({
     type: 'parcel-mini-card',
     name: 'Parcel mini',
     description: 'The featured delivery on an animated street, with a button to show the full Parcel card.',
-    preview: false,
+    preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
 }
