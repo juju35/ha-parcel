@@ -126,7 +126,7 @@ async def test_card_served(hass, aioclient_mock, entry, hass_client):
     client = await hass_client()
     resp = await client.get("/parcel_static/parcel-card.js")
     assert resp.status == 200
-    assert "customElements.define('parcel-card'" in await resp.text()
+    assert "pickerDefine('parcel-card'" in await resp.text()
 
 
 async def test_auth_failure_starts_reauth(hass, aioclient_mock, entry):

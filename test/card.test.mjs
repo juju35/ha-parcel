@@ -1047,7 +1047,7 @@ test('the mini card folds back on a click outside it, not inside it nor in a dia
 
 test('the mini card is offered in the card picker and keeps a 240 px preferred width', () => {
   assert.match(source, /type: 'parcel-mini-card'/);
-  assert.match(source, /customElements\.define\('parcel-mini-card', ParcelMiniCard\)/);
+  assert.match(source, /(?:customElements\.define|pickerDefine)\('parcel-mini-card', ParcelMiniCard\)/);
   const css = ParcelCard._styles();
   assert.match(css, /:host\(\[mini\]\)::before \{ grid-template-columns: minmax\(0, 240px\); \}/);
   assert.match(css, /ha-card\.mini \.header\.hero \{ --scene-max: 36%; \}/);
