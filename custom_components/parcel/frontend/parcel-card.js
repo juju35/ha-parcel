@@ -1,4 +1,4 @@
-var PARCEL_CARD_VERSION = '1.9.4';
+var PARCEL_CARD_VERSION = '1.9.5';
 
 // ── Header icon: same tinted round icon as the project page of the showcase site ──────────────────────────────
 // (the integration keeps its brand/icon.png). Parcel accent, 16 % tint like the generic icons of the other cards.
@@ -2706,7 +2706,7 @@ if (!customElements.get('parcel-card')) {
     type: 'parcel-card',
     name: 'Parcel',
     description: 'Deliveries tracked in Parcel under an animated street, with a form to add one.',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
 }
@@ -2718,7 +2718,7 @@ if (!customElements.get('parcel-mini-card')) {
     type: 'parcel-mini-card',
     name: 'Parcel mini',
     description: 'The featured delivery on an animated street, with a button to show the full Parcel card.',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
 }
