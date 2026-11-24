@@ -19,6 +19,7 @@
 ## Before opening a PR — run the checks locally
 CI mirrors these; running them first avoids round-trips:
 ```sh
+npm ci && node scripts/build-frontend.mjs   # assembles the frontend (not committed) the checks below read
 pre-commit run -a
 vulture custom_components .vulture_whitelist.py --min-confidence 60
 npx --yes jscpd@5.4.2 .
@@ -38,7 +39,7 @@ This is an **INTEGRATION** repo. A bump is complete only when **every** file bel
 carries the new version, updated together in one commit:
 1. `CHANGELOG.md` → add a "## X.Y.Z - YYYY-MM-DD" section at the top (`### Features` | `Fixes` | `Performance` | `Maintenance`).
 2. `custom_components/parcel/manifest.json` → `"version": "X.Y.Z"`.
-3. `custom_components/parcel/frontend/parcel-card.js` → `PARCEL_CARD_VERSION = 'X.Y.Z'`.
+3. `src/parcel-card/card-picker.js` → `PARCEL_CARD_VERSION = 'X.Y.Z'` (assembled into `custom_components/parcel/frontend/parcel-card.js`).
 - Bump rule: `fix` → patch, `feat` → minor, breaking change → major.
 - The PR/commit title carries the version in parentheses, e.g. `feat: new option (X.Y.Z)`.
 
@@ -56,6 +57,17 @@ carries the new version, updated together in one commit:
 
 ## Supported integrations
 This is a **standalone integration** (its own integration, with its own card) — it talks to its device/service directly, not on top of other Home Assistant integrations — so it has **no** `## Supported integrations` section (that section is only for cards/integrations that sit on top of others). If it does build on external integrations, add the section (title verbatim).
+
+## Source layout
+- The card's source is split into ES modules in `src/parcel-card/` (entry `src/parcel-card/index.js`), assembled by
+  `scripts/build-frontend.mjs` (`scripts/bundle.mjs`) into `custom_components/parcel/frontend/parcel-card.js`, the
+  classic script Home Assistant serves: modules concatenated in the order of the entry file, import lines removed,
+  `export` keywords dropped. The assembled file is **not committed** (`.gitignore`): build it before the tests, the
+  screenshots and `scripts/split-frontend.mjs`.
+- Modules share one scope once assembled, so keep top-level names unique across modules; a new module must be listed
+  in `index.js`.
+- Translations: one file per language in `src/parcel-card/i18n/<lang>.js` (`export default { … };`), gathered by the
+  table file next to them and rebuilt into a single object literal at build for `scripts/i18n-split.mjs`.
 
 ## Translations
 - English is the source. Keep every language in sync when a user-facing string changes.

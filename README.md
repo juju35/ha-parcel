@@ -298,7 +298,10 @@ The integration polls the Parcel API at the update interval and exposes the deli
 
 ## Development
 
+The card's source is split into ES modules under `src/parcel-card/` (entry `src/parcel-card/index.js`). `node scripts/build-frontend.mjs` assembles them into `custom_components/parcel/frontend/parcel-card.js`, which is not committed: build it before the tests, the screenshots and the release (modules share one scope once assembled, so top-level names stay unique; a new module must be listed in `index.js`).
+
 ```bash
+npm ci && node scripts/build-frontend.mjs
 pip install -r requirements_test.txt && pytest
 pip install playwright==1.64.1 && playwright install chromium
 python scripts/screenshots.py   # renders the card and mini card stills and one GIF per animation, light and dark (needs ffmpeg), into screenshots/
@@ -308,7 +311,7 @@ Python tests live in `tests/` (pytest); the card's JavaScript tests live in `tes
 
 ### Releasing
 
-1. Bump the version in `custom_components/parcel/manifest.json` and `PARCEL_CARD_VERSION` in the card
+1. Bump the version in `custom_components/parcel/manifest.json` and `PARCEL_CARD_VERSION` in `src/parcel-card/card-picker.js`
 2. Add a `## <version>` section at the top of [CHANGELOG.md](https://github.com/juju35/ha-parcel/blob/main/CHANGELOG.md)
 3. Push to `main`: the **Release** workflow creates the tag and the GitHub release with the changelog section as notes
 

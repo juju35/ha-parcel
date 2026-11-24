@@ -2,7 +2,7 @@
 
 ## Purpose
 Home Assistant custom integration for [Parcel](https://parcelapp.net): lists the deliveries tracked in Parcel and adds new ones.
-Ships its own Lovelace card (`frontend/parcel-card.js`), served by the integration itself.
+Ships its own Lovelace card (`frontend/parcel-card.js`, assembled at build from the ES modules in the repository's `src/parcel-card/`), served by the integration itself.
 
 ## Architecture
 
