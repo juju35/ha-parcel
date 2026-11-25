@@ -141,7 +141,7 @@ if (!customElements.get('parcel-card')) {
   window.customCards.push({
     type: 'parcel-card',
     name: 'Parcel',
-    description: 'Deliveries tracked in Parcel under an animated street, with a form to add one.',
+    description: 'Deliveries tracked in Parcel, 17TRACK or AfterShip under an animated street, with a form to add one.',
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
@@ -153,7 +153,7 @@ if (!customElements.get('parcel-mini-card')) {
   window.customCards.push({
     type: 'parcel-mini-card',
     name: 'Parcel mini',
-    description: 'The featured delivery on an animated street, with a button to show the full Parcel card.',
+    description: 'The featured delivery of Parcel, 17TRACK or AfterShip on an animated street, with a button to show the full card.',
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });

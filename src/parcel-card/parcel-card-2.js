@@ -11,6 +11,9 @@ import { PARCEL_SOURCE_NAMES, parcelFindSourceEntity, parcelFrom17Track, parcelF
 
 export var parcelUid = 0;
 
+// 17TRACK requests by account, shared by the cards: { at, promise }.
+export var PARCEL_17_REQUESTS = {};
+
 export function parcelMorphAttrs(cur, next) {
   for (var a of Array.from(cur.attributes)) {
     if (!next.hasAttribute(a.name) && !(a.name === 'open' && cur.localName === 'dialog')) cur.removeAttribute(a.name);
@@ -192,12 +195,14 @@ export class ParcelCard extends HTMLElement {
       }
       return this._autoEntity;
     }
-    if (!this._autoEntity || !this._hass?.states[this._autoEntity]) this._autoEntity = ParcelCard._findEntity(this._hass);
+    // A sensor found for another source (the source changed in the editor) is looked up again.
+    if (!this._autoEntity || !this._hass?.states[this._autoEntity] || this._autoSource) {
+      this._autoEntity = ParcelCard._findEntity(this._hass);
+      this._autoSource = null;
+    }
     return this._autoEntity;
   }
 
-  // Parcel account of the sensor, sent with the actions so several accounts can be used. An unavailable
-  // sensor has no attributes: the account then comes from the entity and device registries.
   // The state the card shows: the Parcel sensor, or the deliveries of 17TRACK or AfterShip read into the same shape
   // (kept between hass updates as long as their data is the same, so that the card is only redrawn on a change).
   _sourceState(hass) {
@@ -206,9 +211,10 @@ export class ParcelCard extends HTMLElement {
     var raw = entityId ? hass.states[entityId] || null : null;
     if (src === 'parcel') return raw;
     if (src === 'aftership') {
-      if (raw !== this._asRaw || this._asLang !== hass.language) {
+      var lang = parcelLang(hass, this._config);
+      if (raw !== this._asRaw || this._asLang !== lang) {
         this._asRaw = raw;
-        this._asLang = hass.language;
+        this._asLang = lang;
         this._asState = parcelFromAftership(hass, this._config, raw);
       }
       return this._asState;
@@ -216,8 +222,12 @@ export class ParcelCard extends HTMLElement {
     if (!raw) return null;
     // 17TRACK only gives its packages through an action: asked again when one of its sensors changes, or every
     // 30 minutes.
-    var counts = Object.keys(hass.entities || {}).filter((id) => hass.entities[id].platform === 'seventeentrack' && hass.states[id])
-      .map((id) => `${id}=${hass.states[id].state}`).join('|');
+    // Its sensors, listed again only when the entity registry changes (not on every state update).
+    if (this._reg17 !== hass.entities) {
+      this._reg17 = hass.entities;
+      this._ids17 = Object.keys(hass.entities || {}).filter((id) => hass.entities[id].platform === 'seventeentrack');
+    }
+    var counts = this._ids17.map((id) => `${id}=${hass.states[id]?.state}`).join('|');
     if (!this._data17 || counts !== this._counts17 || Date.now() - (this._fetched17 || 0) > 30 * 60000) {
       this._counts17 = counts;
       this._fetch17();
@@ -229,6 +239,9 @@ export class ParcelCard extends HTMLElement {
     return `${parcelSourceOf(this._config)}|${this._config?.entity || ''}|${this._config?.config_entry_id || ''}`;
   }
 
+  // Asks 17TRACK for the packages of the account. A failed request keeps the deliveries already shown (the card only
+  // turns unavailable when it has none yet) and resolves to its error, for the refresh button. The cards of one
+  // account share a request and its answer for a minute (PARCEL_17_REQUESTS).
   _fetch17() {
     if (this._fetching17) return this._fetching17;
     var entryId = this._entryId();
@@ -236,15 +249,30 @@ export class ParcelCard extends HTMLElement {
     this._source17Key = this._sourceKey();
     if (!entryId) {
       this._data17 = { state: 'unavailable', attributes: {} };
-      return Promise.resolve();
+      return Promise.resolve(null);
     }
     var hass = this._hass;
-    this._fetching17 = Promise.resolve(hass.callService('seventeentrack', 'get_packages', { config_entry_id: entryId }, undefined, false, true))
+    var shared = PARCEL_17_REQUESTS[entryId];
+    // Shared while its 17TRACK sensors read the same (a change means new packages: asked again).
+    if (!shared || Date.now() - shared.at > 60000 || shared.counts !== this._counts17) {
+      shared = PARCEL_17_REQUESTS[entryId] = {
+        at: Date.now(),
+        counts: this._counts17,
+        promise: Promise.resolve(hass.callService('seventeentrack', 'get_packages', { config_entry_id: entryId }, undefined, false, true)),
+      };
+      // A failed request is not shared: the next card or refresh asks again.
+      shared.promise.catch(() => {
+        if (PARCEL_17_REQUESTS[entryId] === shared) delete PARCEL_17_REQUESTS[entryId];
+      });
+    }
+    this._fetching17 = shared.promise
       .then((res) => {
         this._data17 = parcelFrom17Track(hass, this._config, res?.response?.packages);
+        return null;
       })
-      .catch(() => {
-        this._data17 = { state: 'unavailable', attributes: {} };
+      .catch((err) => {
+        if (!this._data17?.attributes?.deliveries?.length) this._data17 = { state: 'unavailable', attributes: {} };
+        return err || new Error('17TRACK');
       })
       .finally(() => {
         this._fetching17 = null;
@@ -254,6 +282,9 @@ export class ParcelCard extends HTMLElement {
     return this._fetching17;
   }
 
+  // Parcel account of the sensor, sent with the actions so several accounts can be used. An unavailable
+  // sensor has no attributes: the account then comes from the entity and device registries. 17TRACK: the account of
+  // its sensor's device (or `config_entry_id`); AfterShip has a single account.
   _entryId() {
     if (parcelSourceOf(this._config) === 'aftership') return null;
     if (parcelSourceOf(this._config) === 'seventeentrack' && this._config.config_entry_id) return this._config.config_entry_id;
@@ -704,8 +735,12 @@ export class ParcelCard extends HTMLElement {
     this._refreshError = null;
     this._render();
     var t = this._t();
-    var done = parcelSourceOf(this._config) === 'seventeentrack'
-      ? this._fetch17()
+    var seventeen = parcelSourceOf(this._config) === 'seventeentrack';
+    if (seventeen) delete PARCEL_17_REQUESTS[this._entryId()];
+    var done = seventeen
+      ? this._fetch17().then((err) => {
+          if (err) throw err;
+        })
       : this._hass.callService('homeassistant', 'update_entity', { entity_id: this._entityId() });
     Promise.resolve(done).catch((err) => parcelErrorText(this._hass, err).then((text) => {
       this._refreshError = `${t.refresh_failed} ${text}`;
@@ -862,7 +897,10 @@ export class ParcelCard extends HTMLElement {
       ? ['seventeentrack', 'add_package', { package_tracking_number: tracking, package_friendly_name: description, config_entry_id: this._entryId() }]
       : ['aftership', 'add_tracking', Object.assign({ tracking_number: tracking, title: description }, carrier ? { slug: carrier.toLowerCase() } : {})];
     // 17TRACK only gives its packages through an action: asked again at once.
-    this._sendAdd(form, call, t.added_source, seventeen ? () => this._fetch17() : null);
+    this._sendAdd(form, call, t.added_source, seventeen ? () => {
+      delete PARCEL_17_REQUESTS[this._entryId()];
+      this._fetch17();
+    } : null);
   }
 
   static _styles() {

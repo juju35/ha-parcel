@@ -15,10 +15,13 @@ const context = {
 };
 vm.createContext(context);
 vm.runInContext(
-  `${source}\nthis.parcel = { ParcelCard, parcelEditorSchema, parcelFrom17Track, parcelFromAftership, parcelFindSourceEntity, parcelSourceOf, parcelSourceStatus };`,
+  `${source}\nthis.parcel = { ParcelCard, parcelEditorSchema, parcelFrom17Track, parcelFromAftership, parcelFindSourceEntity, parcelSourceOf, parcelSourceStatus, PARCEL_17_REQUESTS };`,
   context,
 );
-const { ParcelCard, parcelEditorSchema, parcelFrom17Track, parcelFromAftership, parcelFindSourceEntity, parcelSourceOf, parcelSourceStatus } = context.parcel;
+const { ParcelCard, parcelEditorSchema, parcelFrom17Track, parcelFromAftership, parcelFindSourceEntity, parcelSourceOf, parcelSourceStatus, PARCEL_17_REQUESTS } = context.parcel;
+const clear17 = () => {
+  for (const k of Object.keys(PARCEL_17_REQUESTS)) delete PARCEL_17_REQUESTS[k];
+};
 const card = ParcelCard.prototype;
 const json = (v) => JSON.parse(JSON.stringify(v));
 const flush = () => new Promise((resolve) => setImmediate(resolve));
@@ -116,6 +119,7 @@ test('the sensor of a source is found: the AfterShip one by its trackings, a 17T
 
 // A card instance without the DOM: its config, hass and the calls it makes.
 const make = (config, h) => {
+  clear17();
   const self = Object.create(card);
   Object.assign(self, { _config: config, _expanded: {}, _renders: 0 });
   self._render = function () {
@@ -156,15 +160,53 @@ test('17TRACK: its packages are asked with the account of its sensor, and shown 
   assert.equal(make({ source: 'seventeentrack', config_entry_id: 'yaml' }, h17([]))._entryId(), 'yaml');
 });
 
-test('17TRACK: a failed request leaves the card unavailable, not empty', async () => {
-  const h = h17([]);
-  h.callService = () => Promise.reject(new Error('down'));
+test('17TRACK: a failed request keeps the deliveries shown, is reported on refresh, unavailable only without any', async () => {
+  const calls = [];
+  const h = h17(calls);
   const self = make({ source: 'seventeentrack' }, h);
   self._sourceState(h);
   await flush();
+  assert.equal(self._lastState.attributes.deliveries.length, 1);
+  h.callService = () => Promise.reject(new Error('down'));
+  self._refresh();
   await flush();
-  assert.equal(self._lastState.state, 'unavailable');
-  assert.equal(self._sourceText({ unavailable_source: '{source} is unavailable.' }, 'unavailable'), '17TRACK is unavailable.');
+  await flush();
+  await flush();
+  assert.equal(self._lastState.attributes.deliveries.length, 1, 'kept');
+  assert.match(String(self._refreshError), /^Refresh failed:/);
+  assert.equal(self._refreshing, false);
+  // Never had any: unavailable.
+  const empty = make({ source: 'seventeentrack' }, { ...h17([]), callService: () => Promise.reject(new Error('down')) });
+  empty._sourceState(empty._hass);
+  await flush();
+  await flush();
+  assert.equal(empty._lastState.state, 'unavailable');
+  assert.equal(empty._sourceText({ unavailable_source: '{source} is unavailable.' }, 'unavailable'), '17TRACK is unavailable.');
+});
+
+test('17TRACK: the cards of one account share a request; a sensor change asks again', async () => {
+  const calls = [];
+  const h = h17(calls);
+  const a = make({ source: 'seventeentrack' }, h);
+  const b = Object.assign(Object.create(card), { _config: { source: 'seventeentrack' }, _expanded: {}, _render() {}, _hass: h });
+  a._sourceState(h);
+  b._sourceState(h);
+  await flush();
+  assert.equal(calls.length, 1);
+  assert.equal(b._lastState.attributes.deliveries[0].description, 'Shoes');
+  // The registry is listed again only when it changes.
+  const ids = a._ids17;
+  a._sourceState({ ...h, states: { ...h.states } });
+  assert.equal(a._ids17, ids);
+});
+
+test('back to Parcel in the editor: the sensor found for another source is looked up again', () => {
+  const h = h17([]);
+  h.states['sensor.parcel_deliveries'] = { state: '0', attributes: { deliveries: [], config_entry_id: 'p' } };
+  const self = make({ source: 'seventeentrack' }, h);
+  assert.equal(self._entityId(), 'sensor.17track_in_transit');
+  self._config = {};
+  assert.equal(self._entityId(), 'sensor.parcel_deliveries');
 });
 
 test('AfterShip: read from its sensor, the same object kept while the sensor does not change; refresh updates it', async () => {
