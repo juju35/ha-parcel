@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktiva',
   more: '+{n} till',
   nothing: 'Inget på väg',
+  no_entity_source: '{source}-sensorn hittades inte. Konfigurera {source}-integrationen eller ange "entity".',
+  unavailable_source: '{source} är inte tillgänglig. Leveranserna visas efter nästa lyckade uppdatering.',
+  added_source: 'Leverans tillagd. Den visas efter nästa uppdatering.',
+  required_source: 'Spårningsnummer och beskrivning krävs.',
+  carrier_optional: 'Transportörskod (valfri)',
   editor: {
+    source: 'Datakälla',
     entity: 'Parcel-sensor',
     title: 'Titel',
     show_delivered: 'Visa levererade paket',

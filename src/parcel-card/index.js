@@ -5,6 +5,7 @@ import "./header-icon.js";
 import "./i18n/parceli18n.js";
 import "./i18n-helpers.js";
 import "./illustration.js";
+import "./sources.js";
 import "./parcel-card-2.js";
 import "./parcel-mini-card.js";
 import "./parcel-card-editor.js";

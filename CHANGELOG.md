@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.10.0 - 2026-11-25
+
+### Features
+- Cards without Parcel: `source: seventeentrack` shows the deliveries of the 17TRACK integration (asked with `seventeentrack.get_packages` when its sensors change, every 30 minutes and on refresh; added with `seventeentrack.add_package`), `source: aftership` those of the AfterShip sensor (added with `aftership.add_tracking`, carrier code optional). Their states map to Parcel's, so the street, the tiles and the mini card work the same. The source is picked in the visual editor, whose sensor picker follows it. Closes #81.
+- **Card only** in the integration's setup: loads the cards without a Parcel account (no sensor, no request to Parcel), for 17TRACK and AfterShip users.
+
 ## 1.9.7 - 2026-11-24
 
 ### Maintenance

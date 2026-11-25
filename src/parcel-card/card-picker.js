@@ -66,4 +66,4 @@ export function pickerDefine(tag, Card, options) {
   return customElements.define(tag, lazy, options);
 }
 
-export var PARCEL_CARD_VERSION = '1.9.7';
+export var PARCEL_CARD_VERSION = '1.10.0';

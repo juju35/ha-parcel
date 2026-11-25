@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Sledujte zásielky s účtom Parcel alebo pridajte len kartu na zobrazenie zásielok zo 17TRACK alebo AfterShip.",
+        "menu_options": { "account": "Účet Parcel (kľúč API)", "card_only": "Len karta (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Vygenerujte kľúč API na web.parcelapp.net (vyžaduje sa Parcel Premium).",
         "data": { "api_key": "Kľúč API" }
       },
+      "card_only": { "title": "Karta Parcel", "description": "Pridá kartu Parcel na panely bez účtu Parcel. V karte zvoľte zdroj 17TRACK alebo AfterShip: ich integrácia musí byť nastavená." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "Kľúč API pre Parcel bol odmietnutý. Zadajte nový.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Tento kľúč API je už nakonfigurovaný.",
-      "reauth_successful": "Kľúč API bol aktualizovaný."
+      "reauth_successful": "Kľúč API bol aktualizovaný.",
+      "card_only_configured": "Karta je už pridaná."
     }
   },
   "options": {

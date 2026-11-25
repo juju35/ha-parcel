@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Παρακολουθήστε τις αποστολές με λογαριασμό Parcel ή προσθέστε μόνο την κάρτα για να εμφανίζονται οι αποστολές του 17TRACK ή του AfterShip.",
+        "menu_options": { "account": "Λογαριασμός Parcel (κλειδί API)", "card_only": "Μόνο η κάρτα (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Δημιουργήστε ένα κλειδί API στο web.parcelapp.net (απαιτείται Parcel Premium).",
         "data": { "api_key": "Κλειδί API" }
       },
+      "card_only": { "title": "Κάρτα Parcel", "description": "Προσθέτει την κάρτα Parcel στους πίνακες χωρίς λογαριασμό Parcel. Στην κάρτα, επιλέξτε την πηγή 17TRACK ή AfterShip: η ενσωμάτωσή τους πρέπει να έχει ρυθμιστεί." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "Το κλειδί API του Parcel απορρίφθηκε. Εισαγάγετε ένα νέο.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Αυτό το κλειδί API έχει ήδη διαμορφωθεί.",
-      "reauth_successful": "Το κλειδί API ενημερώθηκε."
+      "reauth_successful": "Το κλειδί API ενημερώθηκε.",
+      "card_only_configured": "Η κάρτα έχει ήδη προστεθεί."
     }
   },
   "options": {

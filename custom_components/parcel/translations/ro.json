@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Urmăriți livrările cu un cont Parcel sau adăugați doar cardul pentru a afișa livrările din 17TRACK sau AfterShip.",
+        "menu_options": { "account": "Cont Parcel (cheie API)", "card_only": "Doar cardul (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Generați o cheie API pe web.parcelapp.net (este necesar Parcel Premium).",
         "data": { "api_key": "Cheie API" }
       },
+      "card_only": { "title": "Card Parcel", "description": "Adaugă cardul Parcel în tablouri fără cont Parcel. În card, alegeți sursa 17TRACK sau AfterShip: integrarea lor trebuie configurată." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "Cheia API Parcel a fost respinsă. Introduceți una nouă.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Această cheie API este deja configurată.",
-      "reauth_successful": "Cheia API a fost actualizată."
+      "reauth_successful": "Cheia API a fost actualizată.",
+      "card_only_configured": "Cardul este deja adăugat."
     }
   },
   "options": {

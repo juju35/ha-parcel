@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Track deliveries with a Parcel account, or add only the card to show the deliveries of 17TRACK or AfterShip.",
+        "menu_options": { "account": "Parcel account (API key)", "card_only": "Card only (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Generate an API key at web.parcelapp.net (Parcel Premium is required).",
         "data": { "api_key": "API key" }
       },
+      "card_only": { "title": "Parcel card", "description": "Adds the Parcel card to the dashboards without a Parcel account. In the card, set the source to 17TRACK or AfterShip: their integration must be set up." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "The Parcel API key was rejected. Enter a new one.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "This API key is already configured.",
-      "reauth_successful": "API key updated."
+      "reauth_successful": "API key updated.",
+      "card_only_configured": "The card is already added."
     }
   },
   "options": {

@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Volg zendingen met een Parcel-account, of voeg alleen de kaart toe om de zendingen van 17TRACK of AfterShip te tonen.",
+        "menu_options": { "account": "Parcel-account (API-sleutel)", "card_only": "Alleen de kaart (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Maak een API-sleutel aan op web.parcelapp.net (Parcel Premium is vereist).",
         "data": { "api_key": "API-sleutel" }
       },
+      "card_only": { "title": "Parcel-kaart", "description": "Voegt de Parcel-kaart toe aan de dashboards zonder Parcel-account. Kies in de kaart de bron 17TRACK of AfterShip: hun integratie moet ingesteld zijn." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "De API-sleutel van Parcel is geweigerd. Voer een nieuwe in.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Deze API-sleutel is al geconfigureerd.",
-      "reauth_successful": "API-sleutel bijgewerkt."
+      "reauth_successful": "API-sleutel bijgewerkt.",
+      "card_only_configured": "De kaart is al toegevoegd."
     }
   },
   "options": {

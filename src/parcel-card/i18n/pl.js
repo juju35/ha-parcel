@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktywne',
   more: '+{n} więcej',
   nothing: 'Nic nie jest w drodze',
+  no_entity_source: 'Nie znaleziono czujnika {source}. Skonfiguruj integrację {source} lub ustaw „entity”.',
+  unavailable_source: '{source} jest niedostępny. Przesyłki pojawią się po jego następnej udanej aktualizacji.',
+  added_source: 'Przesyłka dodana. Pojawi się po następnej aktualizacji.',
+  required_source: 'Numer przesyłki i opis są wymagane.',
+  carrier_optional: 'Kod przewoźnika (opcjonalnie)',
   editor: {
+    source: 'Źródło danych',
     entity: 'Sensor Parcel',
     title: 'Tytuł',
     show_delivered: 'Pokaż doręczone przesyłki',

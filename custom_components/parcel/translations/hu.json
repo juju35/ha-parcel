@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Kövesse a küldeményeket Parcel-fiókkal, vagy csak a kártyát adja hozzá a 17TRACK vagy AfterShip küldeményeinek megjelenítéséhez.",
+        "menu_options": { "account": "Parcel-fiók (API-kulcs)", "card_only": "Csak a kártya (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Hozzon létre egy API-kulcsot a web.parcelapp.net oldalon (Parcel Premium szükséges).",
         "data": { "api_key": "API-kulcs" }
       },
+      "card_only": { "title": "Parcel-kártya", "description": "Parcel-fiók nélkül hozzáadja a Parcel-kártyát az irányítópultokhoz. A kártyában válassza a 17TRACK vagy AfterShip forrást: az integrációjuknak beállítva kell lennie." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "A Parcel elutasította az API-kulcsot. Adjon meg egy újat.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Ez az API-kulcs már konfigurálva van.",
-      "reauth_successful": "Az API-kulcs frissítve."
+      "reauth_successful": "Az API-kulcs frissítve.",
+      "card_only_configured": "A kártya már hozzá van adva."
     }
   },
   "options": {

@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktive',
   more: '+{n} mere',
   nothing: 'Intet på vej',
+  no_entity_source: '{source}-sensoren blev ikke fundet. Opsæt {source}-integrationen, eller angiv "entity".',
+  unavailable_source: '{source} er ikke tilgængelig. Forsendelserne vises efter næste vellykkede opdatering.',
+  added_source: 'Forsendelse tilføjet. Den vises efter næste opdatering.',
+  required_source: 'Sporingsnummer og beskrivelse er påkrævet.',
+  carrier_optional: 'Fragtfirmakode (valgfri)',
   editor: {
+    source: 'Datakilde',
     entity: 'Parcel-sensor',
     title: 'Titel',
     show_delivered: 'Vis leverede pakker',

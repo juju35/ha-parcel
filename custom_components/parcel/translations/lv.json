@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Sekojiet sūtījumiem ar Parcel kontu vai pievienojiet tikai karti, lai rādītu 17TRACK vai AfterShip sūtījumus.",
+        "menu_options": { "account": "Parcel konts (API atslēga)", "card_only": "Tikai karte (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Ģenerējiet API atslēgu vietnē web.parcelapp.net (nepieciešams Parcel Premium).",
         "data": { "api_key": "API atslēga" }
       },
+      "card_only": { "title": "Parcel karte", "description": "Pievieno Parcel karti informācijas paneļiem bez Parcel konta. Kartē izvēlieties avotu 17TRACK vai AfterShip: to integrācijai jābūt iestatītai." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "Parcel API atslēga tika noraidīta. Ievadiet jaunu.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Šī API atslēga jau ir konfigurēta.",
-      "reauth_successful": "API atslēga atjaunināta."
+      "reauth_successful": "API atslēga atjaunināta.",
+      "card_only_configured": "Karte jau ir pievienota."
     }
   },
   "options": {

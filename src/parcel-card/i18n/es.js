@@ -29,7 +29,13 @@ export default {
   tab_active: 'Activos',
   more: '+{n} más',
   nothing: 'Nada en camino',
+  no_entity_source: 'No se encuentra el sensor de {source}. Configura la integración {source} o indica «entity».',
+  unavailable_source: '{source} no está disponible. Los envíos aparecerán tras su próxima actualización correcta.',
+  added_source: 'Envío añadido. Aparecerá tras la próxima actualización.',
+  required_source: 'El número de seguimiento y la descripción son obligatorios.',
+  carrier_optional: 'Código del transportista (opcional)',
   editor: {
+    source: 'Fuente de datos',
     entity: 'Sensor de Parcel',
     title: 'Título',
     show_delivered: 'Mostrar los envíos entregados',

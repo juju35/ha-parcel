@@ -8,6 +8,7 @@ from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.const import CONF_API_KEY, CONF_EMAIL
 from homeassistant.core import HomeAssistant
 
+from .const import CONF_CARD_ONLY
 from .coordinator import ParcelConfigEntry
 
 # The API key, the tracking numbers, and what can hold an address or an email: event locations, the
@@ -26,6 +27,8 @@ TO_REDACT = {
 
 
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: ParcelConfigEntry) -> dict[str, Any]:
+    if entry.data.get(CONF_CARD_ONLY):
+        return {"entry": {"data": dict(entry.data)}}
     coordinator = entry.runtime_data
     return {
         "entry": async_redact_data(

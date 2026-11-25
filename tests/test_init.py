@@ -14,12 +14,14 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError,
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.parcel.config_flow import ParcelConfigFlow
 from custom_components.parcel.const import (
     API_ADD_DELIVERY,
     API_CARRIERS,
     API_DELIVERIES,
     DOMAIN,
 )
+from custom_components.parcel.diagnostics import async_get_config_entry_diagnostics
 
 DELIVERIES = {
     "success": True,
@@ -129,6 +131,36 @@ async def test_card_served(hass, aioclient_mock, entry, hass_client):
     assert "pickerDefine('parcel-card'" in await resp.text()
 
 
+async def test_card_only_entry(hass, hass_client, hass_ws_client):
+    """The card alone: served without a Parcel account, no entity, no request, no options, added once."""
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "card_only"})
+    assert result["type"] is FlowResultType.FORM
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"] == {"card_only": True}
+    await hass.async_block_till_done()
+    card_entry = result["result"]
+    assert card_entry.state is ConfigEntryState.LOADED
+    assert not hass.states.async_entity_ids(DOMAIN) and not hass.states.async_entity_ids("sensor")
+    client = await hass_client()
+    resp = await client.get("/parcel_static/parcel-card.js")
+    assert resp.status == 200
+    # No Parcel account: the services and the carriers list ignore the card entry.
+    with pytest.raises(ServiceValidationError):
+        await hass.services.async_call(DOMAIN, "refresh", {}, blocking=True)
+    ws = await hass_ws_client(hass)
+    await ws.send_json({"id": 1, "type": "parcel/carriers"})
+    assert (await ws.receive_json())["result"]["carriers"] == {}
+    assert not ParcelConfigFlow.async_supports_options(card_entry)
+    assert await async_get_config_entry_diagnostics(hass, card_entry) == {"entry": {"data": {"card_only": True}}}
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "card_only"})
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "card_only_configured"
+    assert await hass.config_entries.async_unload(card_entry.entry_id)
+
+
 async def test_auth_failure_starts_reauth(hass, aioclient_mock, entry):
     aioclient_mock.get(API_DELIVERIES, status=401, json={"success": False})
     assert await async_setup_component(hass, "http", {})
@@ -142,6 +174,9 @@ async def test_config_flow(hass, aioclient_mock):
     aioclient_mock.get(API_DELIVERIES, json=DELIVERIES)
     aioclient_mock.get(API_CARRIERS, json=CARRIERS)
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    assert result["type"] is FlowResultType.MENU
+    assert result["menu_options"] == ["account", "card_only"]
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "account"})
     assert result["type"] is FlowResultType.FORM
     with patch("custom_components.parcel.async_setup_entry", return_value=True):
         result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: " my-key "})
@@ -153,6 +188,7 @@ async def test_config_flow(hass, aioclient_mock):
 async def test_config_flow_invalid_key(hass, aioclient_mock):
     aioclient_mock.get(API_DELIVERIES, json={"success": False, "error_message": "Invalid API key"})
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "account"})
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "bad"})
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "invalid_auth"}
@@ -262,6 +298,7 @@ async def test_add_delivery_timeout(hass, aioclient_mock, entry):
 async def test_config_flow_timeout(hass, aioclient_mock):
     aioclient_mock.get(API_DELIVERIES, exc=TimeoutError())
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"next_step_id": "account"})
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {CONF_API_KEY: "key"})
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"base": "cannot_connect"}

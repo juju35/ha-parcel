@@ -7,8 +7,12 @@ import { PARCEL_ACCENT } from "./header-icon.js";
 import { PARCEL_DEFAULTS } from "./i18n-helpers.js";
 import { PARCEL_CHIP, PARCEL_STATUS_STYLE, parcelDate, parcelErrorText, parcelEsc, parcelFeatured, parcelHeaderColor, parcelIsAdmin, parcelLang, parcelLocale, parcelNight, parcelParseDate, parcelScene, parcelSceneOf } from "./illustration.js";
 import { ParcelI18n } from "./i18n/parceli18n.js";
+import { PARCEL_SOURCE_NAMES, parcelFindSourceEntity, parcelFrom17Track, parcelFromAftership, parcelSourceOf } from "./sources.js";
 
 export var parcelUid = 0;
+
+// 17TRACK requests by account, shared by the cards: { at, promise }.
+export var PARCEL_17_REQUESTS = {};
 
 export function parcelMorphAttrs(cur, next) {
   for (var a of Array.from(cur.attributes)) {
@@ -102,8 +106,8 @@ export class ParcelCard extends HTMLElement {
     this._expanded = this._expanded || {};
     // Read the sensor now: with hass already set (visual editor, dashboard change), waiting for the
     // next hass update would show "sensor not found" meanwhile.
-    var entityId = this._hass ? this._entityId() : null;
-    this._lastState = entityId ? this._hass.states[entityId] || null : null;
+    if (parcelSourceOf(config) !== 'parcel' && this._source17Key !== this._sourceKey()) this._data17 = null;
+    this._lastState = this._hass ? this._sourceState(this._hass) : null;
     if (this._hass) this._render();
   }
 
@@ -111,7 +115,8 @@ export class ParcelCard extends HTMLElement {
     var first = !this._hass;
     this._hass = hass;
     var entityId = this._entityId();
-    var st = entityId ? hass.states[entityId] : null;
+    // Parcel's sensor as it is; 17TRACK and AfterShip read into the same shape.
+    var st = parcelSourceOf(this._config) === 'parcel' ? (entityId ? hass.states[entityId] : null) : this._sourceState(hass);
     // Only redraw when the sensor changed, so typing in the form is never interrupted.
     if (first || st !== this._lastState) {
       this._lastState = st;
@@ -182,14 +187,108 @@ export class ParcelCard extends HTMLElement {
   // (several times a second) is wasted work. It is looked up again only when it disappears.
   _entityId() {
     if (this._config?.entity) return this._config.entity;
-    if (!this._autoEntity || !this._hass?.states[this._autoEntity]) this._autoEntity = ParcelCard._findEntity(this._hass);
+    if (parcelSourceOf(this._config) !== 'parcel') {
+      var src = parcelSourceOf(this._config);
+      if (!this._autoEntity || !this._hass?.states[this._autoEntity] || this._autoSource !== src) {
+        this._autoEntity = parcelFindSourceEntity(this._hass, src);
+        this._autoSource = src;
+      }
+      return this._autoEntity;
+    }
+    // A sensor found for another source (the source changed in the editor) is looked up again.
+    if (!this._autoEntity || !this._hass?.states[this._autoEntity] || this._autoSource) {
+      this._autoEntity = ParcelCard._findEntity(this._hass);
+      this._autoSource = null;
+    }
     return this._autoEntity;
   }
 
+  // The state the card shows: the Parcel sensor, or the deliveries of 17TRACK or AfterShip read into the same shape
+  // (kept between hass updates as long as their data is the same, so that the card is only redrawn on a change).
+  _sourceState(hass) {
+    var src = parcelSourceOf(this._config);
+    var entityId = this._entityId();
+    var raw = entityId ? hass.states[entityId] || null : null;
+    if (src === 'parcel') return raw;
+    if (src === 'aftership') {
+      var lang = parcelLang(hass, this._config);
+      if (raw !== this._asRaw || this._asLang !== lang) {
+        this._asRaw = raw;
+        this._asLang = lang;
+        this._asState = parcelFromAftership(hass, this._config, raw);
+      }
+      return this._asState;
+    }
+    if (!raw) return null;
+    // 17TRACK only gives its packages through an action: asked again when one of its sensors changes, or every
+    // 30 minutes.
+    // Its sensors, listed again only when the entity registry changes (not on every state update).
+    if (this._reg17 !== hass.entities) {
+      this._reg17 = hass.entities;
+      this._ids17 = Object.keys(hass.entities || {}).filter((id) => hass.entities[id].platform === 'seventeentrack');
+    }
+    var counts = this._ids17.map((id) => `${id}=${hass.states[id]?.state}`).join('|');
+    if (!this._data17 || counts !== this._counts17 || Date.now() - (this._fetched17 || 0) > 30 * 60000) {
+      this._counts17 = counts;
+      this._fetch17();
+    }
+    return this._data17 || { state: '0', attributes: { deliveries: [] } };
+  }
+
+  _sourceKey() {
+    return `${parcelSourceOf(this._config)}|${this._config?.entity || ''}|${this._config?.config_entry_id || ''}`;
+  }
+
+  // Asks 17TRACK for the packages of the account. A failed request keeps the deliveries already shown (the card only
+  // turns unavailable when it has none yet) and resolves to its error, for the refresh button. The cards of one
+  // account share a request and its answer for a minute (PARCEL_17_REQUESTS).
+  _fetch17() {
+    if (this._fetching17) return this._fetching17;
+    var entryId = this._entryId();
+    this._fetched17 = Date.now();
+    this._source17Key = this._sourceKey();
+    if (!entryId) {
+      this._data17 = { state: 'unavailable', attributes: {} };
+      return Promise.resolve(null);
+    }
+    var hass = this._hass;
+    var shared = PARCEL_17_REQUESTS[entryId];
+    // Shared while its 17TRACK sensors read the same (a change means new packages: asked again).
+    if (!shared || Date.now() - shared.at > 60000 || shared.counts !== this._counts17) {
+      shared = PARCEL_17_REQUESTS[entryId] = {
+        at: Date.now(),
+        counts: this._counts17,
+        promise: Promise.resolve(hass.callService('seventeentrack', 'get_packages', { config_entry_id: entryId }, undefined, false, true)),
+      };
+      // A failed request is not shared: the next card or refresh asks again.
+      shared.promise.catch(() => {
+        if (PARCEL_17_REQUESTS[entryId] === shared) delete PARCEL_17_REQUESTS[entryId];
+      });
+    }
+    this._fetching17 = shared.promise
+      .then((res) => {
+        this._data17 = parcelFrom17Track(hass, this._config, res?.response?.packages);
+        return null;
+      })
+      .catch((err) => {
+        if (!this._data17?.attributes?.deliveries?.length) this._data17 = { state: 'unavailable', attributes: {} };
+        return err || new Error('17TRACK');
+      })
+      .finally(() => {
+        this._fetching17 = null;
+        this._lastState = this._data17;
+        if (this._config) this._render();
+      });
+    return this._fetching17;
+  }
+
   // Parcel account of the sensor, sent with the actions so several accounts can be used. An unavailable
-  // sensor has no attributes: the account then comes from the entity and device registries.
+  // sensor has no attributes: the account then comes from the entity and device registries. 17TRACK: the account of
+  // its sensor's device (or `config_entry_id`); AfterShip has a single account.
   _entryId() {
-    var st = this._lastState;
+    if (parcelSourceOf(this._config) === 'aftership') return null;
+    if (parcelSourceOf(this._config) === 'seventeentrack' && this._config.config_entry_id) return this._config.config_entry_id;
+    var st = parcelSourceOf(this._config) === 'parcel' ? this._lastState : null;
     if (st?.attributes?.config_entry_id) return st.attributes.config_entry_id;
     var entityId = this._entityId();
     var ent = entityId ? this._hass?.entities?.[entityId] : null;
@@ -267,11 +366,11 @@ export class ParcelCard extends HTMLElement {
     this._renderHeader(header, t, st, title, deliveries);
     var tabbed = this._renderTabs(deliveries, t);
     if (!st) {
-      parcelMorph(list, `<div class="empty">${parcelEsc(t.no_entity)}</div>`);
+      parcelMorph(list, `<div class="empty">${parcelEsc(this._sourceText(t, 'no_entity'))}</div>`);
       return;
     }
     if (unavailable) {
-      parcelMorph(list, `<div class="empty">${parcelEsc(t.unavailable)}</div>`);
+      parcelMorph(list, `<div class="empty">${parcelEsc(this._sourceText(t, 'unavailable'))}</div>`);
       return;
     }
     // The compact mini card is its banner alone.
@@ -448,7 +547,7 @@ export class ParcelCard extends HTMLElement {
     more.hidden = true;
     if (!featured) {
       name.textContent = title;
-      l2.textContent = !st ? t.no_entity : unavailable ? t.unavailable : t.nothing;
+      l2.textContent = !st ? this._sourceText(t, 'no_entity') : unavailable ? this._sourceText(t, 'unavailable') : t.nothing;
       return;
     }
     var key = featured.status || 'unknown';
@@ -500,6 +599,13 @@ export class ParcelCard extends HTMLElement {
     var base = `.delivery[data-id="${String(item.getAttribute('data-id')).replace(/["\\]/g, '\\$&')}"]`;
     if (el.closest('[data-copy]')) return `${base} .tracking`;
     return el.closest('.desc') ? `${base} .desc` : null;
+  }
+
+  // Parcel's own messages, or those of another source ({source}: 17TRACK, AfterShip).
+  _sourceText(t, key) {
+    var src = parcelSourceOf(this._config);
+    if (src === 'parcel') return t[key];
+    return String(t[`${key}_source`]).replace('{source}', PARCEL_SOURCE_NAMES[src] || src);
   }
 
   _iconHtml() {
@@ -605,6 +711,7 @@ export class ParcelCard extends HTMLElement {
 
   _refresh() {
     if (this._refreshing) return;
+    if (parcelSourceOf(this._config) !== 'parcel') return this._refreshSource();
     var data = {};
     var entryId = this._entryId();
     if (entryId) data.config_entry_id = entryId;
@@ -622,6 +729,27 @@ export class ParcelCard extends HTMLElement {
     });
   }
 
+  // 17TRACK: its packages asked again; AfterShip: its sensor updated.
+  _refreshSource() {
+    this._refreshing = true;
+    this._refreshError = null;
+    this._render();
+    var t = this._t();
+    var seventeen = parcelSourceOf(this._config) === 'seventeentrack';
+    if (seventeen) delete PARCEL_17_REQUESTS[this._entryId()];
+    var done = seventeen
+      ? this._fetch17().then((err) => {
+          if (err) throw err;
+        })
+      : this._hass.callService('homeassistant', 'update_entity', { entity_id: this._entityId() });
+    Promise.resolve(done).catch((err) => parcelErrorText(this._hass, err).then((text) => {
+      this._refreshError = `${t.refresh_failed} ${text}`;
+    })).finally(() => {
+      this._refreshing = false;
+      this._render();
+    });
+  }
+
   // ── add form ────────────────────────────────────────────────────────────────
   _toggleForm() {
     var form = this._root.querySelector('.form');
@@ -629,7 +757,11 @@ export class ParcelCard extends HTMLElement {
       form.hidden = true;
       return;
     }
-    if (!form.firstChild) this._buildForm(form);
+    // Built for the source of the card: built again when the source changed.
+    if (!form.firstChild || this._formSource !== parcelSourceOf(this._config)) {
+      this._formSource = parcelSourceOf(this._config);
+      this._buildForm(form);
+    }
     form.hidden = false;
     this._loadCarriers();
     form.querySelector('[name=tracking]').focus();
@@ -637,14 +769,22 @@ export class ParcelCard extends HTMLElement {
 
   _buildForm(form) {
     var t = this._t();
+    var src = parcelSourceOf(this._config);
+    // Parcel: carrier from its list, push confirmation, its daily limit. AfterShip: an optional carrier code (it
+    // detects the carrier otherwise). 17TRACK: the number and a name only.
+    var carrier = src === 'parcel'
+      ? '<label>' + parcelEsc(t.carrier) + '<input name="carrier" list="parcel-carriers" placeholder="' + parcelEsc(t.carrier_search) + '" autocomplete="off"></label>' +
+        '<datalist id="parcel-carriers"></datalist>'
+      : src === 'aftership'
+        ? '<label>' + parcelEsc(t.carrier_optional) + '<input name="carrier" placeholder="ups, dhl, colissimo…" autocomplete="off"></label>'
+        : '';
     form.innerHTML =
       '<label>' + parcelEsc(t.tracking_number) + '<input name="tracking" autocomplete="off"></label>' +
-      '<label>' + parcelEsc(t.carrier) + '<input name="carrier" list="parcel-carriers" placeholder="' + parcelEsc(t.carrier_search) + '" autocomplete="off"></label>' +
-      '<datalist id="parcel-carriers"></datalist>' +
+      carrier +
       '<label>' + parcelEsc(t.description) + '<input name="description" autocomplete="off"></label>' +
-      '<label class="check"><input type="checkbox" name="push"> ' + parcelEsc(t.push) + '</label>' +
+      (src === 'parcel' ? '<label class="check"><input type="checkbox" name="push"> ' + parcelEsc(t.push) + '</label>' : '') +
       '<div class="msg"></div>' +
-      '<div class="hint">' + parcelEsc(t.limit) + '</div>' +
+      (src === 'parcel' ? '<div class="hint">' + parcelEsc(t.limit) + '</div>' : '') +
       '<div class="actions"><button type="button" class="cancel">' + parcelEsc(t.cancel) + '</button>' +
       '<button type="button" class="submit">' + parcelEsc(t.submit) + '</button></div>';
     form.querySelector('.cancel').addEventListener('click', this._toggleForm.bind(this));
@@ -655,7 +795,7 @@ export class ParcelCard extends HTMLElement {
   }
 
   _loadCarriers() {
-    if (this._carriers || this._loadingCarriers) return;
+    if (parcelSourceOf(this._config) !== 'parcel' || this._carriers || this._loadingCarriers) return;
     this._loadingCarriers = true;
     var msg = { type: 'parcel/carriers' };
     var entryId = this._entryId();
@@ -695,8 +835,9 @@ export class ParcelCard extends HTMLElement {
     var btn = form.querySelector('.submit');
     if (btn.disabled) return;
     var tracking = form.querySelector('[name=tracking]').value.trim();
-    var carrierInput = form.querySelector('[name=carrier]').value;
+    var carrierInput = form.querySelector('[name=carrier]')?.value || '';
     var description = form.querySelector('[name=description]').value.trim();
+    if (parcelSourceOf(this._config) !== 'parcel') return this._submitSource(form, tracking, carrierInput.trim(), description);
     var push = form.querySelector('[name=push]').checked;
 
     msgEl.className = 'msg error';
@@ -714,15 +855,25 @@ export class ParcelCard extends HTMLElement {
     var entryId = this._entryId();
     if (entryId) data.config_entry_id = entryId;
 
+    this._sendAdd(form, ['parcel', 'add_delivery', data], t.added);
+  }
+
+  // Sends the form's delivery: « Adding… » meanwhile, the fields emptied and `okText` once added, else the error.
+  _sendAdd(form, call, okText, onAdded) {
+    var t = this._t();
+    var msgEl = form.querySelector('.msg');
+    var btn = form.querySelector('.submit');
     btn.disabled = true;
     btn.textContent = t.adding;
     msgEl.textContent = '';
-    this._hass.callService('parcel', 'add_delivery', data).then(() => {
+    Promise.resolve(this._hass.callService(call[0], call[1], call[2])).then(() => {
       msgEl.className = 'msg ok';
-      msgEl.textContent = t.added;
-      form.querySelector('[name=tracking]').value = '';
-      form.querySelector('[name=carrier]').value = '';
-      form.querySelector('[name=description]').value = '';
+      msgEl.textContent = okText;
+      for (var name of ['tracking', 'carrier', 'description']) {
+        var input = form.querySelector(`[name=${name}]`);
+        if (input) input.value = '';
+      }
+      onAdded?.();
     }).catch((err) => parcelErrorText(this._hass, err).then((text) => {
       msgEl.className = 'msg error';
       msgEl.textContent = text;
@@ -730,6 +881,26 @@ export class ParcelCard extends HTMLElement {
       btn.disabled = false;
       btn.textContent = t.submit;
     });
+  }
+
+  // 17TRACK (seventeentrack.add_package) or AfterShip (aftership.add_tracking).
+  _submitSource(form, tracking, carrier, description) {
+    var t = this._t();
+    var msgEl = form.querySelector('.msg');
+    msgEl.className = 'msg error';
+    if (!tracking || !description) {
+      msgEl.textContent = t.required_source;
+      return;
+    }
+    var seventeen = parcelSourceOf(this._config) === 'seventeentrack';
+    var call = seventeen
+      ? ['seventeentrack', 'add_package', { package_tracking_number: tracking, package_friendly_name: description, config_entry_id: this._entryId() }]
+      : ['aftership', 'add_tracking', Object.assign({ tracking_number: tracking, title: description }, carrier ? { slug: carrier.toLowerCase() } : {})];
+    // 17TRACK only gives its packages through an action: asked again at once.
+    this._sendAdd(form, call, t.added_source, seventeen ? () => {
+      delete PARCEL_17_REQUESTS[this._entryId()];
+      this._fetch17();
+    } : null);
   }
 
   static _styles() {

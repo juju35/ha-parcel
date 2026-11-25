@@ -25,6 +25,7 @@ from homeassistant.helpers.selector import (
 
 from .api import ParcelApi, ParcelAuthError, ParcelError
 from .const import (
+    CONF_CARD_ONLY,
     CONF_FILTER_MODE,
     CONF_NOTIFY,
     CONF_SCAN_INTERVAL,
@@ -62,6 +63,18 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
         return None
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """A Parcel account, or the card alone (for deliveries tracked with 17TRACK or AfterShip)."""
+        return self.async_show_menu(step_id="user", menu_options=["account", "card_only"])
+
+    async def async_step_card_only(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Serve the card without a Parcel account: no sensor, no API call."""
+        await self.async_set_unique_id(CONF_CARD_ONLY)
+        self._abort_if_unique_id_configured(error="card_only_configured")
+        if user_input is not None:
+            return self.async_create_entry(title="Parcel card", data={CONF_CARD_ONLY: True})
+        return self.async_show_form(step_id="card_only", data_schema=vol.Schema({}))
+
+    async def async_step_account(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors: dict[str, str] = {}
         if user_input is not None:
             api_key = user_input[CONF_API_KEY].strip()
@@ -71,7 +84,7 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(title="Parcel", data={CONF_API_KEY: api_key})
             errors["base"] = error
 
-        return self.async_show_form(step_id="user", data_schema=API_KEY_SCHEMA, errors=errors)
+        return self.async_show_form(step_id="account", data_schema=API_KEY_SCHEMA, errors=errors)
 
     async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> ConfigFlowResult:
         return await self.async_step_reauth_confirm()
@@ -100,6 +113,12 @@ class ParcelConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = error
 
         return self.async_show_form(step_id="reauth_confirm", data_schema=API_KEY_SCHEMA, errors=errors)
+
+    @classmethod
+    @callback
+    def async_supports_options(cls, config_entry: ConfigEntry) -> bool:
+        # The card-only entry has nothing to set.
+        return not config_entry.data.get(CONF_CARD_ONLY)
 
     @staticmethod
     @callback

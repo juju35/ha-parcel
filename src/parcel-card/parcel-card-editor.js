@@ -5,10 +5,16 @@ import { parcelLang } from "./illustration.js";
 import { ParcelCard } from "./parcel-card-2.js";
 import { ParcelMiniCard } from "./parcel-mini-card.js";
 import { ParcelI18n } from "./i18n/parceli18n.js";
+import { PARCEL_SOURCE_NAMES, PARCEL_SOURCES } from "./sources.js";
 
-export function parcelEditorSchema(t) {
+// `source`: where the deliveries come from (Parcel, 17TRACK or AfterShip); the entity picker lists its sensors.
+export function parcelEditorSchema(t, source) {
   return [
-    { name: 'entity', selector: { entity: { domain: 'sensor', integration: 'parcel' } } },
+    {
+      name: 'source',
+      selector: { select: { mode: 'dropdown', options: PARCEL_SOURCES.map((s) => ({ value: s, label: PARCEL_SOURCE_NAMES[s] })) } },
+    },
+    { name: 'entity', selector: { entity: { domain: 'sensor', integration: source || 'parcel' } } },
     { name: 'title', selector: { text: {} } },
     {
       type: 'grid',
@@ -93,15 +99,17 @@ export class ParcelCardEditor extends HTMLElement {
     }
     // The labels follow the language picked in the editor: rebuilt only when it changes.
     var lang = parcelLang(this._hass, this._config);
-    if (lang !== this._lang) {
+    var source = this._config.source || 'parcel';
+    if (lang !== this._lang || source !== this._schemaSource) {
       this._lang = lang;
+      this._schemaSource = source;
       var t = ParcelI18n[lang].editor;
-      this._form.schema = parcelEditorSchema(t);
+      this._form.schema = parcelEditorSchema(t, source);
       this._form.computeLabel = (field) => t[field.name] || field.name;
     }
     this._form.hass = this._hass;
     // Show the defaults as set, so the toggles match what the card does.
-    this._form.data = Object.assign({}, PARCEL_DEFAULTS, this._config);
+    this._form.data = Object.assign({ source: 'parcel' }, PARCEL_DEFAULTS, this._config);
   }
 
   _valueChanged(ev) {
@@ -111,6 +119,9 @@ export class ParcelCardEditor extends HTMLElement {
       if (value[key] === PARCEL_DEFAULTS[key]) delete value[key];
     });
     if (!value.title) delete value.title;
+    // Another source: the sensor picked for the previous one no longer applies.
+    if ((value.source || 'parcel') !== (this._config.source || 'parcel')) delete value.entity;
+    if (value.source === 'parcel') delete value.source;
     if (!value.entity) delete value.entity;
     if (!value.language) delete value.language;
     this._config = value;
@@ -130,7 +141,7 @@ if (!customElements.get('parcel-card')) {
   window.customCards.push({
     type: 'parcel-card',
     name: 'Parcel',
-    description: 'Deliveries tracked in Parcel under an animated street, with a form to add one.',
+    description: 'Deliveries tracked in Parcel, 17TRACK or AfterShip under an animated street, with a form to add one.',
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });
@@ -142,7 +153,7 @@ if (!customElements.get('parcel-mini-card')) {
   window.customCards.push({
     type: 'parcel-mini-card',
     name: 'Parcel mini',
-    description: 'The featured delivery on an animated street, with a button to show the full Parcel card.',
+    description: 'The featured delivery of Parcel, 17TRACK or AfterShip on an animated street, with a button to show the full card.',
     preview: true,
     documentationURL: 'https://github.com/juju35/ha-parcel',
   });

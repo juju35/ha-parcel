@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktiv',
   more: '+{n} weitere',
   nothing: 'Nichts unterwegs',
+  no_entity_source: '{source}-Sensor nicht gefunden. Richte die {source}-Integration ein oder setze „entity“.',
+  unavailable_source: '{source} ist nicht verfügbar. Die Lieferungen erscheinen nach der nächsten erfolgreichen Aktualisierung.',
+  added_source: 'Lieferung hinzugefügt. Sie erscheint nach der nächsten Aktualisierung.',
+  required_source: 'Sendungsnummer und Beschreibung sind erforderlich.',
+  carrier_optional: 'Paketdienst-Code (optional)',
   editor: {
+    source: 'Datenquelle',
     entity: 'Parcel-Sensor',
     title: 'Titel',
     show_delivered: 'Zugestellte Sendungen anzeigen',
