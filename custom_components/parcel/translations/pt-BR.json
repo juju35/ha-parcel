@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Acompanhe as entregas com uma conta Parcel, ou adicione apenas o card para mostrar as entregas do 17TRACK ou do AfterShip.",
+        "menu_options": { "account": "Conta Parcel (chave de API)", "card_only": "Somente o card (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Gere uma chave de API em web.parcelapp.net (é necessário o Parcel Premium).",
         "data": { "api_key": "Chave de API" }
       },
+      "card_only": { "title": "Card Parcel", "description": "Adiciona o card Parcel aos painéis sem conta Parcel. No card, escolha a fonte 17TRACK ou AfterShip: a integração deles precisa estar configurada." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "A chave de API do Parcel foi recusada. Introduza uma nova.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Esta chave de API já está configurada.",
-      "reauth_successful": "Chave de API atualizada."
+      "reauth_successful": "Chave de API atualizada.",
+      "card_only_configured": "O card já foi adicionado."
     }
   },
   "options": {

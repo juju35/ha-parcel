@@ -32,6 +32,7 @@ from .const import (
     ATTR_SEND_PUSH_CONFIRMATION,
     ATTR_TRACKING_NUMBER,
     CARD_FILENAME,
+    CONF_CARD_ONLY,
     DOMAIN,
     FRONTEND_URL,
     MIN_MANUAL_REFRESH,
@@ -177,6 +178,9 @@ def _lovelace_resources(lovelace: Any) -> tuple[Any, str]:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ParcelConfigEntry) -> bool:
+    if entry.data.get(CONF_CARD_ONLY):
+        # The card alone (17TRACK, AfterShip): async_setup already serves it; no account, no entity.
+        return True
     api = ParcelApi(async_get_clientsession(hass), entry.data[CONF_API_KEY])
     coordinator = ParcelCoordinator(hass, entry, api)
     await coordinator.async_config_entry_first_refresh()
@@ -187,6 +191,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ParcelConfigEntry) -> bo
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ParcelConfigEntry) -> bool:
+    if entry.data.get(CONF_CARD_ONLY):
+        return True
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
@@ -195,7 +201,11 @@ async def _async_reload(hass: HomeAssistant, entry: ParcelConfigEntry) -> None:
 
 
 def _loaded_entries(hass: HomeAssistant) -> list[ParcelConfigEntry]:
-    return [e for e in hass.config_entries.async_entries(DOMAIN) if e.state is ConfigEntryState.LOADED]
+    return [
+        e
+        for e in hass.config_entries.async_entries(DOMAIN)
+        if e.state is ConfigEntryState.LOADED and not e.data.get(CONF_CARD_ONLY)
+    ]
 
 
 def _get_coordinator(hass: HomeAssistant, entry_id: str | None) -> ParcelCoordinator:

@@ -29,7 +29,13 @@ export default {
   tab_active: 'Attive',
   more: '+{n} altre',
   nothing: 'Niente in arrivo',
+  no_entity_source: 'Sensore {source} non trovato. Configura l’integrazione {source} o imposta «entity».',
+  unavailable_source: '{source} non è disponibile. Le spedizioni appariranno dopo il prossimo aggiornamento riuscito.',
+  added_source: 'Spedizione aggiunta. Apparirà dopo il prossimo aggiornamento.',
+  required_source: 'Numero di tracciamento e descrizione sono obbligatori.',
+  carrier_optional: 'Codice del corriere (facoltativo)',
   editor: {
+    source: 'Fonte dei dati',
     entity: 'Sensore Parcel',
     title: 'Titolo',
     show_delivered: 'Mostra le spedizioni consegnate',

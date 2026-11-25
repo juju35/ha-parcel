@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktívne',
   more: '+{n} ďalšie',
   nothing: 'Nič nie je na ceste',
+  no_entity_source: 'Senzor {source} sa nenašiel. Nastavte integráciu {source} alebo zadajte „entity“.',
+  unavailable_source: '{source} nie je dostupný. Zásielky sa zobrazia po jeho ďalšej úspešnej aktualizácii.',
+  added_source: 'Zásielka pridaná. Zobrazí sa po ďalšej aktualizácii.',
+  required_source: 'Sledovacie číslo a popis sú povinné.',
+  carrier_optional: 'Kód prepravcu (voliteľné)',
   editor: {
+    source: 'Zdroj údajov',
     entity: 'Senzor Parcel',
     title: 'Názov',
     show_delivered: 'Zobraziť doručené zásielky',

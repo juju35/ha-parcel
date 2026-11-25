@@ -29,7 +29,13 @@ export default {
   tab_active: 'Active',
   more: '+{n} more',
   nothing: 'Nothing on the way',
+  no_entity_source: '{source} sensor not found. Set up the {source} integration or set "entity".',
+  unavailable_source: '{source} is unavailable. The deliveries will show up after its next successful update.',
+  added_source: 'Delivery added. It will show up after the next update.',
+  required_source: 'Tracking number and description are required.',
+  carrier_optional: 'Carrier code (optional)',
   editor: {
+    source: 'Data source',
     entity: 'Parcel sensor',
     title: 'Title',
     show_delivered: 'Show delivered parcels',

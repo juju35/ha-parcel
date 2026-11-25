@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktīvās',
   more: 'vēl {n}',
   nothing: 'Nekas nav ceļā',
+  no_entity_source: '{source} sensors nav atrasts. Iestatiet {source} integrāciju vai norādiet “entity”.',
+  unavailable_source: '{source} nav pieejams. Sūtījumi parādīsies pēc nākamās veiksmīgās atjaunināšanas.',
+  added_source: 'Sūtījums pievienots. Tas parādīsies pēc nākamās atjaunināšanas.',
+  required_source: 'Izsekošanas numurs un apraksts ir obligāti.',
+  carrier_optional: 'Pārvadātāja kods (neobligāti)',
   editor: {
+    source: 'Datu avots',
     entity: 'Parcel sensors',
     title: 'Virsraksts',
     show_delivered: 'Rādīt piegādātos sūtījumus',

@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktív',
   more: '+{n} további',
   nothing: 'Semmi sincs úton',
+  no_entity_source: 'A(z) {source} érzékelő nem található. Állítsa be a(z) {source} integrációt, vagy adja meg az „entity” értéket.',
+  unavailable_source: 'A(z) {source} nem érhető el. A küldemények a következő sikeres frissítés után jelennek meg.',
+  added_source: 'Küldemény hozzáadva. A következő frissítés után jelenik meg.',
+  required_source: 'A követési szám és a leírás kötelező.',
+  carrier_optional: 'Futárszolgálat kódja (nem kötelező)',
   editor: {
+    source: 'Adatforrás',
     entity: 'Parcel érzékelő',
     title: 'Cím',
     show_delivered: 'Kézbesített csomagok megjelenítése',

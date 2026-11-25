@@ -29,7 +29,13 @@ export default {
   tab_active: 'Actief',
   more: '+{n} meer',
   nothing: 'Niets onderweg',
+  no_entity_source: '{source}-sensor niet gevonden. Stel de {source}-integratie in of geef "entity" op.',
+  unavailable_source: '{source} is niet beschikbaar. De zendingen verschijnen na de volgende geslaagde update.',
+  added_source: 'Zending toegevoegd. Ze verschijnt na de volgende update.',
+  required_source: 'Trackingnummer en omschrijving zijn verplicht.',
+  carrier_optional: 'Vervoerderscode (optioneel)',
   editor: {
+    source: 'Gegevensbron',
     entity: 'Parcel-sensor',
     title: 'Titel',
     show_delivered: 'Bezorgde zendingen tonen',

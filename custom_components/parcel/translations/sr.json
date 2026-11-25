@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Пратите пошиљке са Parcel налогом или додајте само картицу да бисте приказали пошиљке из 17TRACK или AfterShip.",
+        "menu_options": { "account": "Parcel налог (API кључ)", "card_only": "Само картица (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Генеришите API кључ на web.parcelapp.net (потребан је Parcel Premium).",
         "data": { "api_key": "API кључ" }
       },
+      "card_only": { "title": "Parcel картица", "description": "Додаје Parcel картицу на контролне табле без Parcel налога. У картици изаберите извор 17TRACK или AfterShip: њихова интеграција мора бити подешена." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "Parcel је одбио API кључ. Унесите нови.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Овај API кључ је већ подешен.",
-      "reauth_successful": "API кључ је ажуриран."
+      "reauth_successful": "API кључ је ажуриран.",
+      "card_only_configured": "Картица је већ додата."
     }
   },
   "options": {

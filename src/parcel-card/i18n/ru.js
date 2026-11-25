@@ -29,7 +29,13 @@ export default {
   tab_active: 'Активные',
   more: 'ещё {n}',
   nothing: 'Ничего не в пути',
+  no_entity_source: 'Сенсор {source} не найден. Настройте интеграцию {source} или укажите «entity».',
+  unavailable_source: '{source} недоступен. Посылки появятся после следующего успешного обновления.',
+  added_source: 'Посылка добавлена. Она появится после следующего обновления.',
+  required_source: 'Трек-номер и описание обязательны.',
+  carrier_optional: 'Код службы доставки (необязательно)',
   editor: {
+    source: 'Источник данных',
     entity: 'Сенсор Parcel',
     title: 'Заголовок',
     show_delivered: 'Показывать доставленные посылки',

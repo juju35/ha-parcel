@@ -30,15 +30,28 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - `custom:parcel-mini-card` compact card: the featured parcel on an illustrated banner (a problem first, then the parcel at the door, the one to pick up, the rest), with a button to open the full card
 - `parcel_out_for_delivery` and `parcel_delivered` events when a delivery changes status, for automations
 - **Notifications** to the notify actions of your choice when a delivery is out for delivery or delivered, with no automation to write
+- **Without Parcel** (Android, or deliveries already in 17TRACK or AfterShip): the cards can show the deliveries of the [17TRACK](https://www.home-assistant.io/integrations/seventeentrack/) or [AfterShip](https://www.home-assistant.io/integrations/aftership/) integration instead (`source`), with their add form; see [Supported integrations](#supported-integrations)
 - Diagnostics download with the API key, tracking numbers, addresses and emails redacted
 - API key entered in the UI, never in YAML
 - English, French, German, Spanish, Serbian (Cyrillic and Latin), Italian, Dutch, Portuguese, Polish, Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Slovak, Czech, Slovenian, Latvian and Greek
 
+## Supported integrations
+
+The integration talks to Parcel itself. The cards can also show the deliveries of another tracking integration of Home Assistant, for those without Parcel (an Apple-only app):
+
+| Integration | Link | Card `source` | Deliveries | Add form | Notes |
+|---|---|---|---|---|---|
+| **Parcel** (this integration) | [parcelapp.net](https://parcelapp.net) | `parcel` (default) | Every event, carrier, expected date | ✓ carrier from Parcel's list, push confirmation | Parcel Premium API key |
+| **17TRACK** (built in) | [seventeentrack](https://www.home-assistant.io/integrations/seventeentrack/) | `seventeentrack` | Name, state, last event and place, route | ✓ number and name (`seventeentrack.add_package`) | Free account; the packages are asked with `seventeentrack.get_packages` when its sensors change, every 30 minutes and on refresh |
+| **AfterShip** (built in) | [aftership](https://www.home-assistant.io/integrations/aftership/) | `aftership` | Name, state, carrier, last checkpoint, expected date | ✓ number, name, optional carrier code (`aftership.add_tracking`) | Its API needs a paid plan |
+
+Each state maps to Parcel's (in transit, out for delivery, awaiting pickup, failed attempt, exception, delivered…), so the street, the tiles and the mini card work the same.
+
 ## Prerequisites
 
 - Home Assistant 2024.12 or later
-- A **Parcel Premium** subscription (the API is reserved to it)
-- An API key, generated on [web.parcelapp.net](https://web.parcelapp.net)
+- With Parcel: a **Parcel Premium** subscription (the API is reserved to it) and an API key, generated on [web.parcelapp.net](https://web.parcelapp.net)
+- Without Parcel: the [17TRACK](https://www.home-assistant.io/integrations/seventeentrack/) or [AfterShip](https://www.home-assistant.io/integrations/aftership/) integration set up
 
 ## Installation
 
@@ -71,7 +84,10 @@ Copy `custom_components/parcel/` to `/config/custom_components/parcel/`, then re
 
 [![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=parcel)
 
-**Settings → Devices & services → Add integration → Parcel**, then paste your API key.
+**Settings → Devices & services → Add integration → Parcel**, then pick:
+
+- **Parcel account (API key)**, and paste your API key;
+- **Card only (17TRACK, AfterShip)**, without a Parcel account: no sensor, no request to Parcel, the cards are just loaded, to use with `source: seventeentrack` or `source: aftership`.
 
 Options (**Configure** button):
 
@@ -91,7 +107,9 @@ type: custom:parcel-card
 
 | Option | Default | Description |
 |---|---|---|
-| `entity` | detected | Parcel sensor to show (useful with several accounts) |
+| `source` | `parcel` | Where the deliveries come from: `parcel`, `seventeentrack` (17TRACK) or `aftership` (AfterShip); see [Supported integrations](#supported-integrations) |
+| `entity` | detected | Sensor to show: the Parcel sensor (useful with several accounts), any 17TRACK sensor (its account is used), or the AfterShip sensor |
+| `config_entry_id` | from `entity` | YAML only, 17TRACK: the account to ask, when it cannot be found from the sensor |
 | `title` | `Deliveries` | Card title |
 | `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
 | `show_delivered` | `true` | Show delivered parcels, in a **Delivered** tab next to the **Active** one |
@@ -104,6 +122,12 @@ type: custom:parcel-card
 | `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |
 
 Click a delivery to see its events, and the tracking number to copy it.
+
+```yaml
+# Without Parcel: the deliveries of 17TRACK (or `source: aftership`)
+type: custom:parcel-card
+source: seventeentrack
+```
 
 ### Mini card
 

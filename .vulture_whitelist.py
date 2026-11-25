@@ -19,3 +19,7 @@ async_get_config_entry_diagnostics  # unused function (custom_components/parcel/
 _.event  # unused property (custom_components/parcel/calendar.py:90)
 _.async_get_events  # unused method (custom_components/parcel/calendar.py:96)
 _._attr_translation_key  # unused attribute (custom_components/parcel/entity.py:20)
+_.async_step_card_only  # unused method (custom_components/parcel/config_flow.py:69)
+_.async_step_account  # unused method (custom_components/parcel/config_flow.py:77)
+_.async_supports_options  # unused method (custom_components/parcel/config_flow.py:117)
+cls  # unused variable (custom_components/parcel/config_flow.py:119)

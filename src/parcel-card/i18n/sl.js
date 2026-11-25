@@ -29,7 +29,13 @@ export default {
   tab_active: 'Aktivne',
   more: 'še {n}',
   nothing: 'Nič ni na poti',
+  no_entity_source: 'Senzorja {source} ni mogoče najti. Nastavite integracijo {source} ali vnesite »entity«.',
+  unavailable_source: '{source} ni na voljo. Pošiljke bodo prikazane po naslednji uspešni posodobitvi.',
+  added_source: 'Pošiljka dodana. Prikazana bo po naslednji posodobitvi.',
+  required_source: 'Številka za sledenje in opis sta obvezna.',
+  carrier_optional: 'Koda prevoznika (neobvezno)',
   editor: {
+    source: 'Vir podatkov',
     entity: 'Senzor Parcel',
     title: 'Naslov',
     show_delivered: 'Prikaži dostavljene pošiljke',

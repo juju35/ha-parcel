@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Spremljajte pošiljke z računom Parcel ali dodajte samo kartico za prikaz pošiljk iz 17TRACK ali AfterShip.",
+        "menu_options": { "account": "Račun Parcel (ključ API)", "card_only": "Samo kartica (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Ustvarite ključ API na web.parcelapp.net (potrebna je naročnina Parcel Premium).",
         "data": { "api_key": "Ključ API" }
       },
+      "card_only": { "title": "Kartica Parcel", "description": "Doda kartico Parcel na nadzorne plošče brez računa Parcel. V kartici izberite vir 17TRACK ali AfterShip: njihova integracija mora biti nastavljena." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "Ključ API za Parcel je bil zavrnjen. Vnesite novega.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Ta ključ API je že nastavljen.",
-      "reauth_successful": "Ključ API je posodobljen."
+      "reauth_successful": "Ključ API je posodobljen.",
+      "card_only_configured": "Kartica je že dodana."
     }
   },
   "options": {

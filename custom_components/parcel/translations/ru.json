@@ -3,9 +3,15 @@
     "step": {
       "user": {
         "title": "Parcel",
+        "description": "Отслеживайте посылки с аккаунтом Parcel или добавьте только карточку, чтобы показывать посылки из 17TRACK или AfterShip.",
+        "menu_options": { "account": "Аккаунт Parcel (ключ API)", "card_only": "Только карточка (17TRACK, AfterShip)" }
+      },
+      "account": {
+        "title": "Parcel",
         "description": "Создайте API-ключ на web.parcelapp.net (требуется Parcel Premium).",
         "data": { "api_key": "API-ключ" }
       },
+      "card_only": { "title": "Карточка Parcel", "description": "Добавляет карточку Parcel на панели без аккаунта Parcel. В карточке выберите источник 17TRACK или AfterShip: их интеграция должна быть настроена." },
       "reauth_confirm": {
         "title": "Parcel",
         "description": "API-ключ Parcel был отклонён. Введите новый.",
@@ -19,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Этот API-ключ уже настроен.",
-      "reauth_successful": "API-ключ обновлён."
+      "reauth_successful": "API-ключ обновлён.",
+      "card_only_configured": "Карточка уже добавлена."
     }
   },
   "options": {

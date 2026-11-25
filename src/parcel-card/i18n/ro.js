@@ -29,7 +29,13 @@ export default {
   tab_active: 'Active',
   more: 'încă {n}',
   nothing: 'Nimic pe drum',
+  no_entity_source: 'Senzorul {source} nu a fost găsit. Configurați integrarea {source} sau setați „entity”.',
+  unavailable_source: '{source} nu este disponibil. Livrările vor apărea după următoarea actualizare reușită.',
+  added_source: 'Livrare adăugată. Va apărea după următoarea actualizare.',
+  required_source: 'Numărul de urmărire și descrierea sunt obligatorii.',
+  carrier_optional: 'Codul curierului (opțional)',
   editor: {
+    source: 'Sursa datelor',
     entity: 'Senzor Parcel',
     title: 'Titlu',
     show_delivered: 'Afișează coletele livrate',

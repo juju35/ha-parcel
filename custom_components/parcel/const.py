@@ -12,6 +12,7 @@ API_DELIVERIES: Final = f"{API_BASE}/deliveries/"
 API_ADD_DELIVERY: Final = f"{API_BASE}/add-delivery/"
 API_CARRIERS: Final = f"{API_BASE}/supported_carriers.json"
 
+CONF_CARD_ONLY: Final = "card_only"
 CONF_FILTER_MODE: Final = "filter_mode"
 FILTER_ACTIVE: Final = "active"
 FILTER_RECENT: Final = "recent"

@@ -29,7 +29,13 @@ export default {
   tab_active: 'Активне',
   more: 'још {n}',
   nothing: 'Ништа није на путу',
+  no_entity_source: 'Сензор {source} није пронађен. Подесите интеграцију {source} или поставите „entity“.',
+  unavailable_source: '{source} није доступан. Пошиљке ће се појавити после његовог следећег успешног ажурирања.',
+  added_source: 'Пошиљка је додата. Појавиће се после следећег ажурирања.',
+  required_source: 'Број за праћење и опис су обавезни.',
+  carrier_optional: 'Шифра превозника (опционо)',
   editor: {
+    source: 'Извор података',
     entity: 'Parcel сензор',
     title: 'Наслов',
     show_delivered: 'Прикажи испоручене пошиљке',

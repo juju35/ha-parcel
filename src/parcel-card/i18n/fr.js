@@ -29,7 +29,13 @@ export default {
   tab_active: 'En cours',
   more: '+{n} autres',
   nothing: 'Aucun colis en route',
+  no_entity_source: 'Capteur {source} introuvable. Configurez l’intégration {source} ou renseignez « entity ».',
+  unavailable_source: '{source} est indisponible. Les colis s’afficheront après sa prochaine mise à jour réussie.',
+  added_source: 'Colis ajouté. Il s’affichera après la prochaine mise à jour.',
+  required_source: 'Le numéro de suivi et la description sont obligatoires.',
+  carrier_optional: 'Code transporteur (facultatif)',
   editor: {
+    source: 'Source des données',
     entity: 'Capteur Parcel',
     title: 'Titre',
     show_delivered: 'Afficher les colis livrés',
