@@ -10,7 +10,12 @@
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/custom_components/parcel/brand/icon.png" alt="Parcel" width="120"></p>
 
-Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveries tracked in Parcel and add new ones, with a Lovelace card included.
+<p align="center">
+  <a href="https://www.17track.net"><img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/images/17track.png" alt="17TRACK" height="32"></a>&nbsp;&nbsp;&nbsp;
+  <a href="https://www.aftership.com"><img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/images/aftership.png" alt="AfterShip" height="32"></a>
+</p>
+
+Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveries tracked in Parcel and add new ones, with Lovelace cards included. Without Parcel (an Apple-only app), the cards also show the deliveries of the [17TRACK](https://www.home-assistant.io/integrations/seventeentrack/) or [AfterShip](https://www.home-assistant.io/integrations/aftership/) integrations.
 
 [![Open your Home Assistant instance and open a repository inside the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=juju35&repository=ha-parcel&category=integration)
 
@@ -22,7 +27,7 @@ Home Assistant integration for [Parcel](https://parcelapp.net): see the deliveri
 - **Deliveries** calendar: one event per active delivery on its expected date
 - `parcel.add_delivery` action to add a delivery from an automation, a script or the card
 - `parcel.refresh` action to force an update
-- `custom:parcel-card` card, **shipped with the integration** and loaded automatically: an animated street as header, the deliveries as tiles in **Active / Delivered** tabs, events on click, add form with carrier search
+- `custom:parcel-card` card, **shipped with the integration** and loaded automatically: an animated street as header, the deliveries as tiles in **Active / Delivered** tabs, events on click, add form (with carrier search for Parcel)
 - The illustration follows the most pressing parcel: the van brings it to the door, drives by while it is in transit, leaves a notice on the door after a failed attempt; the parcel waits in the parcel shop to be picked up, or lies on the doorstep once delivered
 - `illustration_background: false` keeps the houses and the van without the sky and the road, on the card's own background
 - **Night mode** of the illustration: stars, moon, lit windows and the van's headlight; it comes with the dark theme of Home Assistant (a light theme keeps the day picture after sunset), or is forced with `illustration_theme`
@@ -41,9 +46,9 @@ The integration talks to Parcel itself. The cards can also show the deliveries o
 
 | Integration | Link | Card `source` | Deliveries | Add form | Notes |
 |---|---|---|---|---|---|
-| **Parcel** (this integration) | [parcelapp.net](https://parcelapp.net) | `parcel` (default) | Every event, carrier, expected date | ✓ carrier from Parcel's list, push confirmation | Parcel Premium API key |
-| **17TRACK** (built in) | [seventeentrack](https://www.home-assistant.io/integrations/seventeentrack/) | `seventeentrack` | Name, state, last event and place, route | ✓ number and name (`seventeentrack.add_package`) | Free account; the packages are asked with `seventeentrack.get_packages` when its sensors change, every 30 minutes and on refresh |
-| **AfterShip** (built in) | [aftership](https://www.home-assistant.io/integrations/aftership/) | `aftership` | Name, state, carrier, last checkpoint, expected date | ✓ number, name, optional carrier code (`aftership.add_tracking`) | Its API needs a paid plan |
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/custom_components/parcel/brand/icon.png" alt="" width="20"> **Parcel** (this integration) | [parcelapp.net](https://parcelapp.net) | `parcel` (default) | Every event, carrier, expected date | ✓ carrier from Parcel's list, push confirmation | Parcel Premium API key |
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/images/17track-icon.png" alt="" width="20"> **17TRACK** (built in) | [seventeentrack](https://www.home-assistant.io/integrations/seventeentrack/) | `seventeentrack` | Name, state, last event and place, route | ✓ number and name (`seventeentrack.add_package`) | Free account; the packages are asked with `seventeentrack.get_packages` when its sensors change, every 30 minutes and on refresh |
+| <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/images/aftership-icon.png" alt="" width="20"> **AfterShip** (built in) | [aftership](https://www.home-assistant.io/integrations/aftership/) | `aftership` | Name, state, carrier, last checkpoint, expected date | ✓ number, name, optional carrier code (`aftership.add_tracking`) | Its API needs a paid plan |
 
 Each state maps to Parcel's (in transit, out for delivery, awaiting pickup, failed attempt, exception, delivered…), so the street, the tiles and the mini card work the same.
 
@@ -99,7 +104,7 @@ Options (**Configure** button):
 
 ### Card
 
-Add the **Parcel** card from the card picker: every option is set in the visual editor. In YAML:
+Add the **Parcel** card from the card picker: every option is set in the visual editor, the data source first (Parcel, 17TRACK or AfterShip). In YAML:
 
 ```yaml
 type: custom:parcel-card
@@ -137,7 +142,7 @@ A compact card for dashboards: a lower illustrated banner with the featured parc
 type: custom:parcel-mini-card
 ```
 
-It takes the same options as `custom:parcel-card` (set in the same visual editor); `show_delivered`, `show_add`, `show_refresh` and `max_events` apply to the full view, `illustration`, `illustration_background` and `illustration_theme` to both.
+It takes the same options as `custom:parcel-card` (set in the same visual editor), `source` included; `show_delivered`, `show_add`, `show_refresh` and `max_events` apply to the full view, `illustration`, `illustration_background` and `illustration_theme` to both.
 
 <img src="https://raw.githubusercontent.com/juju35/ha-parcel/main/screenshots/mini-card.png" alt="parcel-mini-card" width="300">
 
@@ -199,7 +204,7 @@ actions:
 
 ### Diagnostics
 
-**Settings → Devices & services → Parcel → ⋮ → Download diagnostics** gives the entry options and the last deliveries, for bug reports. The API key, tracking numbers, event locations, extra carrier information (often a pickup address), postcodes and emails are redacted.
+**Settings → Devices & services → Parcel → ⋮ → Download diagnostics** gives the entry options and the last deliveries, for bug reports (the **Card only** entry has nothing more than its type). The API key, tracking numbers, event locations, extra carrier information (often a pickup address), postcodes and emails are redacted.
 
 ## Screenshots
 
@@ -306,7 +311,9 @@ While parcels refresh, the refresh button spins until the update finishes.
 
 ## How it works
 
-The integration polls the Parcel API at the update interval and exposes the deliveries on one sensor and one calendar per account. When an update fails (hourly request limit reached, timeout, Parcel server error), the sensor keeps the last deliveries until the next update and flags them with its `stale` (`true`) and `last_error` attributes; only a refused API key makes it unavailable. The card reads that sensor, sorts active deliveries first by expected date, and colors each status from the Home Assistant theme:
+The integration polls the Parcel API at the update interval and exposes the deliveries on one sensor and one calendar per account. When an update fails (hourly request limit reached, timeout, Parcel server error), the sensor keeps the last deliveries until the next update and flags them with its `stale` (`true`) and `last_error` attributes; only a refused API key makes it unavailable. The card reads that sensor — or, with `source`, the 17TRACK packages (`seventeentrack.get_packages`) or the AfterShip sensor, each read into the same shape: a failed 17TRACK request keeps the deliveries already shown — sorts active deliveries first by expected date, and colors each status from the Home Assistant theme:
+
+17TRACK and AfterShip states are mapped to these: *Ready to be picked up* / *AvailableForPickup* → awaiting pickup, *Undelivered* / *AttemptFail* → failed attempt, *Alert* / *Exception* → exception, *Expired* → no updates, *Pending* → not found, *InfoReceived* → info received, *OutForDelivery* → out for delivery.
 
 | Code | Status | Color |
 |---|---|---|
