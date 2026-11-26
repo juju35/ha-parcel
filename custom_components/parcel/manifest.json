@@ -2,6 +2,7 @@
   "domain": "parcel",
   "name": "Parcel",
   "after_dependencies": ["lovelace"],
+  "categories": ["productivity_information.shopping_groceries"],
   "codeowners": ["@juju35"],
   "config_flow": true,
   "dependencies": ["frontend", "http", "websocket_api"],
